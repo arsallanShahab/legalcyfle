@@ -71,7 +71,7 @@ body {
 }
 
 .blog_paragraph {
-  @apply font-giest-sans text-lg leading-relaxed text-gray-900 dark:text-gray-300;
+  @apply text-wrap break-all font-giest-sans text-lg leading-relaxed text-gray-900 dark:text-gray-300;
 }
 
 .blog_paragraph a {
@@ -84,7 +84,7 @@ body {
   }
 
   .blog_container {
-    @apply px-5;
+    @apply px-0;
   }
 }
 

@@ -21,7 +21,7 @@ const ArticleCard = ({ article }: Props) => {
   return (
     <div
       key={article.sys.id}
-      className="relative flex flex-col items-start justify-start gap-2 rounded-xl bg-white p-2 *:w-full dark:border-zinc-900 dark:bg-zinc-800 md:flex-row md:*:w-auto"
+      className="relative flex flex-col items-start justify-start gap-2 rounded-xl bg-zinc-100 *:w-full dark:border-zinc-900 dark:bg-zinc-800 md:flex-row md:p-2 md:*:w-auto"
     >
       <div className="relative w-full">
         <Image
@@ -42,7 +42,7 @@ const ArticleCard = ({ article }: Props) => {
       <FlexContainer
         variant="column-start"
         wrap="wrap"
-        className="h-full px-2 py-1 md:px-5"
+        className="h-full px-3 pb-3 pt-2 md:px-5"
         gap="sm"
       >
         <FlexContainer variant="row-start">
@@ -82,16 +82,16 @@ const ArticleCard = ({ article }: Props) => {
           className="gap-1 md:max-w-xl md:gap-3"
         >
           <FlexContainer alignItems="center" className="relative" wrap="wrap">
-            <FlexContainer gap="xs" alignItems="center">
+            <FlexContainer gap="xs" alignItems="center" wrap="wrap">
               <span className="text-xs">By</span>
               {article.fields?.authors?.map((author, index) => (
                 <Link
                   href={"/author/" + author.sys.id}
                   key={author.sys.id}
-                  className="text-nowrap p-1 text-xs text-black hover:underline dark:text-gray-400"
+                  className="text-nowrap rounded-xl bg-zinc-200 px-2 py-1 text-xs text-black hover:underline dark:bg-zinc-900 dark:text-gray-400"
                 >
                   {author.fields.name}{" "}
-                  {index < article.fields.authors.length - 1 && ","}
+                  {/* {index < article.fields.authors.length - 1 && ","} */}
                 </Link>
               ))}
             </FlexContainer>
@@ -105,13 +105,13 @@ const ArticleCard = ({ article }: Props) => {
               orientation="vertical"
               className="h-4 w-[1px] bg-gray-500"
             /> */}
-            •
-            <p className="text-nowrap text-xs text-black dark:text-gray-400">
+            <span className="hidden md:block">•</span>
+            <p className="text-nowrap rounded-xl bg-zinc-200 px-2 py-1 text-xs text-black dark:bg-zinc-900 dark:text-gray-400">
               {/* july 7 2024 with time */}
               {dayjs(article.fields?.date).format("hh:mm A - MMMM DD, YYYY")}
             </p>
-            •
-            <div className="text-nowrap text-xs text-black dark:text-gray-400">
+            <span className="hidden md:block">•</span>
+            <div className="text-nowrap rounded-xl bg-zinc-200 px-2 py-1 text-xs text-black dark:bg-zinc-900 dark:text-gray-400">
               {estimateReadingTime(
                 documentToHtmlString(article.fields.body as Document),
               )}{" "}

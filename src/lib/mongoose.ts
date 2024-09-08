@@ -36,7 +36,7 @@ async function connectToDatabase(): Promise<Mongoose> {
       // bufferMaxEntries: 0,
       // useFindAndModify: false,
       // useCreateIndex: true,
-      dbName: "legalCyfle",
+      dbName: process.env.MONGODB_DB,
     } as ConnectOptions;
 
     cached.promise = mongoose.connect(MONGODB_URI, opts).then((mongoose) => {

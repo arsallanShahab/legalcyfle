@@ -47,19 +47,19 @@ const Footer = () => {
       {pathname === "/" && (
         <FlexContainer
           variant="column-start"
-          className="bg-gradient-to-bl from-green-300 to-green-900 px-10 py-16"
+          className="bg-gradient-to-bl from-purple-400 to-indigo-900 px-5 py-16 md:px-10"
         >
-          <h3 className="font-rubik text-4xl font-semibold text-amber-200">
+          <h3 className="font-rubik text-4xl font-semibold text-white">
             Disclaimer
           </h3>
-          <p className="max-w-2xl text-medium font-medium text-white">
+          <p className="max-w-2xl text-medium text-white">
             LegalCyfle is a platform for legal professionals to share their
             knowledge and insights. The information provided on this platform is
             for educational purposes only. It should not be considered as legal
             advice. Please consult with a legal professional for specific legal
             advice.
           </p>
-          <p className="max-w-2xl text-medium font-medium text-white">
+          <p className="max-w-2xl text-medium text-white">
             Furthermore, all articles featured on LegalCyfle represent the
             exclusive opinions and views of the respective guest writers, and do
             not reflect the opinions or views of LegalCyfle, its editor, or its
@@ -109,7 +109,7 @@ const Footer = () => {
           )}
         </ModalContent>
       </Modal>
-      <div className="bg-zinc-100 px-10 py-20 dark:bg-zinc-900 md:px-20">
+      <div className="bg-zinc-100 px-5 py-20 dark:bg-zinc-900 md:px-10 lg:px-20">
         <FlexContainer className="flex-col gap-10 md:flex-row md:gap-20">
           {/* <h3 className="font-rubik text-2xl font-semibold">Legal Cyfle</h3> */}
           <FlexContainer variant="column-start" gap="md">

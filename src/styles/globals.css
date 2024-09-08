@@ -80,7 +80,11 @@ body {
 
 @media (max-width: 420px) {
   .blog_paragraph {
-    @apply text-base;
+    @apply text-base leading-loose;
+  }
+
+  .blog_container {
+    @apply px-5;
   }
 }
 

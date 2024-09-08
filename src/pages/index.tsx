@@ -37,7 +37,7 @@ export default function Home({ data }: HomeProps) {
 
   return (
     <main className="flex flex-col items-start justify-start gap-10 py-5 pb-20 *:w-full">
-      <div className="grid max-h-[75vh] grid-cols-3 grid-rows-3 gap-5 px-5 md:px-10 lg:grid-cols-4">
+      <div className="grid max-h-[75vh] grid-cols-3 grid-rows-3 gap-5 px-3 md:px-5 lg:grid-cols-4 lg:px-10">
         <div className="col-span-3 row-span-3">
           <Swiper
             spaceBetween={50}
@@ -88,7 +88,11 @@ export default function Home({ data }: HomeProps) {
                       <p className="inline-block max-w-xl text-3xl font-medium text-white">
                         {article.fields?.title}
                       </p>
-                      <FlexContainer variant="row-between" alignItems="center">
+                      <FlexContainer
+                        variant="row-between"
+                        alignItems="center"
+                        wrap="wrap"
+                      >
                         <FlexContainer alignItems="center">
                           <p className="text-medium font-medium text-white">
                             {dayjs(article?.fields?.date).format(
@@ -125,8 +129,8 @@ export default function Home({ data }: HomeProps) {
         <div className="h-full w-full rounded-xl bg-zinc-100 dark:bg-zinc-800"></div>
         <div className="h-full w-full rounded-xl bg-zinc-100 dark:bg-zinc-800"></div>
       </div>
-      <FlexContainer variant="column-start" className="px-5 md:px-10">
-        <h3 className="mb-5 mt-10 font-rubik text-4xl font-semibold">
+      <FlexContainer variant="column-start" className="px-3 md:px-5 lg:px-10">
+        <h3 className="px-2 text-4xl font-semibold md:mb-5 md:mt-10">
           Latest Articles
         </h3>
         <div className="grid grid-cols-5 gap-5">
@@ -143,8 +147,8 @@ export default function Home({ data }: HomeProps) {
           </FlexContainer>
         </div>
       </FlexContainer>
-      <FlexContainer variant="column-start" className="px-5 md:px-10">
-        <h3 className="mb-5 mt-10 font-rubik text-4xl font-semibold">News</h3>
+      <FlexContainer variant="column-start" className="px-3 md:px-5 lg:px-10">
+        <h3 className="px-2 text-4xl font-semibold md:mb-5 md:mt-10">News</h3>
         <div className="grid grid-cols-5 gap-5">
           <div className="col-span-5 grid gap-y-7 md:col-span-4">
             {data?.news?.map((article: BlogEntry) => {
@@ -159,8 +163,8 @@ export default function Home({ data }: HomeProps) {
           </FlexContainer>
         </div>
       </FlexContainer>
-      <FlexContainer variant="column-start" className="px-5 md:px-10">
-        <h3 className="mb-5 mt-10 font-rubik text-4xl font-semibold">
+      <FlexContainer variant="column-start" className="px-3 md:px-5 lg:px-10">
+        <h3 className="px-2 text-4xl font-semibold md:mb-5 md:mt-10">
           Case Analysis
         </h3>
         <div className="grid grid-cols-5 gap-5">

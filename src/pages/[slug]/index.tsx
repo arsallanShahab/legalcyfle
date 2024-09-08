@@ -209,10 +209,10 @@ const Index = (props: Props) => {
   return (
     <FlexContainer
       variant="column-start"
-      className="mx-auto max-w-3xl px-5 py-10 md:px-10 md:py-20"
+      className="mx-auto max-w-3xl px-0 py-10 md:px-10 lg:py-20"
       gap="5xl"
     >
-      <FlexContainer variant="column-start" gap="md">
+      <FlexContainer variant="column-start" gap="md" className="px-5">
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem>
@@ -239,11 +239,11 @@ const Index = (props: Props) => {
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
-        <h1 className="max-w-xl text-left font-poppins text-3xl font-semibold md:text-4xl">
+        <h1 className="max-w-xl pr-16 text-left font-poppins text-3xl font-semibold md:pr-0 md:text-4xl">
           {props.data.fields.title}
         </h1>
       </FlexContainer>
-      <FlexContainer variant="row-start" alignItems="center">
+      <FlexContainer variant="row-start" alignItems="center" className="px-5">
         {props.data.fields?.authors?.length > 1 && (
           <AvatarGroup isBordered>
             {props.data.fields?.authors.map((author) => (
@@ -320,6 +320,7 @@ const Index = (props: Props) => {
       <FlexContainer
         variant="row-between"
         // className="border-y border-zinc-100 py-5"
+        className="px-5"
       >
         <FlexContainer gap="sm">
           <Button
@@ -356,11 +357,11 @@ const Index = (props: Props) => {
         src={formatImageLink(thumbnail)}
         width={1280}
         height={720}
-        className="h-auto max-h-80 w-full rounded-xl border object-cover object-center"
+        className="h-auto max-h-80 w-full border object-cover object-center md:rounded-xl"
         alt="Cover"
       />
       <BlogContent data={props.data} />
-      <FlexContainer variant="row-start" gap="sm" className="mb-2.5">
+      <FlexContainer variant="row-start" gap="sm" className="mb-2.5 px-5">
         {props.data.fields.category.map((category) => (
           <Link
             key={category.sys.id}
@@ -376,7 +377,7 @@ const Index = (props: Props) => {
           </Link>
         ))}
       </FlexContainer>
-      <FlexContainer variant="column-start" className="mt-5">
+      <FlexContainer variant="column-start" className="mt-5 px-5">
         <FlexContainer variant="row-start" gap="sm">
           {props.data.fields?.authors?.length > 1 && (
             <AvatarGroup isBordered>

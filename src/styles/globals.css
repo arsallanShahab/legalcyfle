@@ -1,0 +1,136 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Work+Sans:wght@100..900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Rubik:wght@300..900&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  font-family: "Work Sans", sans-serif;
+}
+
+.bg-zinc-transparent {
+  background: linear-gradient(
+    90deg,
+    rgb(255, 255, 255, 1) 0%,
+    rgba(255, 255, 255, 0) 100%
+  );
+}
+
+.dark .bg-zinc-transparent {
+  background: linear-gradient(
+    90deg,
+    rgb(24, 24, 27, 1) 0%,
+    rgba(255, 255, 255, 0) 90%
+  );
+}
+
+/* radial gradient from left center dark to transparent */
+.bg-radial-dark {
+  background: radial-gradient(
+    circle at -85% 50%,
+    rgba(255, 255, 255, 1) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+}
+.dark .bg-radial-dark {
+  background: radial-gradient(
+    circle at -85% 50%,
+    rgba(39, 39, 42, 1) 50%,
+    rgba(24, 24, 27, 0) 100%
+  );
+}
+
+.bg-radial-violet {
+  background: radial-gradient(
+    circle at -103% -100%,
+    #4c1d95 -27%,
+    rgba(237, 233, 254, 0) 100%
+  );
+}
+
+.blog_container {
+  @apply flex flex-col items-start justify-center gap-5 px-2.5 md:p-0;
+}
+
+.blog_container ol {
+  @apply flex list-outside list-decimal flex-col items-start justify-start gap-2.5 px-2.5 *:w-full;
+}
+
+.blog_container ul {
+  @apply flex list-outside list-disc flex-col items-start justify-start gap-2.5 px-2.5 *:w-full;
+}
+
+.blog_container li {
+  @apply text-lg leading-relaxed text-gray-900 dark:text-gray-300;
+}
+
+.blog_container img {
+  @apply h-auto w-full;
+}
+
+.blog_paragraph {
+  @apply font-giest-sans text-lg leading-relaxed text-gray-900 dark:text-gray-300;
+}
+
+.blog_paragraph a {
+  @apply inline-block cursor-pointer text-wrap break-words break-all font-medium text-blue-500 dark:text-blue-400;
+}
+
+@media (max-width: 420px) {
+  .blog_paragraph {
+    @apply text-base;
+  }
+}
+
+.font-xl {
+  @apply text-xl;
+}
+
+.blog_heading_h1 {
+  @apply text-4xl font-semibold text-gray-900 dark:text-gray-300;
+}
+
+.blog_heading_h2 {
+  @apply text-3xl font-semibold text-gray-900 dark:text-gray-300;
+}
+
+.blog_heading_h3 {
+  @apply text-2xl font-semibold text-gray-900 dark:text-gray-300;
+}
+
+.blog_heading_h4 {
+  @apply text-xl font-semibold text-gray-900 dark:text-gray-300;
+}
+
+.blog_heading_h5 {
+  @apply text-lg font-semibold text-gray-900 dark:text-gray-300;
+}
+
+.blog_heading_h6 {
+  @apply text-base font-semibold text-gray-900 dark:text-gray-300;
+}
+.blog_paragraph a:hover {
+  @apply underline;
+}
+
+.blog_paragraph strong {
+  @apply font-semibold;
+}
+
+.blog_paragraph em {
+  @apply italic;
+}
+
+.blog_paragraph code {
+  @apply font-mono text-sm;
+}
+
+.blog_paragraph pre {
+  @apply overflow-x-auto;
+}
+
+.blog_paragraph pre code {
+  @apply block rounded-lg bg-gray-100 p-4 dark:bg-gray-800;
+}

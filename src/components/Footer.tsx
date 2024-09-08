@@ -33,7 +33,7 @@ const Footer = () => {
   const handleClose = () => {
     setItem("disclaimer", "false");
     //get the user off from the website
-    router.push("/disclaimer");
+    router.push("/disclaimer-and-terms");
   };
 
   const handleAccept = () => {
@@ -126,16 +126,28 @@ const Footer = () => {
             <h3 className="text-sm font-semibold text-black dark:text-zinc-200">
               Opportunities
             </h3>
-            <Link href="#" className="text-sm text-zinc-600 dark:text-zinc-300">
-              Publications
-            </Link>
-            <Link href="#" className="text-sm text-zinc-600 dark:text-zinc-300">
+            <Link
+              href="/category/internships"
+              className="text-sm text-zinc-600 dark:text-zinc-300"
+            >
               Internships
             </Link>
-            <Link href="#" className="text-sm text-zinc-600 dark:text-zinc-300">
+            <Link
+              href="/category/jobs"
+              className="text-sm text-zinc-600 dark:text-zinc-300"
+            >
+              Jobs
+            </Link>
+            <Link
+              href="/category/competitions"
+              className="text-sm text-zinc-600 dark:text-zinc-300"
+            >
               Competitions
             </Link>
-            <Link href="#" className="text-sm text-zinc-600 dark:text-zinc-300">
+            <Link
+              href="/category/call-for-papers"
+              className="text-sm text-zinc-600 dark:text-zinc-300"
+            >
               Call for papers
             </Link>
           </FlexContainer>
@@ -149,13 +161,22 @@ const Footer = () => {
             >
               About Us
             </Link>
-            <Link href="#" className="text-sm text-zinc-600 dark:text-zinc-300">
+            <Link
+              href="/contact-us"
+              className="text-sm text-zinc-600 dark:text-zinc-300"
+            >
               Contact Us
             </Link>
-            <Link href="#" className="text-sm text-zinc-600 dark:text-zinc-300">
+            <Link
+              href="/privacy-policy"
+              className="text-sm text-zinc-600 dark:text-zinc-300"
+            >
               Privacy Policy
             </Link>
-            <Link href="#" className="text-sm text-zinc-600 dark:text-zinc-300">
+            <Link
+              href="/disclaimer-and-terms"
+              className="text-sm text-zinc-600 dark:text-zinc-300"
+            >
               Terms of Service
             </Link>
           </FlexContainer>

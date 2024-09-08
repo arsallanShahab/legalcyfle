@@ -1,14 +1,15 @@
+import Heading from "@/components/Heading";
 import Wrapper from "@/components/Wrapper";
 import React from "react";
 
 type Props = {};
 
-const Page = (props: Props) => {
+const Index = (props: Props) => {
   return (
     <Wrapper>
-      <h1 className="font-giest-sans text-4xl font-semibold">Disclaimer</h1>
+      <Heading>Contact Us</Heading>
     </Wrapper>
   );
 };
 
-export default Page;
+export default Index;

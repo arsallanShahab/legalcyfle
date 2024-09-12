@@ -2,7 +2,6 @@ import FlexContainer from "@/components/FlexContainer";
 import Heading from "@/components/Heading";
 import { Button } from "@/components/ui/button";
 import Wrapper from "@/components/Wrapper";
-import { sendMail } from "@/lib/send-mail";
 import { Input, Textarea } from "@nextui-org/react";
 import { Form, Formik } from "formik";
 import React from "react";
@@ -16,11 +15,10 @@ const initialValues = z.object({
   name: z.string(),
   email: z.string(),
   phone: z.string(),
-  subject: z.string(),
   message: z.string(),
 });
 
-const Index = (props: Props) => {
+const Page = (props: Props) => {
   const handleSubmit = async (
     values: z.infer<typeof initialValues>,
     actions: {
@@ -36,15 +34,17 @@ const Index = (props: Props) => {
           name: values.name,
           email: values.email,
           phone: values.phone,
-          subject: `Legalcyfle ["contact"] - ${values.subject}`,
+          subject: `Legalcyfle ["subscribe"]`,
           message: `
           From: ${values.name}
           Email: ${values.email}
-          Phone Number: ${values.phone}
-          
+          WhatsApp Number: ${values.phone}
+
           Message: ${values.message}
-          
-          #This is an automated email. Please do not reply to this email.`,
+
+
+          #This is an automated email. Please do not reply to this email.
+          `,
         }),
         headers: {
           "Content-Type": "application/json",
@@ -59,23 +59,20 @@ const Index = (props: Props) => {
       actions.setSubmitting(false);
     }
   };
-
   return (
     <Wrapper>
-      <Heading>Contact Us</Heading>
+      <Heading>Subscribe</Heading>
       <Formik
         initialValues={initialValues.parse({
           name: "",
           email: "",
           phone: "",
-          subject: "",
           message: "",
         })}
         validationSchema={Yup.object().shape({
           name: Yup.string().required("Name is required"),
           email: Yup.string().email().required("Email is required"),
           phone: Yup.string().length(10, "Phone number must be 10 digits"),
-          subject: Yup.string().required("Subject is required"),
           message: Yup.string().required("Message is required"),
         })}
         onSubmit={handleSubmit}
@@ -90,11 +87,12 @@ const Index = (props: Props) => {
         }) => {
           return (
             <Form className="max-w-3xl">
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-5 gap-3">
                 <Input
                   name="name"
                   label="Name"
                   placeholder="Enter your name"
+                  classNames={{ base: "col-span-2 md:col-span-1" }}
                   value={values.name}
                   onChange={handleChange}
                   onBlur={handleBlur}
@@ -107,6 +105,7 @@ const Index = (props: Props) => {
                   type="email"
                   label="Email"
                   placeholder="Enter your email"
+                  classNames={{ base: "col-span-3 md:col-span-2" }}
                   value={values.email}
                   onChange={handleChange}
                   onBlur={handleBlur}
@@ -116,8 +115,9 @@ const Index = (props: Props) => {
                 />
                 <Input
                   name="phone"
-                  label="Phone"
-                  placeholder="Enter your phone number"
+                  label="WhatsApp Number"
+                  placeholder="Enter your WhatsApp number"
+                  classNames={{ base: "col-span-5 md:col-span-2" }}
                   value={values.phone}
                   onChange={handleChange}
                   onBlur={handleBlur}
@@ -125,24 +125,11 @@ const Index = (props: Props) => {
                   isInvalid={!!(touched.phone && errors.phone)}
                   color={touched.phone && errors.phone ? "danger" : "default"}
                 />
-                <Input
-                  name="subject"
-                  label="Subject"
-                  placeholder="Enter subject"
-                  value={values.subject}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  errorMessage={touched.subject && errors.subject}
-                  isInvalid={!!(touched.subject && errors.subject)}
-                  color={
-                    touched.subject && errors.subject ? "danger" : "default"
-                  }
-                />
                 <Textarea
                   name="message"
                   label="Message"
                   placeholder="Enter your message"
-                  className="col-span-2"
+                  className="col-span-5"
                   value={values.message}
                   onChange={handleChange}
                   onBlur={handleBlur}
@@ -170,4 +157,4 @@ const Index = (props: Props) => {
   );
 };
 
-export default Index;
+export default Page;

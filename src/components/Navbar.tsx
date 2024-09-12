@@ -6,7 +6,7 @@ import {
   Dropdown as NextUiDropdown,
   DropdownItem as NextUiDropdownItem,
 } from "@nextui-org/react";
-import { Loader2 } from "lucide-react";
+import { Loader2, Menu } from "lucide-react";
 import Link from "next/link";
 import { Router, useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
@@ -15,7 +15,21 @@ import Avatar, { AvatarFullConfig, genConfig } from "react-nice-avatar";
 import DarkModeToggle from "./DarkModeToggle";
 import { Dropdown, DropdownContent, DropdownItem } from "./Dropdown";
 import FlexContainer from "./FlexContainer";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "./ui/accordion";
 import { Button } from "./ui/button";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "./ui/sheet";
 
 const QUICK_LINKS = [
   {
@@ -154,8 +168,9 @@ const Navbar = (_props: Props) => {
   const [avatarConfig, setAvatarConfig] = useState<AvatarFullConfig | null>(
     null,
   );
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const router = useRouter();
-
+  const path = router.pathname;
   const handleLogout = async () => {
     try {
       const res = await fetch("/api/auth/logout", {
@@ -197,6 +212,10 @@ const Navbar = (_props: Props) => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
+
+  useEffect(() => {
+    setSidebarOpen(false);
+  }, [router.asPath]);
   return (
     <>
       <FlexContainer
@@ -255,7 +274,7 @@ const Navbar = (_props: Props) => {
           </FlexContainer>
         </FlexContainer>
         <FlexContainer variant="row-end" alignItems="center" className="flex">
-          <DarkModeToggle />
+          <DarkModeToggle className="hidden md:flex" />
           {loading && (
             <div className="rounded-xl bg-zinc-100 p-2">
               <Loader2 className="h-4 w-4 animate-spin" />
@@ -293,7 +312,10 @@ const Navbar = (_props: Props) => {
           {!user && (
             <FlexContainer>
               <Link href={"/signup"}>
-                <Button variant={"ghost"} className="h-auto rounded-xl py-2.5">
+                <Button
+                  variant={"ghost"}
+                  className="hidden h-auto rounded-xl py-2.5 md:inline-flex"
+                >
                   Signup
                 </Button>
               </Link>
@@ -303,15 +325,116 @@ const Navbar = (_props: Props) => {
               </Link>
             </FlexContainer>
           )}
-          {/* <Input
-            placeholder="Search on LegalCyfle..."
-            radius="md"
-            classNames={{
-              inputWrapper:
-                "w-[300px] border border-zinc-300 dark:border-zinc-800 dark:bg-zinc-900 text-sm font-medium",
-            }}
-            endContent={<Search className="h-4 w-4 cursor-pointer" />}
-          /> */}
+
+          <Sheet
+            open={sidebarOpen}
+            onOpenChange={(isOpen) => setSidebarOpen(isOpen)}
+          >
+            <SheetTrigger asChild>
+              <Button variant="outline">
+                <Menu className="h-4 w-4" />
+              </Button>
+            </SheetTrigger>
+            <SheetContent>
+              <SheetHeader className="space-y-0 text-left">
+                <SheetTitle>Menu</SheetTitle>
+                <SheetDescription>
+                  Quick links to navigate the website
+                </SheetDescription>
+              </SheetHeader>
+              <FlexContainer variant="column-start" gap="none" className="mt-7">
+                <Link
+                  href="/category/publications"
+                  className="border-b py-3 text-sm font-medium text-black dark:text-zinc-200"
+                >
+                  Publications
+                </Link>
+                <Accordion type="single">
+                  <AccordionItem value="item-1">
+                    <AccordionTrigger>Oppurtunities</AccordionTrigger>
+                    <AccordionContent>
+                      <FlexContainer variant="column-start">
+                        <Link
+                          href="/category/jobs"
+                          className="text-sm text-zinc-700 dark:text-zinc-200"
+                        >
+                          Jobs
+                        </Link>
+                        <Link
+                          href="/category/internships"
+                          className="text-sm text-zinc-700 dark:text-zinc-200"
+                        >
+                          Internships
+                        </Link>
+                        <Link
+                          href="/category/competitions"
+                          className="text-sm text-zinc-700 dark:text-zinc-200"
+                        >
+                          Competitions
+                        </Link>
+                        <Link
+                          href="/category/call-for-papers"
+                          className="text-sm text-zinc-700 dark:text-zinc-200"
+                        >
+                          Call for Papers
+                        </Link>
+                      </FlexContainer>
+                    </AccordionContent>
+                  </AccordionItem>
+
+                  <AccordionItem value="item-2">
+                    <AccordionTrigger>Blogs & News</AccordionTrigger>
+                    <AccordionContent>
+                      <FlexContainer variant="column-start">
+                        <Link
+                          href="/category/blogs"
+                          className="text-sm text-zinc-700 dark:text-zinc-200"
+                        >
+                          Blogs
+                        </Link>
+                        <Link
+                          href="/category/news"
+                          className="text-sm text-zinc-700 dark:text-zinc-200"
+                        >
+                          News
+                        </Link>
+                      </FlexContainer>
+                    </AccordionContent>
+                  </AccordionItem>
+
+                  <AccordionItem value="item-3">
+                    <AccordionTrigger>Resources</AccordionTrigger>
+                    <AccordionContent>
+                      <FlexContainer variant="column-start">
+                        <Link
+                          href="/category/law-notes"
+                          className="text-sm text-zinc-700 dark:text-zinc-200"
+                        >
+                          Law Notes
+                        </Link>
+                        <Link
+                          href="/category/case-analysis"
+                          className="text-sm text-zinc-700 dark:text-zinc-200"
+                        >
+                          Case Analysis
+                        </Link>
+                      </FlexContainer>
+                    </AccordionContent>
+                  </AccordionItem>
+                </Accordion>
+                <FlexContainer
+                  variant="row-between"
+                  alignItems="center"
+                  className="mt-3"
+                >
+                  <span className="text-sm font-medium text-zinc-600 dark:text-zinc-200">
+                    Toggle Theme
+                  </span>
+                  <DarkModeToggle className="z-[900]" />
+                </FlexContainer>
+              </FlexContainer>
+            </SheetContent>
+          </Sheet>
         </FlexContainer>
       </FlexContainer>
       {/* <FlexContainer

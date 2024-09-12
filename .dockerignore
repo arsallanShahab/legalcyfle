@@ -16,7 +16,7 @@ node_modules
 *.temp
 
 # Ignore .env files (contains sensitive information)
-.env
+# .env
 
 # Ignore editor-specific files and directories
 .vscode

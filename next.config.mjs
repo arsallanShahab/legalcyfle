@@ -1,4 +1,8 @@
 /** @type {import('next').NextConfig} */
+
+import path from "path";
+const __dirname = path.resolve();
+
 const nextConfig = {
   reactStrictMode: true,
   images: {
@@ -24,6 +28,10 @@ const nextConfig = {
     ],
   },
   transpilePackages: ["geist"],
+  webpack: (config) => {
+    config.resolve.alias["@"] = path.resolve(__dirname, "src");
+    return config;
+  },
 };
 
 export default nextConfig;

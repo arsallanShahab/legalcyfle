@@ -184,13 +184,16 @@ const Footer = () => {
             <h3 className="text-sm font-semibold text-black dark:text-zinc-200">
               Resources
             </h3>
-            <Link href="#" className="text-sm text-zinc-600 dark:text-zinc-300">
-              Blogs & News
-            </Link>
-            <Link href="#" className="text-sm text-zinc-600 dark:text-zinc-300">
+            <Link
+              href="/blogs"
+              className="text-sm text-zinc-600 dark:text-zinc-300"
+            >
               Blog
             </Link>
-            <Link href="#" className="text-sm text-zinc-600 dark:text-zinc-300">
+            <Link
+              href="/news"
+              className="text-sm text-zinc-600 dark:text-zinc-300"
+            >
               News
             </Link>
           </FlexContainer>

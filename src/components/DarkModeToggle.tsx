@@ -1,3 +1,4 @@
+import { cn } from "@/lib/utils";
 import {
   Dropdown,
   DropdownItem,
@@ -8,11 +9,16 @@ import { MoonIcon, SunIcon } from "lucide-react";
 import { useTheme } from "next-themes";
 import { Button } from "./ui/button";
 
-export default function DarkModeToggle() {
+type Props = {
+  children?: React.ReactNode;
+  className?: string;
+};
+
+export default function DarkModeToggle({ className }: Props) {
   const { setTheme } = useTheme();
 
   return (
-    <>
+    <div className={cn(className)}>
       <Dropdown>
         <DropdownTrigger>
           <Button variant="ghost" size="icon">
@@ -33,6 +39,6 @@ export default function DarkModeToggle() {
           </DropdownItem>
         </DropdownMenu>
       </Dropdown>
-    </>
+    </div>
   );
 }

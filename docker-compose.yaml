@@ -1,0 +1,22 @@
+version: "3.8"
+services:
+  server:
+    build:
+      context: .
+      args:
+        CONTENTFUL_SPACE_ID: ${CONTENTFUL_SPACE_ID}
+        CONTENTFUL_ACCESS_TOKEN: ${CONTENTFUL_ACCESS_TOKEN}
+        MONGODB_URI: ${MONGODB_URI}
+        MONGODB_DB: ${MONGODB_DB}
+        JWT_SECRET: ${JWT_SECRET}
+        JWT_EXPIRY: ${JWT_EXPIRY}
+        NEXT_PUBLIC_BASE_URL: ${NEXT_PUBLIC_BASE_URL}
+        SMTP_HOST: ${SMTP_HOST}
+        SMTP_PORT: ${SMTP_PORT}
+        SMTP_SECURE: ${SMTP_SECURE}
+        SMTP_USER: ${SMTP_USER}
+        SMTP_PASS: ${SMTP_PASS}
+    environment:
+      - NODE_ENV=${NODE_ENV}
+    ports:
+      - "3000:3000"

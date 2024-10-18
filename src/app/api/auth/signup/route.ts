@@ -1,4 +1,5 @@
 import connectToDatabase from "@/lib/mongoose";
+import { sendToken } from "@/lib/send-mail";
 import User from "@/models/User";
 import { NextResponse } from "next/server";
 
@@ -33,6 +34,17 @@ export async function POST(req: Request, res: Response) {
       lastName,
       email,
       password,
+    });
+    const verificationToken = user.generateEmailVerificationToken();
+    await user.save();
+
+    const verificationUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/verify-email?token=${verificationToken}`;
+    const message = `Please verify your email by clicking the following link: ${verificationUrl}`;
+
+    await sendToken({
+      to: user.email,
+      subject: "Email Verification",
+      text: message,
     });
     return NextResponse.json({
       success: true,

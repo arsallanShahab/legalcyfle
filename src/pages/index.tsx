@@ -70,7 +70,7 @@ export default function Home({ data }: HomeProps) {
               return (
                 <SwiperSlide
                   key={article.sys.id}
-                  className="relative h-[80vh] max-h-[580px] overflow-hidden rounded-xl"
+                  className="relative h-[80vh] max-h-[300px] overflow-hidden rounded-xl md:max-h-[450px]"
                 >
                   <Link href={article.fields?.slug || "#"} className="group">
                     <Image
@@ -85,7 +85,7 @@ export default function Home({ data }: HomeProps) {
                       gap="sm"
                       className="absolute inset-x-0 bottom-0 z-20 bg-gradient-to-t from-green-950 to-transparent p-5 pt-32"
                     >
-                      <p className="inline-block max-w-xl text-3xl font-medium text-white">
+                      <p className="inline-block max-w-xl text-xl font-medium text-white md:text-3xl">
                         {article.fields?.title}
                       </p>
                       <FlexContainer
@@ -94,7 +94,7 @@ export default function Home({ data }: HomeProps) {
                         wrap="wrap"
                       >
                         <FlexContainer alignItems="center">
-                          <p className="text-medium font-medium text-white">
+                          <p className="text-sm font-medium text-white md:text-medium">
                             {dayjs(article?.fields?.date).format(
                               "hh:mm A - MMMM DD, YYYY",
                             )}
@@ -103,11 +103,11 @@ export default function Home({ data }: HomeProps) {
                             orientation="vertical"
                             className="h-4 w-[1.5px] bg-white"
                           />
-                          <p className="text-medium font-medium text-white">
+                          <p className="text-sm font-medium text-white md:text-medium">
                             By {article?.fields?.author?.fields?.name}
                           </p>
                         </FlexContainer>
-                        <p className="font-medium text-white">
+                        <p className="text-sm font-medium text-white md:text-medium">
                           {estimateReadingTime(
                             documentToHtmlString(
                               article?.fields?.body as Document,

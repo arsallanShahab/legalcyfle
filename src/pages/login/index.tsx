@@ -17,8 +17,14 @@ const Index = (props: Props) => {
 
   const router = useRouter();
 
-  const handleSubmit = async (values: any) => {
+  const handleSubmit = async (
+    values: any,
+    actions: {
+      setSubmitting: (isSubmitting: boolean) => void;
+    },
+  ) => {
     try {
+      actions.setSubmitting(true);
       const res = await fetch("/api/auth/login", {
         method: "POST",
         body: JSON.stringify(values),
@@ -37,6 +43,8 @@ const Index = (props: Props) => {
     } catch (error) {
       const err = error as Error & { message: string };
       toast.error(err?.message || "Something went wrong");
+    } finally {
+      actions.setSubmitting(false);
     }
   };
   return (
@@ -53,9 +61,16 @@ const Index = (props: Props) => {
         validationSchema={LoginValidationSchema}
         onSubmit={handleSubmit}
       >
-        {({ values, handleChange, setFieldValue, errors, touched }) => {
+        {({
+          values,
+          handleChange,
+          setFieldValue,
+          errors,
+          touched,
+          isSubmitting,
+        }) => {
           return (
-            <Form className="mx-auto max-w-md rounded-2xl p-3 dark:bg-zinc-900">
+            <Form className="mx-auto flex max-w-md flex-col gap-5 rounded-2xl p-3 *:w-full dark:bg-zinc-900">
               <div className="grid gap-3">
                 {" "}
                 <div className="grid grid-cols-2 gap-3"></div>
@@ -96,16 +111,24 @@ const Index = (props: Props) => {
               </div>
               <Button
                 type="submit"
-                className="mt-5 h-auto w-full rounded-xl bg-green-500 py-3 hover:bg-green-600"
+                loading={isSubmitting}
+                className="h-auto w-full rounded-xl bg-green-500 py-3 hover:bg-green-600"
               >
                 Submit
               </Button>
-              <p className="mt-3 text-center text-sm text-gray-500">
-                Don&apos;t have an account?{" "}
-                <Link href="/signup" className="text-green-500">
-                  Sign up
+              <FlexContainer variant="row-between" alignItems="center">
+                <span className="text-left text-sm text-gray-500">
+                  Having trouble logging in?
+                </span>
+                <Link href="/request-reset" className="text-sm text-green-500">
+                  Reset Password
                 </Link>
-              </p>
+              </FlexContainer>
+              <Link href="/signup">
+                <Button className="w-full" variant={"link"}>
+                  Create an Account
+                </Button>
+              </Link>
             </Form>
           );
         }}

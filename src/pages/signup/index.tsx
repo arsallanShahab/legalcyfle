@@ -32,6 +32,7 @@ const Index = (props: Props) => {
     }>,
   ) => {
     try {
+      action.setSubmitting(true);
       console.log(values);
       const response = await fetch("/api/auth/signup", {
         method: "POST",
@@ -54,6 +55,8 @@ const Index = (props: Props) => {
         action.setErrors({ email: err.message || "Email already exists" });
       }
       toast.error(err.message || "An error occurred. Please try again later");
+    } finally {
+      action.setSubmitting(false);
     }
   };
 
@@ -79,7 +82,14 @@ const Index = (props: Props) => {
         validationSchema={toFormikValidationSchema(SignupValidationSchema)}
         onSubmit={handleSubmit}
       >
-        {({ values, handleChange, setFieldValue, errors, touched }) => {
+        {({
+          values,
+          handleChange,
+          setFieldValue,
+          errors,
+          touched,
+          isSubmitting,
+        }) => {
           return (
             <Form className="mx-auto max-w-md rounded-2xl p-3 dark:bg-zinc-900">
               <div className="grid gap-3">
@@ -176,6 +186,7 @@ const Index = (props: Props) => {
               </div>
               <Button
                 type="submit"
+                loading={isSubmitting}
                 className="mt-5 h-auto w-full rounded-xl bg-green-500 py-3"
               >
                 Submit

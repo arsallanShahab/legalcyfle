@@ -281,9 +281,11 @@ const Navbar = (_props: Props) => {
             </div>
           )}
           {user && !loading && (
-            <NextUiDropdown>
+            <NextUiDropdown
+              classNames={{ content: "bg-white dark:bg-zinc-800" }}
+            >
               <DropdownTrigger>
-                <div className="flex cursor-pointer items-center justify-center gap-3 rounded-2xl bg-zinc-100 p-2 hover:bg-zinc-200">
+                <div className="flex cursor-pointer items-center justify-center gap-3 rounded-2xl bg-zinc-100 p-2 hover:bg-zinc-200 dark:bg-zinc-900 dark:hover:bg-zinc-800">
                   <Avatar className="h-10 w-10" {...avatarConfig} />
                   <FlexContainer variant="column-start" gap="none">
                     <p className="text-sm font-semibold">
@@ -296,8 +298,8 @@ const Navbar = (_props: Props) => {
                 </div>
               </DropdownTrigger>
               <DropdownMenu aria-label="Static Actions">
-                <NextUiDropdownItem key="profile">Profile</NextUiDropdownItem>
-                <NextUiDropdownItem key="settings">Settings</NextUiDropdownItem>
+                {/* <NextUiDropdownItem key="profile">Profile</NextUiDropdownItem> */}
+                {/* <NextUiDropdownItem key="settings">Settings</NextUiDropdownItem> */}
                 <NextUiDropdownItem
                   key="logout"
                   className="text-danger"
@@ -331,7 +333,7 @@ const Navbar = (_props: Props) => {
             onOpenChange={(isOpen) => setSidebarOpen(isOpen)}
           >
             <SheetTrigger asChild>
-              <Button variant="outline">
+              <Button variant="outline" className="flex md:hidden">
                 <Menu className="h-4 w-4" />
               </Button>
             </SheetTrigger>

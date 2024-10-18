@@ -21,6 +21,12 @@ export async function POST(req: Request, res: Response) {
         message: "User does not exist",
       });
     }
+    if (!user.emailVerified) {
+      return NextResponse.json({
+        success: false,
+        message: "Please verify your email before logging in",
+      });
+    }
     const isPasswordValid = await user.comparePassword(password);
     if (!isPasswordValid) {
       return NextResponse.json({

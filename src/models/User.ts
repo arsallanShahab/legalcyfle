@@ -1,4 +1,5 @@
 import bcrypt from "bcryptjs";
+import crypto from "crypto";
 import jwt from "jsonwebtoken";
 import mongoose, { ObjectId } from "mongoose";
 import { nanoid } from "nanoid";
@@ -51,6 +52,14 @@ const userSchema = new mongoose.Schema({
       ref: "Article",
     },
   ],
+  emailVerified: {
+    type: Boolean,
+    default: false,
+  },
+  emailVerificationToken: String,
+  emailVerificationExpires: Date,
+  resetPasswordToken: String,
+  resetPasswordExpires: Date,
   createdAt: {
     type: Date,
     default: Date.now,
@@ -177,12 +186,6 @@ userSchema.set("toJSON", {
   },
 });
 
-// userSchema.methods.toJSON = function () {
-//   const user = this.toObject();
-//   delete user.password;
-//   return user;
-// };
-
 userSchema.methods.getFullName = function () {
   return `${this.firstName} ${this.lastName}`;
 };
@@ -192,6 +195,28 @@ userSchema.pre("save", function (next) {
   this.updatedAt = new Date();
   next();
 });
+
+// Method to generate password reset token
+userSchema.methods.generatePasswordResetToken = function () {
+  const resetToken = crypto.randomBytes(20).toString("hex");
+  this.resetPasswordToken = crypto
+    .createHash("sha256")
+    .update(resetToken)
+    .digest("hex");
+  this.resetPasswordExpires = Date.now() + 3600000; // 1 hour
+  return resetToken;
+};
+
+// Method to generate email verification token
+userSchema.methods.generateEmailVerificationToken = function () {
+  const verificationToken = crypto.randomBytes(20).toString("hex");
+  this.emailVerificationToken = crypto
+    .createHash("sha256")
+    .update(verificationToken)
+    .digest("hex");
+  this.emailVerificationExpires = Date.now() + 3600000; // 1 hour
+  return verificationToken;
+};
 
 //index the user schema
 userSchema.index({ email: 1, username: 1 });

@@ -5,12 +5,13 @@ export default function Document() {
   return (
     <Html lang="en">
       <Head />
-      <GoogleTagManager gtmId="GTM-K7R2F9MQ" />
+      {/* <GoogleTagManager gtmId="GTM-K7R2F9MQ" /> */}
       <body>
         <Main />
         <NextScript />
       </body>
-      <GoogleAnalytics gaId="G-27Z23YH8R9" />
+      {/* <GoogleAnalytics gaId="G-27Z23YH8R9" /> */}
+      <GoogleAnalytics gaId="G-Q4PRKNHZDN" />
     </Html>
   );
 }

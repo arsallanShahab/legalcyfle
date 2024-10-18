@@ -1,4 +1,5 @@
-import { GoogleAnalytics, GoogleTagManager } from "@next/third-parties/google";
+// import { GoogleAnalytics, GoogleTagManager } from "@next/third-parties/google";
+import GoogleAnalytics from "@/components/GoogleAnalytics";
 import { Head, Html, Main, NextScript } from "next/document";
 
 export default function Document() {

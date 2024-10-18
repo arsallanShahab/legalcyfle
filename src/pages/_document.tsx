@@ -12,7 +12,6 @@ export default function Document() {
         <NextScript />
       </body>
       {/* <GoogleAnalytics gaId="G-27Z23YH8R9" /> */}
-      <GoogleAnalytics gaId="G-Q4PRKNHZDN" />
     </Html>
   );
 }

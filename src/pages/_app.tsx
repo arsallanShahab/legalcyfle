@@ -1,4 +1,5 @@
 import Footer from "@/components/Footer";
+import GoogleAnalytics from "@/components/GoogleAnalytics";
 import Navbar from "@/components/Navbar";
 import Providers from "@/components/Providers";
 import { useGlobalContext } from "@/context/GlobalContext";
@@ -16,6 +17,7 @@ export default function App({ Component, pageProps }: AppProps) {
         <Component {...pageProps} />
       </main>
       <Footer />
+      <GoogleAnalytics gaId="G-Q4PRKNHZDN" />
     </Providers>
   );
 }

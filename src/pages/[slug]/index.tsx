@@ -58,6 +58,7 @@ import {
   TwitterIcon,
   WhatsappIcon,
 } from "react-share";
+import safeJsonStringify from "safe-json-stringify";
 
 type Props = {
   data: BlogEntry;
@@ -599,10 +600,12 @@ export const getStaticProps = async (
     content_type: "blogPage",
     "fields.slug": slug,
   });
+
+  const safeJsonArticle = JSON.parse(safeJsonStringify(articles.items[0]));
   // console.log(articles.items, "articles");
   return {
     props: {
-      data: articles.items[0],
+      data: safeJsonArticle,
     },
   };
 };

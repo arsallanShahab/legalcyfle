@@ -5,6 +5,7 @@ import { removeCircularReferences } from "@/lib/utils";
 import { BlogEntries } from "@/types/contentful/blog";
 import { GetStaticProps } from "next";
 import React from "react";
+import safeJsonStringify from "safe-json-stringify";
 
 type Props = {
   data: BlogEntries;
@@ -53,13 +54,15 @@ export const getStaticProps: GetStaticProps = async (ctx) => {
       "fields.title,fields.slug,fields.image,fields.category,fields.authors,fields.description",
     ],
   });
+
+  const safeJsonArticle = JSON.parse(safeJsonStringify(articles.items));
   // // Clean the articles data
   // const cleanedArticles = articles.items.map((article) =>
   //   removeCircularReferences(article),
   // );
   return {
     props: {
-      data: articles.items,
+      data: safeJsonArticle,
     },
   };
 };

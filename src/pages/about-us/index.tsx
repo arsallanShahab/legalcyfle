@@ -1,5 +1,6 @@
 import FlexContainer from "@/components/FlexContainer";
 import Heading from "@/components/Heading";
+import Wrapper from "@/components/Wrapper";
 import Image from "next/image";
 import React from "react";
 
@@ -7,11 +8,7 @@ type Props = {};
 
 const Page = (props: Props) => {
   return (
-    <FlexContainer
-      variant="column-start"
-      gap="3xl"
-      className="px-5 py-10 lg:px-10 lg:py-20"
-    >
+    <Wrapper>
       <Heading>About Us</Heading>
       <p className="max-w-3xl font-giest-mono text-lg text-gray-700 dark:text-gray-300">
         LegalCyfle is an online platform, run by a group of passionate lawyers,
@@ -33,117 +30,86 @@ const Page = (props: Props) => {
         Our Advisors
       </p>
       <div className="grid gap-5 md:grid-cols-3 lg:grid-cols-6">
-        <FlexContainer
-          variant="column-start"
-          gap="sm"
-          className="col-span-1 rounded-[50px] bg-zinc-100 p-1.5 pb-5 text-center dark:bg-zinc-800"
-        >
-          <Image
-            src="https://picsum.photos/200/300?random=1"
-            alt="Team Member"
-            className="h-28 w-full rounded-[200px] object-cover object-center"
-            width={200}
-            height={200}
-          />
-          <h3 className="text-xl font-semibold">Dr. Tufail Ahmad</h3>
-          <p className="text-gray-400">Advisor</p>
-        </FlexContainer>
-        <FlexContainer
-          variant="column-start"
-          gap="sm"
-          className="col-span-1 rounded-[50px] bg-zinc-100 p-1.5 pb-5 text-center dark:bg-zinc-800"
-        >
-          <Image
-            src="https://picsum.photos/200/300?random=2"
-            alt="Team Member"
-            className="h-28 w-full rounded-[200px] object-cover object-center"
-            width={200}
-            height={200}
-          />
-          <h3 className="text-xl font-semibold">Mohd Fuzail Khan</h3>
-          <p className="text-gray-400">Advisor</p>
-        </FlexContainer>
-        <FlexContainer
-          variant="column-start"
-          gap="sm"
-          className="col-span-1 rounded-[50px] bg-zinc-100 p-1.5 pb-5 text-center dark:bg-zinc-800"
-        >
-          <Image
-            src="https://picsum.photos/200/300?random=3"
-            alt="Team Member"
-            className="h-28 w-full rounded-[200px] object-cover object-center"
-            width={200}
-            height={200}
-          />
-          <h3 className="text-xl font-semibold">Dr. Asif Iqubal Shah</h3>
-          <p className="text-gray-400">Advisor</p>
-        </FlexContainer>
-        <FlexContainer
-          variant="column-start"
-          gap="sm"
-          className="col-span-1 rounded-[50px] bg-zinc-100 p-1.5 pb-5 text-center dark:bg-zinc-800"
-        >
-          <Image
-            src="https://picsum.photos/200/300?random=4"
-            alt="Team Member"
-            className="h-28 w-full rounded-[200px] object-cover object-center"
-            width={200}
-            height={200}
-          />
-          <h3 className="text-xl font-semibold">Dr. Aijaj Ahmed Raj</h3>
-          <p className="text-gray-400">Advisor</p>
-        </FlexContainer>
-        <FlexContainer
-          variant="column-start"
-          gap="sm"
-          className="col-span-1 rounded-[50px] bg-zinc-100 p-1.5 pb-5 text-center dark:bg-zinc-800"
-        >
-          <Image
-            src="https://picsum.photos/200/300?random=1"
-            alt="Team Member"
-            className="h-28 w-full rounded-[200px] object-cover object-center"
-            width={200}
-            height={200}
-          />
-          <h3 className="text-xl font-semibold">Advocate Nitin Bhandare</h3>
-          <p className="text-gray-400">Advisor</p>
-        </FlexContainer>
-        <FlexContainer
-          variant="column-start"
-          gap="sm"
-          className="col-span-1 rounded-[50px] bg-zinc-100 p-1.5 pb-5 text-center dark:bg-zinc-800"
-        >
-          <Image
-            src="https://picsum.photos/200/300?random=2"
-            alt="Team Member"
-            className="h-28 w-full rounded-[200px] object-cover object-center"
-            width={200}
-            height={200}
-          />
-          <h3 className="text-xl font-semibold">Souvik Ghosh</h3>
-          <p className="text-gray-400">Advisor</p>
-        </FlexContainer>
+        <ImageCard
+          src="/tufail-sir.png"
+          title="Dr. Tufail Ahmad"
+          subtitle="Advisor"
+        />
+
+        <ImageCard
+          src="/fuzail-sir.jpg"
+          title="Mohd Fuzail Khan"
+          subtitle="Advisor"
+        />
+
+        <ImageCard
+          src="/asif-iqbal.png"
+          title="Dr. Asif Iqubal Shah"
+          subtitle="Advisor"
+        />
+
+        <ImageCard
+          src="/aijaj-sir.png"
+          title="Dr. Aijaj Ahmed Raj"
+          subtitle="Advisor"
+        />
+
+        {/* <ImageCard
+          src="/nitin-sir.png"
+          title="Advocate Nitin Bhandare"
+          subtitle="Advisor"
+        /> */}
+
+        <ImageCard
+          src="/souvik-sir.png"
+          title="Souvik Ghosh"
+          subtitle="Advisor"
+        />
+
+        <ImageCard
+          src="/deeba-maam.png"
+          title="Deeba Maam"
+          subtitle="Advisor"
+        />
       </div>
-      <p className="font-giest-mono text-2xl text-zinc-600 dark:text-zinc-400">
+      {/* <p className="font-giest-mono text-2xl text-zinc-600 dark:text-zinc-400">
         Our PR Team
       </p>
       <div className="grid gap-5 md:grid-cols-3 lg:grid-cols-6">
-        <FlexContainer
-          variant="column-start"
-          gap="sm"
-          className="col-span-1 rounded-[50px] bg-zinc-100 p-1.5 pb-5 text-center dark:bg-zinc-800"
-        >
-          <Image
-            src="https://picsum.photos/200/300?random=3"
-            alt="Team Member"
-            className="h-28 w-full rounded-[200px] object-cover object-center"
-            width={200}
-            height={200}
-          />
-          <h3 className="text-xl font-semibold">Latifur Rahman</h3>
-          <p className="text-gray-400">Media & PR Head</p>
-        </FlexContainer>
+        <ImageCard
+          src="https://picsum.photos/200/300?random=3"
+          title="Latifur Rahman"
+          subtitle="Media & PR Head"
+        />
+      </div> */}
+    </Wrapper>
+  );
+};
+
+interface ImageCardProps {
+  src: string;
+  title: string;
+  subtitle: string;
+}
+
+const ImageCard = ({ src, title, subtitle }: ImageCardProps) => {
+  return (
+    <FlexContainer
+      variant="column-start"
+      gap="sm"
+      className="rounded-[25px] border bg-zinc-100 p-1.5 pb-5 text-center dark:bg-zinc-800"
+    >
+      <div className="h-40 overflow-hidden rounded-[20px] border bg-black">
+        <Image
+          src={src}
+          alt="Team Member"
+          className="h-full w-full object-cover object-center"
+          width={200}
+          height={200}
+        />
       </div>
+      <h3 className="text-xl font-semibold">{title}</h3>
+      <p className="text-gray-400">{subtitle}</p>
     </FlexContainer>
   );
 };

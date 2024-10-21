@@ -11,6 +11,7 @@ import dayjs from "dayjs";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import safeJsonStringify from "safe-json-stringify";
 import {
   Autoplay,
   Controller,
@@ -191,28 +192,37 @@ export const getStaticProps = async () => {
     order: ["-sys.createdAt"],
     limit: 3,
   });
+  const safeJsonArticles = JSON.parse(safeJsonStringify(articles.items));
   const caseAnalysis = await client.getEntries({
     content_type: "blogPage",
     "fields.category.sys.id[in]": ["7aq38iMXGWwYnP61tHxRfb"],
     limit: 3,
   });
+  const safeJsonCaseAnalysis = JSON.parse(
+    safeJsonStringify(caseAnalysis.items),
+  );
   const news = await client.getEntries({
     content_type: "blogPage",
     "fields.category.sys.id[in]": ["2gwE6uMGZBUL17DtfmRjC4"],
     limit: 3,
   });
+  const safeJsonNews = JSON.parse(safeJsonStringify(news.items));
   const topArticles = await client.getEntries({
     content_type: "topArticles",
     include: 3,
     order: ["-sys.createdAt"],
   });
+  const safeJsonTopArticles = JSON.parse(
+    safeJsonStringify(topArticles?.items[0]?.fields?.articles as BlogEntry[]),
+  );
+  console.log(safeJsonTopArticles, "topArticles");
   return {
     props: {
       data: {
-        latestArticles: articles.items,
-        topArticles: topArticles?.items[0]?.fields.articles,
-        caseAnalysis: caseAnalysis.items,
-        news: news.items,
+        latestArticles: safeJsonArticles,
+        topArticles: safeJsonTopArticles,
+        caseAnalysis: safeJsonCaseAnalysis,
+        news: safeJsonNews,
       },
     },
   };

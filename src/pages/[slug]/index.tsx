@@ -45,6 +45,7 @@ import {
 } from "@nextui-org/react";
 import dayjs from "dayjs";
 import {
+  Ban,
   Heart,
   Loader,
   Share,
@@ -222,6 +223,7 @@ const Index = (props: Props) => {
         },
       );
       const data = (await res.json()) as ApiResponse<LikeResponse>;
+      setComment("");
       if (data.success) {
         refresh(props.data.fields.slug);
         toast.success(data.message);
@@ -477,31 +479,75 @@ const Index = (props: Props) => {
           // className="border-y border-zinc-100 py-5"
         >
           <FlexContainer gap="sm">
-            <Button
-              onClick={handleHeart}
-              disabled={loading || heartLoading || isLiked || isDisliked}
-              loading={heartLoading}
-              className="gap-2 rounded-3xl bg-pink-600 hover:bg-pink-500 dark:bg-pink-600 dark:text-white dark:hover:bg-pink-500"
-            >
-              <Heart className="h-4 w-4 fill-white text-white" /> {heartCount}
-            </Button>
-            <Button
-              onClick={handleLike}
-              disabled={loading || likeLoading || isHearted || isDisliked}
-              loading={likeLoading}
-              className="gap-2 rounded-3xl bg-blue-600 hover:bg-blue-500 dark:bg-blue-600 dark:text-white dark:hover:bg-blue-500"
-            >
-              <ThumbsUp className="h-4 w-4 fill-white text-white" /> {likeCount}
-            </Button>
-            <Button
-              onClick={handleDislike}
-              disabled={loading || dislikeLoading || isHearted || isLiked}
-              loading={dislikeLoading}
-              className="gap-2 rounded-3xl bg-red-600 hover:bg-red-500 dark:bg-red-600 dark:text-white dark:hover:bg-red-500"
-            >
-              <ThumbsDown className="h-4 w-4 fill-white text-white" />{" "}
-              {dislikeCount}
-            </Button>
+            {/* loading skeleton */}
+            {loading ? (
+              <Button
+                disabled
+                className="rounded-3xl bg-pink-600 dark:bg-pink-600"
+              >
+                <Loader className="h-4 w-4 animate-spin" />
+              </Button>
+            ) : (
+              <Button
+                onClick={handleHeart}
+                disabled={loading || heartLoading || isLiked || isDisliked}
+                loading={heartLoading}
+                className="gap-2 rounded-3xl bg-pink-600 hover:bg-pink-500 dark:bg-pink-600 dark:text-white dark:hover:bg-pink-500"
+              >
+                {error ? (
+                  <Ban className="h-4 w-4 text-white" />
+                ) : (
+                  <span className="flex items-center justify-center gap-2">
+                    <Heart className="h-4 w-4 fill-white text-white" />{" "}
+                    {heartCount}
+                  </span>
+                )}
+              </Button>
+            )}
+            {loading ? (
+              <Button
+                disabled
+                className="rounded-3xl bg-blue-600 dark:bg-blue-600"
+              >
+                <Loader className="h-4 w-4 animate-spin" />
+              </Button>
+            ) : (
+              <Button
+                onClick={handleLike}
+                disabled={loading || likeLoading || isHearted || isDisliked}
+                loading={likeLoading}
+                className="gap-2 rounded-3xl bg-blue-600 hover:bg-blue-500 dark:bg-blue-600 dark:text-white dark:hover:bg-blue-500"
+              >
+                {error ? (
+                  <Ban className="h-4 w-4 text-white" />
+                ) : (
+                  <span className="flex items-center justify-center gap-2">
+                    <ThumbsUp className="h-4 w-4 fill-white text-white" />{" "}
+                    {likeCount}
+                  </span>
+                )}
+              </Button>
+            )}
+            {loading ? (
+              <Button
+                disabled
+                className="rounded-3xl bg-red-600 dark:bg-red-600"
+              >
+                <Loader className="h-4 w-4 animate-spin" />
+              </Button>
+            ) : (
+              <Button
+                onClick={handleDislike}
+                disabled={loading || dislikeLoading || isHearted || isLiked}
+                loading={dislikeLoading}
+                className="gap-2 rounded-3xl bg-red-600 hover:bg-red-500 dark:bg-red-600 dark:text-white dark:hover:bg-red-500"
+              >
+                <span className="flex items-center justify-center gap-2">
+                  <ThumbsDown className="h-4 w-4 fill-white text-white" />{" "}
+                  {dislikeCount}
+                </span>
+              </Button>
+            )}
           </FlexContainer>
           <Button className="rounded-3xl" onClick={onOpen}>
             <Share className="h-3.5 w-3.5 stroke-2 text-white dark:text-black" />
@@ -515,22 +561,35 @@ const Index = (props: Props) => {
           alt="Cover"
         />
         <BlogContent data={props.data} />
-        <FlexContainer variant="row-start" gap="sm" className="mb-2.5">
-          {props.data.fields.category.map((category) => (
-            <Link
-              key={category.sys.id}
-              href={`/category/${category.fields.slug}`}
-            >
-              <Badge
-                key={category.sys.id}
-                variant={"default"}
-                className="rounded-3xl px-4 py-1.5 text-sm"
-              >
-                {category.fields.name}
-              </Badge>
-            </Link>
-          ))}
+        <span className="block pl-2 pt-2 text-sm font-medium">TAGS:</span>
+        <FlexContainer
+          variant="column-start"
+          gap="sm"
+          className="mb-2.5 rounded-xl bg-zinc-100 p-2"
+        >
+          <FlexContainer variant="row-between">
+            <FlexContainer variant="row-start" gap="sm" alignItems="center">
+              {props.data.fields.category.map((category) => (
+                <Link
+                  key={category.sys.id}
+                  href={`/category/${category.fields.slug}`}
+                >
+                  <Badge
+                    key={category.sys.id}
+                    variant={"default"}
+                    className="rounded-3xl px-4 py-1.5 text-sm"
+                  >
+                    {category.fields.name}
+                  </Badge>
+                </Link>
+              ))}
+            </FlexContainer>
+            <Button className="rounded-3xl" onClick={onOpen}>
+              <Share className="h-3.5 w-3.5 stroke-2 text-white dark:text-black" />
+            </Button>
+          </FlexContainer>
         </FlexContainer>
+
         <FlexContainer variant="column-start" className="mt-5">
           <FlexContainer variant="row-start" gap="sm">
             {props.data.fields?.authors?.length > 1 && (
@@ -595,8 +654,13 @@ const Index = (props: Props) => {
             </p>
           )}
         </FlexContainer>
-        <FlexContainer variant="column-start" className="mt-5">
+        <FlexContainer variant="column-start" className="mt-5" gap="xl">
           <h3 className="text-2xl font-medium">Comments</h3>
+          {comments.length === 0 && (
+            <p className="text-lg font-normal text-gray-500">
+              No comments yet. Be the first to comment on this article.
+            </p>
+          )}
           {user && (
             <FlexContainer>
               <NiceAvatar
@@ -618,7 +682,7 @@ const Index = (props: Props) => {
                   onClick={handleAddComment}
                   loading={commentLoading}
                 >
-                  Post
+                  save
                 </Button>
               </FlexContainer>
             </FlexContainer>

@@ -185,13 +185,13 @@ const Footer = () => {
               Resources
             </h3>
             <Link
-              href="/blogs"
+              href="/category/blogs"
               className="text-sm text-zinc-600 dark:text-zinc-300"
             >
               Blog
             </Link>
             <Link
-              href="/news"
+              href="/category/news"
               className="text-sm text-zinc-600 dark:text-zinc-300"
             >
               News

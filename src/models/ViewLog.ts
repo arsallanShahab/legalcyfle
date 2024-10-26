@@ -38,6 +38,6 @@ viewLogSchema.pre("save", function (next) {
 viewLogSchema.index({ createdAt: 1 }, { expireAfterSeconds: 60 });
 
 const ViewLog =
-  mongoose.models.ViewLog || mongoose.model("ViewLog", viewLogSchema);
+  mongoose?.models?.ViewLog || mongoose.model("ViewLog", viewLogSchema);
 
 export default ViewLog;

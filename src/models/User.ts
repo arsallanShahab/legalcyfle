@@ -52,6 +52,12 @@ const userSchema = new mongoose.Schema({
       ref: "Article",
     },
   ],
+  comments: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Comment",
+    },
+  ],
   emailVerified: {
     type: Boolean,
     default: false,
@@ -70,17 +76,13 @@ const userSchema = new mongoose.Schema({
   },
 });
 
-// Hash password before saving the user
+//set the user name before saving the user, check if the username is already taken and if it is, add a random number to the username
 userSchema.pre("save", async function (next) {
   if (this.isModified("password") || this.isNew) {
     const salt = await bcrypt.genSalt(10);
     this.password = await bcrypt.hash(this.password, salt);
   }
-  next();
-});
 
-//set the user name before saving the user, check if the username is already taken and if it is, add a random number to the username
-userSchema.pre("save", async function (next) {
   if (this.isModified("username") || this.isNew) {
     const user = await (this.constructor as typeof User).findOne({
       username: this.username,
@@ -221,6 +223,6 @@ userSchema.methods.generateEmailVerificationToken = function () {
 //index the user schema
 userSchema.index({ email: 1, username: 1 });
 
-const User = mongoose.models.User || mongoose.model("User", userSchema);
+const User = mongoose?.models?.User || mongoose.model("User", userSchema);
 
 export default User;

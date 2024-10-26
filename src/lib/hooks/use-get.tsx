@@ -1,6 +1,13 @@
-import axios, { AxiosResponse } from "axios";
+import axios from "axios";
 import { useState } from "react";
-import { toast } from "react-hot-toast";
+import toast from "react-hot-toast";
+
+const cache = new Map<string, Map<string, any>>();
+
+interface UseGetOptions {
+  showToast?: boolean;
+  headers?: Record<string, string>;
+}
 
 interface Messages {
   loading?: string;
@@ -8,58 +15,45 @@ interface Messages {
   failure?: string;
 }
 
-interface Cache {
-  [key: string]: Map<string, any>;
-}
-
-const cache: Cache = {};
-
-interface UseGetOptions {
-  showToast?: boolean;
-  messages?: Messages;
-}
-
-interface GetDataParams {
-  url: string;
-  tag?: string;
-  options?: UseGetOptions;
-}
-
-const useGet = <T,>() => {
+function useGet<T>({ showToast = true, headers = {} }: UseGetOptions = {}) {
   const [data, setData] = useState<T | null>(null);
   const [error, setError] = useState<Error | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
 
-  const getData = async ({
-    url,
-    tag = "default",
-    options = {},
-  }: GetDataParams) => {
-    const { showToast = true, messages = {} } = options;
+  const getData = async (
+    url: string,
+    tag: string = "default",
+    messages: Messages = {},
+  ) => {
     setLoading(true);
-    let loading_toast: any;
-    let tagCache = cache[tag];
-
+    let loading_toast;
+    let tagCache = cache.get(tag);
     if (tagCache && tagCache.has(url)) {
       setData(tagCache.get(url));
       setLoading(false);
     } else {
       if (showToast) {
-        loading_toast = toast.loading(messages.loading || "Loading...");
+        loading_toast = toast.loading(messages?.loading || "Loading...");
       }
       try {
-        const response: AxiosResponse<T> = await axios.get(url);
+        const response = await axios.get<T>(url, { headers });
         setData(response.data);
         if (!tagCache) {
           tagCache = new Map<string, T>();
-          cache[tag] = tagCache;
+          cache.set(tag, tagCache);
         }
         tagCache.set(url, response.data);
         if (showToast) {
-          toast.success(messages.success || "Data loaded successfully");
+          toast.success(messages?.success || "Data loaded successfully");
         }
       } catch (error: any) {
-        setError(new Error(error?.response?.data?.message));
+        setError(
+          new Error(
+            error?.response?.data?.message ||
+              error?.response?.data?.error ||
+              "An error occurred",
+          ),
+        );
         if (showToast) {
           toast.error(
             messages.failure ||
@@ -76,32 +70,46 @@ const useGet = <T,>() => {
     }
   };
 
-  const refreshData = async ({
-    url,
-    tag = "default",
-    options = {},
-  }: GetDataParams) => {
-    const { showToast = true, messages = {} } = options;
+  const refresh = async (
+    tag: string,
+    messages: Messages = {},
+    samePage = true,
+  ) => {
     setLoading(true);
-    let loading_toast: any;
-
+    let loading_toast;
+    if (showToast) {
+      loading_toast = toast.loading(messages?.loading || "Refreshing...");
+    }
     try {
-      if (showToast) {
-        loading_toast = toast.loading(messages.loading || "Refreshing data...");
+      // Ensure a tag is provided
+      if (!tag) {
+        throw new Error("Tag is required for refreshing data");
       }
 
-      const response: AxiosResponse<T> = await axios.get(url);
-      setData(response.data);
-
-      let tagCache = cache[tag];
+      // Attempt to retrieve the tag cache
+      const tagCache = cache.get(tag);
       if (!tagCache) {
-        tagCache = new Map<string, T>();
-        cache[tag] = tagCache;
+        throw new Error(`No cache found for tag: ${tag}`);
       }
-      tagCache.set(url, response.data);
 
+      // Attempt to fetch data for the first URL associated with the tag
+      const urlToFetch = Array.from(tagCache.keys())[0];
+      if (!urlToFetch) {
+        throw new Error(`No URL found for the provided tag: ${tag}`);
+      }
+
+      const response = await axios.get(urlToFetch, { headers });
+      if (samePage) {
+        setData(response.data);
+      }
+
+      // Update the tag cache with the new data
+      // tagCache.set(tag, response.data);
+      const newTagCache = new Map();
+      newTagCache.set(urlToFetch, response.data);
+      cache.set(tag, newTagCache);
       if (showToast) {
-        toast.success(messages.success || "Data refreshed successfully");
+        toast.success(messages?.success || "Data refreshed successfully");
       }
     } catch (error: any) {
       setError(new Error(error?.message || "An error occurred during refresh"));
@@ -120,7 +128,14 @@ const useGet = <T,>() => {
     }
   };
 
-  return { data, error, loading, getData, refreshData };
-};
+  const invalidateCache = (tag: string, showToast: boolean = false) => {
+    cache.delete(tag);
+    if (showToast) {
+      toast.success("Cache invalidated successfully");
+    }
+  };
+
+  return { data, error, loading, getData, refresh, invalidateCache };
+}
 
 export default useGet;

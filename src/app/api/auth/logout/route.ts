@@ -9,10 +9,9 @@ export async function GET(req: Request) {
     // NextResponse.redirect(
     //   process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000",
     // );
-    return NextResponse.json({
-      success: true,
-      message: "Logged out successfully",
-    });
+    return NextResponse.redirect(
+      process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000",
+    );
   } catch (error) {
     console.log(error, "error from verify route");
     return NextResponse.json({

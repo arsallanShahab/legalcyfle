@@ -27,21 +27,31 @@ import {
   LikeResponse,
   MetricsResponse,
 } from "@/types/global/api-response";
+import { Comment, IArticle } from "@/types/global/article";
 import { documentToHtmlString } from "@contentful/rich-text-html-renderer";
 import { Document } from "@contentful/rich-text-types";
 import {
   Avatar,
   AvatarGroup,
+  Input,
   Modal,
   ModalBody,
   ModalContent,
   ModalFooter,
   ModalHeader,
+  Textarea,
   Tooltip,
   useDisclosure,
 } from "@nextui-org/react";
 import dayjs from "dayjs";
-import { Heart, Share, ThumbsDown, ThumbsUp } from "lucide-react";
+import {
+  Heart,
+  Loader,
+  Share,
+  ThumbsDown,
+  ThumbsUp,
+  Trash,
+} from "lucide-react";
 import { GetStaticProps } from "next";
 import Head from "next/head";
 import Image from "next/image";
@@ -49,6 +59,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { useEffect } from "react";
 import toast from "react-hot-toast";
+import NiceAvatar, { genConfig } from "react-nice-avatar";
 import {
   EmailIcon,
   FacebookIcon,
@@ -69,25 +80,33 @@ const Index = (props: Props) => {
   const { user } = useGlobalContext();
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
-  //
+  const [article, setArticle] = React.useState<IArticle | null>(null);
+
+  // loading states
   const [likeLoading, setLikeLoading] = React.useState<boolean>(false);
   const [dislikeLoading, setDislikeLoading] = React.useState<boolean>(false);
   const [heartLoading, setHeartLoading] = React.useState<boolean>(false);
+  const [commentLoading, setCommentLoading] = React.useState<boolean>(false);
+  const [commentDeleting, setCommentDeleting] = React.useState<boolean>(false);
 
-  //
+  // like, dislike, heart states
   const [isLiked, setIsLiked] = React.useState<boolean | undefined>(false);
   const [isDisliked, setIsDisliked] = React.useState<boolean | undefined>(
     false,
   );
   const [isHearted, setIsHearted] = React.useState<boolean | undefined>(false);
 
-  //
+  // like, dislike, heart counts
   const [likeCount, setLikeCount] = React.useState<number | undefined>(0);
   const [dislikeCount, setDislikeCount] = React.useState<number | undefined>(0);
   const [heartCount, setHeartCount] = React.useState<number | undefined>(0);
 
-  const { getData, loading, data, error } =
-    useGet<ApiResponse<MetricsResponse>>();
+  const [comment, setComment] = React.useState<string>("");
+  const [comments, setComments] = React.useState<Comment[]>([]);
+
+  const { getData, loading, data, error, refresh } = useGet<
+    ApiResponse<MetricsResponse>
+  >({ showToast: false });
 
   const handleHeart = async () => {
     if (!user?._id) {
@@ -177,34 +196,107 @@ const Index = (props: Props) => {
     }
   };
 
-  console.log(props.data);
+  const handleAddComment = async () => {
+    if (!user?._id) {
+      return toast.error("Please login to comment on this article");
+    }
+    if (!comment) {
+      return toast.error("Please write a comment before posting");
+    }
+    if (!article?._id) {
+      return toast.error("Please reload the page and try again");
+    }
+    try {
+      setCommentLoading(true);
+      const res = await fetch(
+        `/api/articles/${props.data.fields.slug}/comment`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            content: comment,
+            articleId: article._id,
+          }),
+        },
+      );
+      const data = (await res.json()) as ApiResponse<LikeResponse>;
+      if (data.success) {
+        refresh(props.data.fields.slug);
+        toast.success(data.message);
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      const err = error as Error & { message: string };
+      toast.error(err.message);
+    } finally {
+      setCommentLoading(false);
+    }
+  };
+
+  const handleDeleteComment = async (commentId: string) => {
+    if (!user?._id) {
+      return toast.error("Please login to delete this comment");
+    }
+    try {
+      setCommentDeleting(true);
+      const res = await fetch(
+        `/api/articles/${props.data.fields.slug}/comment`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            commentId,
+          }),
+        },
+      );
+      const data = (await res.json()) as ApiResponse<{}>;
+      if (data.success) {
+        refresh(props.data.fields.slug);
+        toast.success(data.message);
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      const err = error as Error & { message: string };
+      toast.error(err.message);
+    } finally {
+      setCommentDeleting(false);
+    }
+  };
 
   const thumbnail =
     props.data?.fields?.image?.fields?.file?.url ||
     "https://picsum.photos/500/500";
 
   useEffect(() => {
-    getData({
-      url: `/api/articles/${props.data.fields.slug}/metrics`,
-      options: {
-        showToast: true,
-        messages: {
-          loading: "Loading metrics...",
-          success: "Metrics loaded successfully",
-          failure: "Failed to load metrics",
-        },
+    getData(
+      `/api/articles/${props.data.fields.slug}/metrics`,
+      props.data.fields.slug,
+      {
+        loading: "Loading metrics...",
+        success: "Metrics loaded successfully",
+        failure: "Failed to load metrics",
       },
-      tag: props.data.fields.slug,
-    });
+    );
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.data]);
 
   useEffect(() => {
     if (data?.data) {
+      setArticle(data?.data?.article);
+      setComments(data?.data?.comments);
       setLikeCount(data?.data?.like);
       setDislikeCount(data?.data?.dislikes);
       setHeartCount(data?.data?.hearts);
+      setIsLiked(data?.data?.isLiked);
+      setIsDisliked(data?.data?.isDisliked);
+      setIsHearted(data?.data?.isHearted);
     }
   }, [data]);
 
@@ -387,7 +479,7 @@ const Index = (props: Props) => {
           <FlexContainer gap="sm">
             <Button
               onClick={handleHeart}
-              disabled={loading || heartLoading}
+              disabled={loading || heartLoading || isLiked || isDisliked}
               loading={heartLoading}
               className="gap-2 rounded-3xl bg-pink-600 hover:bg-pink-500 dark:bg-pink-600 dark:text-white dark:hover:bg-pink-500"
             >
@@ -395,7 +487,7 @@ const Index = (props: Props) => {
             </Button>
             <Button
               onClick={handleLike}
-              disabled={loading || likeLoading}
+              disabled={loading || likeLoading || isHearted || isDisliked}
               loading={likeLoading}
               className="gap-2 rounded-3xl bg-blue-600 hover:bg-blue-500 dark:bg-blue-600 dark:text-white dark:hover:bg-blue-500"
             >
@@ -403,7 +495,7 @@ const Index = (props: Props) => {
             </Button>
             <Button
               onClick={handleDislike}
-              disabled={loading || dislikeLoading}
+              disabled={loading || dislikeLoading || isHearted || isLiked}
               loading={dislikeLoading}
               className="gap-2 rounded-3xl bg-red-600 hover:bg-red-500 dark:bg-red-600 dark:text-white dark:hover:bg-red-500"
             >
@@ -499,9 +591,76 @@ const Index = (props: Props) => {
           </FlexContainer>
           {props.data.fields?.authors.length === 1 && (
             <p className="max-w-lg text-base font-normal text-gray-400">
-              {props.data.fields.author.fields.bio}
+              {props.data.fields.author?.fields?.bio}
             </p>
           )}
+        </FlexContainer>
+        <FlexContainer variant="column-start" className="mt-5">
+          <h3 className="text-2xl font-medium">Comments</h3>
+          {user && (
+            <FlexContainer>
+              <NiceAvatar
+                {...genConfig(user.firstName)}
+                className="h-10 w-10"
+              />
+              <FlexContainer variant="column-end" gap="md" className="w-full">
+                <Textarea
+                  value={comment}
+                  onValueChange={setComment}
+                  placeholder="Write your comment here"
+                  // disabled={
+                  //   comments.some((c) => c.author._id === user._id) ||
+                  //   !user?._id
+                  // }
+                />
+                <Button
+                  className="rounded-3xl px-7"
+                  onClick={handleAddComment}
+                  loading={commentLoading}
+                >
+                  Post
+                </Button>
+              </FlexContainer>
+            </FlexContainer>
+          )}
+          {comments.map((comment) => (
+            <FlexContainer key={comment._id} className="mt-5">
+              <NiceAvatar
+                {...genConfig(comment.author.firstName)}
+                className="h-10 w-10"
+              />
+              <FlexContainer variant="column-end" className="w-full">
+                <FlexContainer
+                  gap="none"
+                  className="relative flex w-full flex-col items-start justify-start rounded-xl bg-zinc-100 p-3"
+                >
+                  <p className="text-lg font-semibold">
+                    {comment.author.firstName}
+                  </p>
+                  <p className="text-base font-normal text-gray-700">
+                    {comment.content}
+                  </p>
+                  {comment.author._id === user?._id && (
+                    <Button
+                      size={"icon"}
+                      variant={"destructive"}
+                      onClick={() => handleDeleteComment(comment._id!)}
+                      className="absolute -right-2 -top-2 rounded-3xl"
+                    >
+                      {commentDeleting ? (
+                        <Loader className="h-4 w-4 animate-spin text-white" />
+                      ) : (
+                        <Trash className="h-4 w-4 fill-white text-white" />
+                      )}
+                    </Button>
+                  )}
+                </FlexContainer>
+                <span className="text-sm text-gray-700">
+                  {dayjs(comment.createdAt).format("hh:mm A - MMMM DD, YYYY")}
+                </span>
+              </FlexContainer>
+            </FlexContainer>
+          ))}
         </FlexContainer>
         <Modal
           isOpen={isOpen}
@@ -584,7 +743,6 @@ export const getStaticPaths = async () => {
   const paths = articles.items.map((item) => ({
     params: { slug: item.fields.slug },
   }));
-  console.log(paths, "paths");
   return {
     paths,
     fallback: false,
@@ -595,7 +753,6 @@ export const getStaticProps = async (
   ctx: { params: { slug: string } } & GetStaticProps,
 ) => {
   const { slug } = ctx.params;
-  console.log(slug, "slug");
   const articles = await client.getEntries({
     content_type: "blogPage",
     "fields.slug": slug,

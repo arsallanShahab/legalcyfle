@@ -1,4 +1,5 @@
 import { ObjectId } from "mongoose";
+import { Comment, IArticle } from "./article";
 
 export interface ApiResponse<T> {
   data: T | null;
@@ -7,11 +8,16 @@ export interface ApiResponse<T> {
 }
 
 export interface MetricsResponse {
+  article: IArticle;
+  comments: Comment[];
   like: number;
   view: number;
   comment: number;
   dislikes: number;
   hearts: number;
+  isLiked: boolean;
+  isHearted: boolean;
+  isDisliked: boolean;
 }
 
 export interface LikeResponse {

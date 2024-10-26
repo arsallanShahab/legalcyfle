@@ -23,6 +23,6 @@ articleSchema.pre("save", function (next) {
 });
 
 const Article =
-  mongoose.models.Article || mongoose.model("Article", articleSchema);
+  mongoose?.models?.Article || mongoose.model("Article", articleSchema);
 
 export default Article;

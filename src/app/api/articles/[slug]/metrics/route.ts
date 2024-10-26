@@ -1,8 +1,12 @@
 import connectToDatabase from "@/lib/mongoose";
 import Article from "@/models/Article";
+import Comment from "@/models/Comment";
+import User from "@/models/User";
 import ViewLog from "@/models/ViewLog";
+import IUser from "@/types/global/user";
 import crypto from "crypto";
-import { headers } from "next/headers";
+import { JwtPayload, verify } from "jsonwebtoken";
+import { cookies, headers } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
@@ -12,8 +16,6 @@ export async function GET(
   const { slug } = params;
   const headersList = headers();
   const ip = headersList.get("ip") as string;
-  console.log(req.user, "req.user");
-  const userId = req?.user?._id ?? null;
   const ipHash = crypto.createHash("sha256").update(ip).digest("hex");
 
   if (!slug) {
@@ -23,13 +25,36 @@ export async function GET(
     );
   }
 
-  try {
-    const db = await connectToDatabase();
+  const db = await connectToDatabase();
+  let user: IUser | null = null;
 
+  try {
+    const cookiesList = cookies();
+    const token = cookiesList.get("token")?.value!;
+    const decodedToken = verify(
+      token,
+      process.env.JWT_SECRET as string,
+    ) as JwtPayload;
+
+    user = await User.findById(decodedToken._id);
+  } catch (error) {
+    console.log(error, "error");
+  }
+
+  try {
     let article = await Article.findOne({ slug });
     if (!article) {
       article = await Article.create({ slug });
     }
+
+    //populate users only name and email omit everything else
+    const comments = await Comment.find({ article: article._id })
+      .populate({
+        path: "author",
+        select: "firstName lastName email",
+      })
+      .exec();
+    const userId = user?._id;
 
     const existingView = await ViewLog.findOne({
       articleId: slug,
@@ -42,11 +67,16 @@ export async function GET(
     }
 
     const responseData = {
+      article,
+      comments,
       like: article.likes.length,
       view: article.views,
       comment: article.comments.length,
       dislikes: article.dislikes.length,
       hearts: article.hearts.length,
+      isLiked: user ? user.hasLikedArticle(article._id) : false,
+      isDisliked: user ? user.hasDislikedArticle(article._id) : false,
+      isHearted: user ? user.hasHeartedArticle(article._id) : false,
     };
 
     return NextResponse.json({

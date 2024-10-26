@@ -194,6 +194,8 @@ const Navbar = (_props: Props) => {
           method: "GET",
         });
         const data = await user.json();
+        const config = genConfig(data?.firstName);
+        setAvatarConfig(config);
         setUser(data.data);
       } catch (error) {
         console.log(error, "error from navbar fetch user");
@@ -204,14 +206,6 @@ const Navbar = (_props: Props) => {
     fetchUser();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  useEffect(() => {
-    if (user) {
-      const config = genConfig(user?.firstName);
-      setAvatarConfig(config);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user]);
 
   useEffect(() => {
     setSidebarOpen(false);
@@ -285,7 +279,7 @@ const Navbar = (_props: Props) => {
               classNames={{ content: "bg-white dark:bg-zinc-800" }}
             >
               <DropdownTrigger>
-                <div className="flex cursor-pointer items-center justify-center gap-3 rounded-2xl bg-zinc-100 p-2 hover:bg-zinc-200 dark:bg-zinc-900 dark:hover:bg-zinc-800">
+                <div className="hidden cursor-pointer items-center justify-center gap-3 rounded-2xl bg-zinc-100 p-2 hover:bg-zinc-200 dark:bg-zinc-900 dark:hover:bg-zinc-800 sm:flex">
                   <Avatar className="h-10 w-10" {...avatarConfig} />
                   <FlexContainer variant="column-start" gap="none">
                     <p className="text-sm font-semibold">
@@ -333,18 +327,50 @@ const Navbar = (_props: Props) => {
             onOpenChange={(isOpen) => setSidebarOpen(isOpen)}
           >
             <SheetTrigger asChild>
-              <Button variant="outline" className="flex md:hidden">
-                <Menu className="h-4 w-4" />
+              <Button variant="ghost" className="flex md:hidden">
+                <Menu className="h-5 w-5" />
               </Button>
             </SheetTrigger>
             <SheetContent>
               <SheetHeader className="space-y-0 text-left">
-                <SheetTitle>Menu</SheetTitle>
-                <SheetDescription>
-                  Quick links to navigate the website
-                </SheetDescription>
+                {user && !loading && (
+                  <NextUiDropdown
+                    classNames={{ content: "bg-white dark:bg-zinc-800" }}
+                  >
+                    <DropdownTrigger>
+                      <div className="mt-5 flex cursor-pointer items-center justify-center gap-3 rounded-2xl bg-zinc-100 p-2 hover:bg-zinc-200 dark:bg-zinc-900 dark:hover:bg-zinc-800">
+                        <Avatar
+                          className="h-10 w-10"
+                          {...genConfig(user.firstName)}
+                        />
+                        <FlexContainer variant="column-start" gap="none">
+                          <p className="text-sm font-semibold">
+                            {user.firstName + " " + user.lastName}
+                          </p>
+                          <span className="text-xs text-gray-500">
+                            {user.username}
+                          </span>
+                        </FlexContainer>
+                      </div>
+                    </DropdownTrigger>
+                    <DropdownMenu aria-label="Static Actions">
+                      <NextUiDropdownItem
+                        key="logout"
+                        className="text-danger"
+                        color="danger"
+                        onPress={handleLogout}
+                      >
+                        Logout
+                      </NextUiDropdownItem>
+                    </DropdownMenu>
+                  </NextUiDropdown>
+                )}
               </SheetHeader>
-              <FlexContainer variant="column-start" gap="none" className="mt-7">
+              <FlexContainer
+                variant="column-start"
+                gap="none"
+                className="z-[100] mt-7"
+              >
                 <Link
                   href="/category/publications"
                   className="border-b py-3 text-sm font-medium text-black dark:text-zinc-200"
@@ -427,12 +453,12 @@ const Navbar = (_props: Props) => {
                 <FlexContainer
                   variant="row-between"
                   alignItems="center"
-                  className="mt-3"
+                  className="z-[100] mt-3"
                 >
                   <span className="text-sm font-medium text-zinc-600 dark:text-zinc-200">
                     Toggle Theme
                   </span>
-                  <DarkModeToggle className="z-[900]" />
+                  <DarkModeToggle className="z-[100]" />
                 </FlexContainer>
               </FlexContainer>
             </SheetContent>

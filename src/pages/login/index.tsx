@@ -41,6 +41,9 @@ const Index = (props: Props) => {
         router.push("/");
       } else {
         toast.error(data.message);
+        if (data.message.includes("verify")) {
+          setShowVerifyEmail(true);
+        }
       }
     } catch (error) {
       const err = error as Error & { message: string };
@@ -49,6 +52,7 @@ const Index = (props: Props) => {
       actions.setSubmitting(false);
     }
   };
+  console.log("rendering");
 
   const handleSendVefificationMail = async (email: string) => {
     if (!email) {
@@ -62,15 +66,14 @@ const Index = (props: Props) => {
         headers: {
           "Content-Type": "application/json",
         },
+        // no cache
+        cache: "no-store",
       });
       const data = await res.json();
       if (data.success) {
         toast.success(data.message);
       } else {
         toast.error(data.message);
-        if (data.message.includes("verify")) {
-          setShowVerifyEmail(true);
-        }
       }
     } catch (error) {
       const err = error as Error & { message: string };

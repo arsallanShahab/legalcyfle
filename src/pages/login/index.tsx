@@ -15,6 +15,7 @@ type Props = {};
 
 const Index = (props: Props) => {
   const { setUser } = useGlobalContext();
+  const [showVerifyEmail, setShowVerifyEmail] = React.useState(false);
 
   const router = useRouter();
 
@@ -67,6 +68,9 @@ const Index = (props: Props) => {
         toast.success(data.message);
       } else {
         toast.error(data.message);
+        if (data.message.includes("verify")) {
+          setShowVerifyEmail(true);
+        }
       }
     } catch (error) {
       const err = error as Error & { message: string };
@@ -116,6 +120,16 @@ const Index = (props: Props) => {
                   color={errors.email && touched.email ? "danger" : "default"}
                   errorMessage={errors.email || touched.email}
                 />
+                {showVerifyEmail && (
+                  <FlexContainer variant="row-end">
+                    <Badge
+                      onClick={() => handleSendVefificationMail(values.email)}
+                      className="cursor-pointer"
+                    >
+                      Resend Verification Email
+                    </Badge>
+                  </FlexContainer>
+                )}
                 <Input
                   type="password"
                   name="password"
@@ -136,11 +150,7 @@ const Index = (props: Props) => {
                   }
                 />
               </div>
-              <FlexContainer variant="row-end">
-                <Badge onClick={() => handleSendVefificationMail(values.email)}>
-                  Resend Verification Email
-                </Badge>
-              </FlexContainer>
+
               <Button
                 type="submit"
                 loading={isSubmitting}

@@ -55,14 +55,19 @@ export const sendToken = async ({
     },
   });
 
-  const info = await transporter.sendMail({
-    from: `"LegalCyfle" <${process.env.SMTP_USER}>`,
-    to,
-    subject,
-    text,
-  });
-  console.log("Message sent: %s", info.messageId);
-  console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
+  try {
+    const info = await transporter.sendMail({
+      from: `"LegalCyfle" <${process.env.SMTP_USER}>`,
+      to,
+      subject,
+      text,
+    });
+    console.log("Message sent: %s", info.messageId);
+    console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
 
-  return info;
+    return info;
+  } catch (error) {
+    console.log(error, "error from send mail");
+    return;
+  }
 };

@@ -1,4 +1,5 @@
 import FlexContainer from "@/components/FlexContainer";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import Wrapper from "@/components/Wrapper";
 import { useGlobalContext } from "@/context/GlobalContext";
@@ -47,6 +48,32 @@ const Index = (props: Props) => {
       actions.setSubmitting(false);
     }
   };
+
+  const handleSendVefificationMail = async (email: string) => {
+    if (!email) {
+      toast.error("Please provide email address");
+      return;
+    }
+    try {
+      const res = await fetch("/api/auth/generate-verify-token", {
+        method: "POST",
+        body: JSON.stringify({ email }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      const data = await res.json();
+      if (data.success) {
+        toast.success(data.message);
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      const err = error as Error & { message: string };
+      toast.error(err?.message || "Something went wrong");
+    }
+  };
+
   return (
     <Wrapper className="py-20">
       <FlexContainer variant="column-center">
@@ -109,6 +136,11 @@ const Index = (props: Props) => {
                   }
                 />
               </div>
+              <FlexContainer variant="row-end">
+                <Badge onClick={() => handleSendVefificationMail(values.email)}>
+                  Resend Verification Email
+                </Badge>
+              </FlexContainer>
               <Button
                 type="submit"
                 loading={isSubmitting}

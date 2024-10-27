@@ -8,6 +8,7 @@ import { documentToHtmlString } from "@contentful/rich-text-html-renderer";
 import { Document } from "@contentful/rich-text-types";
 import { Divider } from "@nextui-org/react";
 import dayjs from "dayjs";
+import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -38,6 +39,82 @@ export default function Home({ data }: HomeProps) {
 
   return (
     <main className="flex flex-col items-start justify-start gap-10 py-5 pb-20 *:w-full">
+      <Head>
+        <title>LegalCyfle - iuris occasio omnibus</title>
+        <meta name="description" content="iuris occasio omnibus" />
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@graph": [
+              {
+                "@type": "CollectionPage",
+                "@id": "https://legalcyfle.in/",
+                url: "https://legalcyfle.in/",
+                name: "LegalCyfle - iuris occasio omnibus",
+                isPartOf: { "@id": "https://legalcyfle.in/#website" },
+                about: { "@id": "https://legalcyfle.in/#organization" },
+                description: "iuris occasio omnibus",
+                breadcrumb: { "@id": "https://legalcyfle.in/#breadcrumb" },
+                inLanguage: "en-US",
+              },
+              {
+                "@type": "BreadcrumbList",
+                "@id": "https://legalcyfle.in/#breadcrumb",
+                itemListElement: [
+                  { "@type": "ListItem", position: 1, name: "Home" },
+                ],
+              },
+              {
+                "@type": "WebSite",
+                "@id": "https://legalcyfle.in/#website",
+                url: "https://legalcyfle.in/",
+                name: "LegalCyfle",
+                description: "iuris occasio omnibus",
+                publisher: { "@id": "https://legalcyfle.in/#organization" },
+                potentialAction: [
+                  {
+                    "@type": "SearchAction",
+                    target: {
+                      "@type": "EntryPoint",
+                      urlTemplate:
+                        "https://legalcyfle.in/search?q={search_term_string}",
+                    },
+                    "query-input": {
+                      "@type": "PropertyValueSpecification",
+                      valueRequired: true,
+                      valueName: "search_term_string",
+                    },
+                  },
+                ],
+                inLanguage: "en-US",
+              },
+              {
+                "@type": "Organization",
+                "@id": "https://legalcyfle.in/#organization",
+                name: "LegalCyfle",
+                url: "https://legalcyfle.in/",
+                logo: {
+                  "@type": "ImageObject",
+                  inLanguage: "en-US",
+                  "@id": "https://legalcyfle.in/#/schema/logo/image/",
+                  url: "https://www.legalcyfle.in/_next/image?url=logo-black.png",
+                  contentUrl:
+                    "https://www.legalcyfle.in/_next/image?url=logo-black.png",
+                  width: 1500,
+                  height: 1500,
+                  caption: "LegalCyfle",
+                },
+                image: { "@id": "https://legalcyfle.in/#/schema/logo/image/" },
+                sameAs: [
+                  "https://www.facebook.com/profile.php?id=61559661011805",
+                  "https://www.linkedin.com/company/legalcyfle-in/",
+                  "https://www.instagram.com/legalcyfle/?hl=en",
+                ],
+              },
+            ],
+          })}
+        </script>
+      </Head>
       <div className="grid max-h-[75vh] grid-cols-3 grid-rows-3 gap-5 px-3 md:px-5 lg:grid-cols-4 lg:px-10">
         <div className="col-span-3 row-span-3">
           <Swiper

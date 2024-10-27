@@ -190,7 +190,13 @@ export const getStaticProps = async () => {
   const articles = await client.getEntries({
     content_type: "blogPage",
     order: ["-sys.createdAt"],
-    limit: 3,
+    "fields.category.sys.id[in]": [
+      "2uezIzO3zSYohdj6yen0xm",
+      "2pZtFZgrtxrmJJaH1cBoIm",
+      "2RKXDO21lw1yAlZb8gxjZH",
+      "6sRbgihUKlv69O5GPGQWyf",
+    ],
+    limit: 4,
   });
   const safeJsonArticles = JSON.parse(safeJsonStringify(articles.items));
   const caseAnalysis = await client.getEntries({

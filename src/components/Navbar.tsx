@@ -189,6 +189,8 @@ const Navbar = (_props: Props) => {
     }
   };
 
+  console.log(user);
+
   useEffect(() => {
     const fetchUser = async () => {
       try {
@@ -270,6 +272,7 @@ const Navbar = (_props: Props) => {
           </FlexContainer>
         </FlexContainer>
         <FlexContainer variant="row-end" alignItems="center" className="flex">
+          <DarkModeToggle className="hidden md:flex" />
           <Input
             placeholder="Search LegalCyfle"
             className="hidden md:flex"
@@ -290,7 +293,6 @@ const Navbar = (_props: Props) => {
               }
             }}
           />
-          <DarkModeToggle className="hidden md:flex" />
           {loading && (
             <div className="rounded-xl bg-zinc-100 p-2">
               <Loader2 className="h-4 w-4 animate-spin" />
@@ -302,9 +304,14 @@ const Navbar = (_props: Props) => {
             >
               <DropdownTrigger>
                 <div className="hidden cursor-pointer items-center justify-center gap-3 rounded-2xl bg-zinc-100 p-2 hover:bg-zinc-200 dark:bg-zinc-900 dark:hover:bg-zinc-800 sm:flex">
-                  <Avatar className="h-10 w-10" {...avatarConfig} />
+                  <Avatar
+                    className="h-8 w-8"
+                    {...genConfig({
+                      sex: user.gender !== "male" ? "woman" : "man",
+                    })}
+                  />
                   <FlexContainer variant="column-start" gap="none">
-                    <p className="text-sm font-semibold">
+                    <p className="text-nowrap text-sm font-semibold">
                       {user.firstName + " " + user.lastName}
                     </p>
                     <span className="text-xs text-gray-500">

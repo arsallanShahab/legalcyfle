@@ -2,7 +2,7 @@ import FlexContainer from "@/components/FlexContainer";
 import { Button } from "@/components/ui/button";
 import Wrapper from "@/components/Wrapper";
 import SignupValidationSchema from "@/lib/schemas/signup/SignupValidationSchema";
-import { Input } from "@nextui-org/react";
+import { Input, Select, SelectItem } from "@nextui-org/react";
 import { Form, Formik, FormikHelpers } from "formik";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -12,24 +12,21 @@ import { toFormikValidationSchema } from "zod-formik-adapter";
 
 type Props = {};
 
+type FormValues = {
+  firstName: string;
+  lastName: string;
+  email: string;
+  gender: string;
+  password: string;
+  confirmPassword: string;
+};
+
 const Index = (props: Props) => {
   const router = useRouter();
 
   const handleSubmit = async (
-    values: {
-      firstName: string;
-      lastName: string;
-      email: string;
-      password: string;
-      confirmPassword: string;
-    },
-    action: FormikHelpers<{
-      firstName: string;
-      lastName: string;
-      email: string;
-      password: string;
-      confirmPassword: string;
-    }>,
+    values: FormValues,
+    action: FormikHelpers<FormValues>,
   ) => {
     try {
       action.setSubmitting(true);
@@ -76,6 +73,7 @@ const Index = (props: Props) => {
           firstName: "",
           lastName: "",
           email: "",
+          gender: "",
           password: "",
           confirmPassword: "",
         }}
@@ -123,6 +121,36 @@ const Index = (props: Props) => {
                     }}
                   />
                 </div>
+                <Select
+                  name="gender"
+                  placeholder="Select gender"
+                  labelPlacement="outside"
+                  radius="sm"
+                  classNames={{
+                    label: "font-medium text-zinc-900",
+                    trigger: "border shadow-none",
+                  }}
+                  items={[
+                    {
+                      name: "Male",
+                      value: "male",
+                    },
+                    {
+                      name: "Female",
+                      value: "female",
+                    },
+                  ]}
+                  onChange={(e) => {
+                    setFieldValue("gender", e.target.value);
+                  }}
+                  selectedKeys={values?.gender ? [values.gender] : ""}
+                >
+                  {(gender) => (
+                    <SelectItem key={gender?.value} value={gender?.value}>
+                      {gender?.name}
+                    </SelectItem>
+                  )}
+                </Select>
                 <Input
                   type="email"
                   name="email"

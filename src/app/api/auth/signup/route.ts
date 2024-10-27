@@ -4,7 +4,7 @@ import User from "@/models/User";
 import { NextResponse } from "next/server";
 
 export async function POST(req: Request, res: Response) {
-  const { firstName, lastName, email, password, confirmPassword } =
+  const { firstName, lastName, email, gender, password, confirmPassword } =
     await req.json();
   if (!firstName || !email || !password || !confirmPassword) {
     return NextResponse.json({
@@ -33,6 +33,7 @@ export async function POST(req: Request, res: Response) {
       firstName,
       lastName,
       email,
+      gender,
       password,
     });
     const verificationToken = user.generateEmailVerificationToken();

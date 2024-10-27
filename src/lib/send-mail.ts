@@ -68,6 +68,6 @@ export const sendToken = async ({
     return info;
   } catch (error) {
     console.log(error, "error from send mail");
-    return;
+    throw new Error("Error sending mail");
   }
 };

@@ -3,10 +3,11 @@ import IUser from "@/types/global/user";
 import {
   DropdownMenu,
   DropdownTrigger,
+  Input,
   Dropdown as NextUiDropdown,
   DropdownItem as NextUiDropdownItem,
 } from "@nextui-org/react";
-import { Loader2, Menu } from "lucide-react";
+import { Loader2, Menu, Search } from "lucide-react";
 import Link from "next/link";
 import { Router, useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
@@ -169,6 +170,7 @@ const Navbar = (_props: Props) => {
     null,
   );
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [search, setSearch] = useState("");
   const router = useRouter();
   const path = router.pathname;
   const handleLogout = async () => {
@@ -268,6 +270,26 @@ const Navbar = (_props: Props) => {
           </FlexContainer>
         </FlexContainer>
         <FlexContainer variant="row-end" alignItems="center" className="flex">
+          <Input
+            placeholder="Search LegalCyfle"
+            className="hidden md:flex"
+            value={search}
+            onValueChange={setSearch}
+            startContent={
+              <button
+                onClick={() => {
+                  router.push(`/search?q=${search}`);
+                }}
+              >
+                <Search className="h-5 w-5" />
+              </button>
+            }
+            onKeyUp={(e) => {
+              if (e.key === "Enter") {
+                router.push(`/search?q=${search}`);
+              }
+            }}
+          />
           <DarkModeToggle className="hidden md:flex" />
           {loading && (
             <div className="rounded-xl bg-zinc-100 p-2">
@@ -317,7 +339,9 @@ const Navbar = (_props: Props) => {
               </Link>
 
               <Link href={"/login"}>
-                <Button className="h-auto rounded-xl py-2.5">Login</Button>
+                <Button className="hidden h-auto rounded-xl py-2.5 md:inline-flex">
+                  Login
+                </Button>
               </Link>
             </FlexContainer>
           )}
@@ -327,7 +351,7 @@ const Navbar = (_props: Props) => {
             onOpenChange={(isOpen) => setSidebarOpen(isOpen)}
           >
             <SheetTrigger asChild>
-              <Button variant="ghost" className="flex md:hidden">
+              <Button variant="ghost" size={"icon"} className="flex md:hidden">
                 <Menu className="h-5 w-5" />
               </Button>
             </SheetTrigger>
@@ -450,6 +474,31 @@ const Navbar = (_props: Props) => {
                     </AccordionContent>
                   </AccordionItem>
                 </Accordion>
+                <Input
+                  placeholder="Search LegalCyfle"
+                  className="w-full"
+                  value={search}
+                  onValueChange={setSearch}
+                  startContent={
+                    <button
+                      onClick={() => {
+                        router.push(`/search?q=${search}`);
+                      }}
+                    >
+                      <Search className="h-5 w-5" />
+                    </button>
+                  }
+                  onKeyUp={(e) => {
+                    if (e.key === "Enter") {
+                      router.push(`/search?q=${search}`);
+                    }
+                  }}
+                />
+                <Link href={"/login"} className="mt-3 w-full">
+                  <Button className="h-auto w-full rounded-xl py-2.5">
+                    Login
+                  </Button>
+                </Link>
                 <FlexContainer
                   variant="row-between"
                   alignItems="center"

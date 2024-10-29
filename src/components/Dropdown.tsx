@@ -10,16 +10,22 @@ type Props = {
 };
 
 const Dropdown = (props: Props) => {
+  const url = props.title
+    ?.replace(/[^a-zA-Z0-9]/g, "-")
+    .replace(/-+/g, "-")
+    .toLowerCase();
   return (
     <div className="group relative">
-      <div
-        className={cn(
-          "flex cursor-pointer select-none items-center justify-center gap-2 rounded-lg border border-transparent px-2 py-1 transition-all duration-200 hover:bg-zinc-200 group-hover:bg-zinc-100 dark:hover:bg-zinc-900 dark:group-hover:bg-zinc-800",
-          props?.className,
-        )}
-      >
-        {props?.title} <ChevronDown className="h-3.5 w-3.5 stroke-[3px]" />
-      </div>
+      <Link href={"/category/" + url}>
+        <div
+          className={cn(
+            "flex cursor-pointer select-none items-center justify-center gap-2 rounded-lg border border-transparent px-2 py-1 transition-all duration-200 hover:bg-zinc-200 group-hover:bg-zinc-100 dark:hover:bg-zinc-900 dark:group-hover:bg-zinc-800",
+            props?.className,
+          )}
+        >
+          {props?.title} <ChevronDown className="h-3.5 w-3.5 stroke-[3px]" />
+        </div>
+      </Link>
       {props.children}
     </div>
   );

@@ -325,7 +325,7 @@ const Index = (props: Props) => {
   const keywords = generateKeywords(
     props.data.fields.category.map((cat) => cat.fields.name),
     props.data.fields.title,
-    props.data.fields.description,
+    props.data.fields?.description ?? "",
   );
 
   const structuredData = {

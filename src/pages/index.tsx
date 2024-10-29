@@ -97,9 +97,8 @@ export default function Home({ data }: HomeProps) {
                   "@type": "ImageObject",
                   inLanguage: "en-US",
                   "@id": "https://legalcyfle.in/#/schema/logo/image/",
-                  url: "https://www.legalcyfle.in/_next/image?url=logo-black.png",
-                  contentUrl:
-                    "https://www.legalcyfle.in/_next/image?url=logo-black.png",
+                  url: "https://legalcyfle.in/logo-black.png",
+                  contentUrl: "https://legalcyfle.in/logo-black.png",
                   width: 1500,
                   height: 1500,
                   caption: "LegalCyfle",
@@ -182,7 +181,12 @@ export default function Home({ data }: HomeProps) {
                             className="h-4 w-[1.5px] bg-white"
                           />
                           <p className="text-sm font-medium text-white md:text-medium">
-                            By {article?.fields?.author?.fields?.name}
+                            By{" "}
+                            {article?.fields?.authors
+                              .map((author) => {
+                                return author.fields.name;
+                              })
+                              .join(", ")}
                           </p>
                         </FlexContainer>
                         <p className="text-sm font-medium text-white md:text-medium">

@@ -145,7 +145,6 @@ type BlogEntryFields = {
   image: Image;
   description: string;
   body: Body;
-  author: Author;
   authors: Author[];
   category: Category[];
 };

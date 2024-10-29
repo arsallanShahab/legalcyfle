@@ -15,6 +15,7 @@ export function estimateReadingTime(text: string) {
 }
 
 export function formatImageLink(url: string) {
+  if (!url) return "";
   return url.startsWith("http") ? url : `https:${url}`;
 }
 
@@ -60,4 +61,30 @@ export const removeCircularReferences = (
     }
   }
   return obj;
+};
+
+export const generateKeywords = (
+  categories: string[],
+  title: string,
+  description: string,
+): string => {
+  const removeSpecialChars = (str: string) => str.replace(/[^\w\s]/gi, "");
+
+  const processString = (str: string) =>
+    removeSpecialChars(str)
+      .split(/\s+/)
+      .map((word) => word.trim().toLowerCase())
+      .filter((word) => word.length > 3);
+
+  const categoryKeywords = categories.flatMap((cat) => processString(cat));
+  const titleKeywords = processString(title);
+  const descriptionKeywords = processString(description);
+
+  const allKeywords = [
+    ...categoryKeywords,
+    ...titleKeywords,
+    ...descriptionKeywords,
+  ];
+
+  return Array.from(new Set(allKeywords)).join(",");
 };

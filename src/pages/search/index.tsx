@@ -28,7 +28,7 @@ const Index = (props: Props) => {
           return false;
         }
         if (typeof q === "string") {
-          return article.fields.title.toLowerCase().includes(q);
+          return article.fields.title.toLowerCase().includes(q.toLowerCase());
         }
       });
       setFilteredArticles(filtered);

@@ -29,7 +29,7 @@ const Page = (props: Props) => {
       <p className="font-giest-mono text-2xl text-zinc-600 dark:text-zinc-400">
         Our Advisors
       </p>
-      <div className="grid gap-5 md:grid-cols-3 lg:grid-cols-6">
+      <div className="grid gap-5 md:grid-cols-3">
         <ImageCard
           src="/tufail-sir.png"
           title="Dr. Tufail Ahmad"
@@ -72,16 +72,16 @@ const Page = (props: Props) => {
           subtitle="Advisor"
         />
       </div>
-      {/* <p className="font-giest-mono text-2xl text-zinc-600 dark:text-zinc-400">
+      <p className="font-giest-mono text-2xl text-zinc-600 dark:text-zinc-400">
         Our PR Team
       </p>
-      <div className="grid gap-5 md:grid-cols-3 lg:grid-cols-6">
+      <div className="grid gap-5 md:grid-cols-3">
         <ImageCard
-          src="https://picsum.photos/200/300?random=3"
+          src="/latifur-rahman.png"
           title="Latifur Rahman"
           subtitle="Media & PR Head"
         />
-      </div> */}
+      </div>
     </Wrapper>
   );
 };

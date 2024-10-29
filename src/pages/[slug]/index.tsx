@@ -17,6 +17,7 @@ import {
   estimateReadingTime,
   excerpt,
   formatImageLink,
+  generateKeywords,
   sanitizeString,
 } from "@/lib/utils";
 import { BlogEntry } from "@/types/contentful/blog";
@@ -302,37 +303,205 @@ const Index = (props: Props) => {
     }
   }, [data]);
 
+  // const structuredData = {
+  //   "@context": "https://schema.org",
+  //   "@type": "BlogPosting",
+  //   headline: props.data.fields.title,
+  //   image: formatImageLink(thumbnail),
+  //   author: props.data.fields.authors.map((author) => ({
+  //     "@type": "Person",
+  //     name: author.fields.name,
+  //     url: `/author/${author.sys.id}`,
+  //   })),
+  //   datePublished: props.data.fields.date,
+  //   dateModified: props.data.fields.date,
+  //   description: excerpt(props.data.fields.title, 160),
+  //   mainEntityOfPage: {
+  //     "@type": "WebPage",
+  //     "@id": `https://legalcyfle.in/${props.data.fields.slug}`,
+  //   },
+  // };
+
+  const keywords = generateKeywords(
+    props.data.fields.category.map((cat) => cat.fields.name),
+    props.data.fields.title,
+    props.data.fields.description,
+  );
+
   const structuredData = {
     "@context": "https://schema.org",
-    "@type": "BlogPosting",
-    headline: props.data.fields.title,
-    image: formatImageLink(thumbnail),
-    author: props.data.fields.authors.map((author) => ({
-      "@type": "Person",
-      name: author.fields.name,
-      url: `/author/${author.sys.id}`,
-    })),
-    datePublished: props.data.fields.date,
-    dateModified: props.data.fields.date,
-    description: excerpt(props.data.fields.title, 160),
-    mainEntityOfPage: {
-      "@type": "WebPage",
-      "@id": `https://legalcyfle.in/${props.data.fields.slug}`,
-    },
+    "@graph": [
+      {
+        "@type": "Article",
+        "@id": `https://legalcyfle.in/${props.data.fields.slug}/#article`,
+        isPartOf: { "@id": `https://legalcyfle.in/${props.data.fields.slug}/` },
+        author: props.data.fields.authors.map((author) => ({
+          "@id": `https://legalcyfle.in/#/schema/person/image/${author.sys.id}`,
+          "@type": "Person",
+          name: author.fields.name,
+          url: `https://legalcyfle.in/author/${author.sys.id}/`,
+          image: {
+            "@type": "ImageObject",
+            inLanguage: "en-US",
+            "@id": `https://legalcyfle.in/#/schema/person/image/${author.sys.id}`,
+            url: formatImageLink(author?.fields?.avatar?.fields?.file?.url),
+            contentUrl: formatImageLink(
+              author?.fields?.avatar?.fields?.file?.url,
+            ),
+            caption: author.fields.name,
+          },
+          sameAs: [], // Add social links if available
+          description: author?.fields?.bio,
+        })),
+        headline: props.data.fields.title,
+        datePublished: props.data.fields.date,
+        dateModified: props.data.sys.updatedAt,
+        mainEntityOfPage: {
+          "@id": `https://legalcyfle.in/${props.data.fields.slug}/`,
+        },
+        wordCount: props.data?.fields?.body?.content?.reduce(
+          (count, node) =>
+            count +
+            node.content.reduce(
+              (innerCount, innerNode) =>
+                innerCount +
+                (innerNode.value ? innerNode.value.split(" ").length : 0),
+              0,
+            ),
+          0,
+        ),
+        commentCount: comments.length, // Update with actual comment count if available
+        publisher: { "@id": "https://legalcyfle.in/#organization" },
+        image: {
+          "@id": `https://legalcyfle.in/${props.data.fields.slug}/#primaryimage`,
+        },
+        thumbnailUrl: formatImageLink(props.data.fields.image.fields.file.url),
+        keywords: keywords,
+        articleSection: props.data.fields.category.map(
+          (cat) => cat.fields.name,
+        ),
+        inLanguage: "en-US",
+        potentialAction: [
+          {
+            "@type": "CommentAction",
+            name: "Comment",
+            target: [
+              `https://legalcyfle.in/${props.data.fields.slug}/#respond`,
+            ],
+          },
+        ],
+      },
+      {
+        "@type": "WebPage",
+        "@id": `https://legalcyfle.in/${props.data.fields.slug}/`,
+        url: `https://legalcyfle.in/${props.data.fields.slug}/`,
+        name: `${props.data.fields.title} - LegalCyfle`,
+        isPartOf: { "@id": "https://legalcyfle.in/#website" },
+        primaryImageOfPage: {
+          "@id": `https://legalcyfle.in/${props.data.fields.slug}/#primaryimage`,
+        },
+        image: {
+          "@id": `https://legalcyfle.in/${props.data.fields.slug}/#primaryimage`,
+        },
+        thumbnailUrl: formatImageLink(props.data.fields.image.fields.file.url),
+        datePublished: props.data.fields.date,
+        dateModified: props.data.sys.updatedAt,
+        breadcrumb: {
+          "@id": `https://legalcyfle.in/${props.data.fields.slug}/#breadcrumb`,
+        },
+        inLanguage: "en-US",
+        potentialAction: [
+          {
+            "@type": "ReadAction",
+            target: [`https://legalcyfle.in/${props.data.fields.slug}/`],
+          },
+        ],
+      },
+      {
+        "@type": "ImageObject",
+        inLanguage: "en-US",
+        "@id": `https://legalcyfle.in/${props.data.fields.slug}/#primaryimage`,
+        url: formatImageLink(props?.data?.fields?.image?.fields?.file?.url),
+        contentUrl: formatImageLink(
+          props?.data?.fields?.image?.fields?.file?.url,
+        ),
+        width: props.data?.fields?.image?.fields?.file?.details?.image?.width,
+        height: props.data?.fields?.image?.fields?.file?.details?.image?.height,
+      },
+      {
+        "@type": "BreadcrumbList",
+        "@id": `https://legalcyfle.in/${props.data.fields.slug}/#breadcrumb`,
+        itemListElement: [
+          {
+            "@type": "ListItem",
+            position: 1,
+            name: "Home",
+            item: "https://legalcyfle.in/",
+          },
+          {
+            "@type": "ListItem",
+            position: 2,
+            name: props.data.fields.category[0]?.fields?.name,
+            item: `https://legalcyfle.in/category/${props.data.fields.category[0]?.fields?.slug}`,
+          },
+          { "@type": "ListItem", position: 3, name: props.data.fields.title },
+        ],
+      },
+      {
+        "@type": "WebSite",
+        "@id": "https://legalcyfle.in/#website",
+        url: "https://legalcyfle.in/",
+        name: "LegalCyfle",
+        description: "iuris occasio omnibus",
+        publisher: { "@id": "https://legalcyfle.in/#organization" },
+        potentialAction: [
+          {
+            "@type": "SearchAction",
+            target: {
+              "@type": "EntryPoint",
+              urlTemplate:
+                "https://legalcyfle.in/search?q={search_term_string}",
+            },
+            "query-input": {
+              "@type": "PropertyValueSpecification",
+              valueRequired: true,
+              valueName: "search_term_string",
+            },
+          },
+        ],
+        inLanguage: "en-US",
+      },
+      {
+        "@type": "Organization",
+        "@id": "https://legalcyfle.in/#organization",
+        name: "LegalCyfle",
+        url: "https://legalcyfle.in/",
+        logo: {
+          "@type": "ImageObject",
+          inLanguage: "en-US",
+          "@id": "https://legalcyfle.in/#/schema/logo/image/",
+          url: "https://legalcyfle.in/logo-black.png",
+          contentUrl: "https://legalcyfle.in/logo-black.png",
+          width: 1500,
+          height: 1500,
+          caption: "LegalCyfle",
+        },
+        image: { "@id": "https://legalcyfle.in/#/schema/logo/image/" },
+        sameAs: [
+          "https://www.facebook.com/profile.php?id=61559661011805",
+          "https://www.linkedin.com/company/legalcyfle-in/",
+          "https://www.instagram.com/legalcyfle/?hl=en",
+        ],
+      },
+    ],
   };
 
   return (
     <>
       <Head>
-        <title>{props.data.fields.title}</title>
-        <meta
-          name="description"
-          content={excerpt(props.data.fields.title, 160)}
-        />
-        <meta
-          name="keywords"
-          content={`blog, article, content, seo, nextjs blog, nextjs article, nextjs content, nextjs seo, ${props.data.fields.title}, ${props.data.fields.category[0]?.fields?.name},${props.data.fields.description}`}
-        />
+        <title>{props.data.fields.title} - LegalCyfle</title>
+        <meta name="description" content={props.data.fields.description} />
+        <meta name="keywords" content={keywords} />
         <link
           rel="canonical"
           href={`https://legalcyfle.in/${props.data.fields.slug}`}
@@ -340,7 +509,7 @@ const Index = (props: Props) => {
         <meta property="og:title" content={props.data.fields.title} />
         <meta
           property="og:description"
-          content={excerpt(props.data.fields.title, 160)}
+          content={props.data.fields.description}
         />
         <meta property="og:image" content={formatImageLink(thumbnail)} />
         <meta
@@ -352,7 +521,7 @@ const Index = (props: Props) => {
         <meta name="twitter:title" content={props.data.fields.title} />
         <meta
           name="twitter:description"
-          content={excerpt(props.data.fields.title, 160)}
+          content={props.data.fields.description}
         />
         <meta name="twitter:image" content={formatImageLink(thumbnail)} />
         <script type="application/ld+json">
@@ -650,7 +819,7 @@ const Index = (props: Props) => {
           </FlexContainer>
           {props.data.fields?.authors.length === 1 && (
             <p className="max-w-lg text-base font-normal text-gray-400">
-              {props.data.fields.author?.fields?.bio}
+              {props.data.fields.authors[0]?.fields?.bio}
             </p>
           )}
         </FlexContainer>

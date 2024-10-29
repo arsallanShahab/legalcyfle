@@ -9,8 +9,13 @@ type Props = {
 
 const Wrapper = (props: Props) => {
   return (
-    <div className={cn("px-5 py-10 md:px-10", props.className)}>
-      <FlexContainer variant="column-start" gap="4xl">
+    <div
+      className={cn(
+        "mx-auto max-w-3xl px-4 py-10 md:px-10 md:py-20",
+        props.className,
+      )}
+    >
+      <FlexContainer variant="column-start" gap="3xl">
         {props.children}
       </FlexContainer>
     </div>

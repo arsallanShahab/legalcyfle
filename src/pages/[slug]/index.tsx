@@ -524,9 +524,10 @@ const Index = (props: Props) => {
           content={props.data.fields.description}
         />
         <meta name="twitter:image" content={formatImageLink(thumbnail)} />
-        <script type="application/ld+json">
-          {JSON.stringify(structuredData)}
-        </script>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+        />
       </Head>
       <FlexContainer
         variant="column-start"

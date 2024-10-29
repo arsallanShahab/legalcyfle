@@ -42,77 +42,82 @@ export default function Home({ data }: HomeProps) {
       <Head>
         <title>LegalCyfle - iuris occasio omnibus</title>
         <meta name="description" content="iuris occasio omnibus" />
-        <script type="application/ld+json">
-          {JSON.stringify({
-            "@context": "https://schema.org",
-            "@graph": [
-              {
-                "@type": "CollectionPage",
-                "@id": "https://legalcyfle.in/",
-                url: "https://legalcyfle.in/",
-                name: "LegalCyfle - iuris occasio omnibus",
-                isPartOf: { "@id": "https://legalcyfle.in/#website" },
-                about: { "@id": "https://legalcyfle.in/#organization" },
-                description: "iuris occasio omnibus",
-                breadcrumb: { "@id": "https://legalcyfle.in/#breadcrumb" },
-                inLanguage: "en-US",
-              },
-              {
-                "@type": "BreadcrumbList",
-                "@id": "https://legalcyfle.in/#breadcrumb",
-                itemListElement: [
-                  { "@type": "ListItem", position: 1, name: "Home" },
-                ],
-              },
-              {
-                "@type": "WebSite",
-                "@id": "https://legalcyfle.in/#website",
-                url: "https://legalcyfle.in/",
-                name: "LegalCyfle",
-                description: "iuris occasio omnibus",
-                publisher: { "@id": "https://legalcyfle.in/#organization" },
-                potentialAction: [
-                  {
-                    "@type": "SearchAction",
-                    target: {
-                      "@type": "EntryPoint",
-                      urlTemplate:
-                        "https://legalcyfle.in/search?q={search_term_string}",
-                    },
-                    "query-input": {
-                      "@type": "PropertyValueSpecification",
-                      valueRequired: true,
-                      valueName: "search_term_string",
-                    },
-                  },
-                ],
-                inLanguage: "en-US",
-              },
-              {
-                "@type": "Organization",
-                "@id": "https://legalcyfle.in/#organization",
-                name: "LegalCyfle",
-                url: "https://legalcyfle.in/",
-                logo: {
-                  "@type": "ImageObject",
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@graph": [
+                {
+                  "@type": "CollectionPage",
+                  "@id": "https://legalcyfle.in/",
+                  url: "https://legalcyfle.in/",
+                  name: "LegalCyfle - iuris occasio omnibus",
+                  isPartOf: { "@id": "https://legalcyfle.in/#website" },
+                  about: { "@id": "https://legalcyfle.in/#organization" },
+                  description: "iuris occasio omnibus",
+                  breadcrumb: { "@id": "https://legalcyfle.in/#breadcrumb" },
                   inLanguage: "en-US",
-                  "@id": "https://legalcyfle.in/#/schema/logo/image/",
-                  url: "https://legalcyfle.in/logo-black.png",
-                  contentUrl: "https://legalcyfle.in/logo-black.png",
-                  width: 1500,
-                  height: 1500,
-                  caption: "LegalCyfle",
                 },
-                image: { "@id": "https://legalcyfle.in/#/schema/logo/image/" },
-                sameAs: [
-                  "https://www.facebook.com/profile.php?id=61559661011805",
-                  "https://www.linkedin.com/company/legalcyfle-in/",
-                  "https://www.instagram.com/legalcyfle/?hl=en",
-                ],
-              },
-            ],
-          })}
-        </script>
+                {
+                  "@type": "BreadcrumbList",
+                  "@id": "https://legalcyfle.in/#breadcrumb",
+                  itemListElement: [
+                    { "@type": "ListItem", position: 1, name: "Home" },
+                  ],
+                },
+                {
+                  "@type": "WebSite",
+                  "@id": "https://legalcyfle.in/#website",
+                  url: "https://legalcyfle.in/",
+                  name: "LegalCyfle",
+                  description: "iuris occasio omnibus",
+                  publisher: { "@id": "https://legalcyfle.in/#organization" },
+                  potentialAction: [
+                    {
+                      "@type": "SearchAction",
+                      target: {
+                        "@type": "EntryPoint",
+                        urlTemplate:
+                          "https://legalcyfle.in/search?q={search_term_string}",
+                      },
+                      "query-input": {
+                        "@type": "PropertyValueSpecification",
+                        valueRequired: true,
+                        valueName: "search_term_string",
+                      },
+                    },
+                  ],
+                  inLanguage: "en-US",
+                },
+                {
+                  "@type": "Organization",
+                  "@id": "https://legalcyfle.in/#organization",
+                  name: "LegalCyfle",
+                  url: "https://legalcyfle.in/",
+                  logo: {
+                    "@type": "ImageObject",
+                    inLanguage: "en-US",
+                    "@id": "https://legalcyfle.in/#/schema/logo/image/",
+                    url: "https://legalcyfle.in/logo-black.png",
+                    contentUrl: "https://legalcyfle.in/logo-black.png",
+                    width: 1500,
+                    height: 1500,
+                    caption: "LegalCyfle",
+                  },
+                  image: {
+                    "@id": "https://legalcyfle.in/#/schema/logo/image/",
+                  },
+                  sameAs: [
+                    "https://www.facebook.com/profile.php?id=61559661011805",
+                    "https://www.linkedin.com/company/legalcyfle-in/",
+                    "https://www.instagram.com/legalcyfle/?hl=en",
+                  ],
+                },
+              ],
+            }),
+          }}
+        ></script>
       </Head>
       <div className="grid max-h-[75vh] grid-cols-3 grid-rows-3 gap-5 px-3 md:px-5 lg:grid-cols-4 lg:px-10">
         <div className="col-span-3 row-span-3">
@@ -205,11 +210,9 @@ export default function Home({ data }: HomeProps) {
             })}
           </Swiper>
         </div>
-        <div className="hidden h-full w-full rounded-xl bg-zinc-100 px-3 py-2 text-sm font-medium dark:bg-zinc-800 lg:flex">
+        <div className="row-span-3 hidden h-full min-w-[300px] rounded-xl bg-zinc-100 px-3 py-2 text-sm font-medium dark:bg-zinc-800 lg:flex">
           ADVERTS
         </div>
-        <div className="h-full w-full rounded-xl bg-zinc-100 dark:bg-zinc-800"></div>
-        <div className="h-full w-full rounded-xl bg-zinc-100 dark:bg-zinc-800"></div>
       </div>
       <FlexContainer variant="column-start" className="px-3 md:px-5 lg:px-10">
         <h3 className="px-2 text-4xl font-semibold md:mb-5 md:mt-10">

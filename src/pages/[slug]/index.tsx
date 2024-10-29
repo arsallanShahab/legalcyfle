@@ -831,6 +831,11 @@ const Index = (props: Props) => {
               No comments yet. Be the first to comment on this article.
             </p>
           )}
+          {!user && (
+            <Link href={`/login?redirect=${router.asPath}`}>
+              <Button className="rounded-3xl px-7">Login to comment</Button>
+            </Link>
+          )}
           {user && (
             <FlexContainer>
               <NiceAvatar

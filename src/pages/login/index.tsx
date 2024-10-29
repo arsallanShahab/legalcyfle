@@ -18,6 +18,7 @@ const Index = (props: Props) => {
   const [showVerifyEmail, setShowVerifyEmail] = React.useState(false);
 
   const router = useRouter();
+  const { redirect } = router.query;
 
   const handleSubmit = async (
     values: any,
@@ -38,7 +39,11 @@ const Index = (props: Props) => {
       if (data.success) {
         setUser(data.data);
         toast.success(data.message);
-        router.push("/");
+        if (redirect) {
+          router.push(redirect as string);
+        } else {
+          router.push("/");
+        }
       } else {
         toast.error(data.message);
         if (data.message.includes("verify")) {

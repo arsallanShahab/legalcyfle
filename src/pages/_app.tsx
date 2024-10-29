@@ -7,11 +7,18 @@ import "@/styles/globals.css";
 import { GeistMono } from "geist/font/mono";
 import { GeistSans } from "geist/font/sans";
 import type { AppProps } from "next/app";
+import Script from "next/script";
 import "swiper/css";
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
     <Providers>
+      <Script
+        id="adsbygoogle-init"
+        strategy="afterInteractive"
+        crossOrigin="anonymous"
+        src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5892936530350741"
+      />
       <Navbar />
       <main className={`${GeistSans.variable} ${GeistMono.variable}`}>
         <Component {...pageProps} />

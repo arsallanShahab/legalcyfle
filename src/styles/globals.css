@@ -71,11 +71,15 @@ body {
 }
 
 .blog_paragraph {
-  @apply text-wrap break-all font-giest-sans text-lg leading-relaxed text-gray-900 dark:text-gray-300;
+  @apply text-wrap break-words text-justify font-giest-sans text-lg leading-relaxed text-gray-900 dark:text-gray-300;
 }
 
-.blog_paragraph a {
+/* .blog_paragraph a {
   @apply inline-block cursor-pointer text-wrap break-words break-all font-medium text-blue-500 dark:text-blue-400;
+} */
+
+.blog_link {
+  @apply rounded-3xl bg-indigo-100 px-4 py-2 text-sm leading-loose text-indigo-600 duration-300 hover:bg-indigo-600 hover:text-white dark:bg-indigo-800 dark:text-indigo-200;
 }
 
 @media (max-width: 420px) {

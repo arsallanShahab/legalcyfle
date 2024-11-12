@@ -221,9 +221,12 @@ export default function Home({ data }: HomeProps) {
             data-ad-format="auto"
             data-full-width-responsive="true"
           ></ins>
-          <Script id="add-group-homepage">
-            (adsbygoogle = window.adsbygoogle || []).push({});
-          </Script>
+          <script
+            dangerouslySetInnerHTML={{
+              __html:
+                "(window.adsbygoogle = window.adsbygoogle || []).push({});",
+            }}
+          />
         </div>
       </div>
       <FlexContainer variant="column-start" className="px-3 md:px-5 lg:px-10">
@@ -248,9 +251,12 @@ export default function Home({ data }: HomeProps) {
               data-ad-format="auto"
               data-full-width-responsive="true"
             ></ins>
-            <Script id="add-group-homepage">
-              (adsbygoogle = window.adsbygoogle || []).push({});
-            </Script>
+            <script
+              dangerouslySetInnerHTML={{
+                __html:
+                  "(window.adsbygoogle = window.adsbygoogle || []).push({});",
+              }}
+            />
           </FlexContainer>
         </div>
       </FlexContainer>
@@ -274,9 +280,12 @@ export default function Home({ data }: HomeProps) {
               data-ad-format="auto"
               data-full-width-responsive="true"
             ></ins>
-            <Script id="add-group-homepage">
-              (adsbygoogle = window.adsbygoogle || []).push({});
-            </Script>
+            <script
+              dangerouslySetInnerHTML={{
+                __html:
+                  "(window.adsbygoogle = window.adsbygoogle || []).push({});",
+              }}
+            />
           </FlexContainer>
         </div>
       </FlexContainer>
@@ -302,9 +311,12 @@ export default function Home({ data }: HomeProps) {
               data-ad-format="auto"
               data-full-width-responsive="true"
             ></ins>
-            <Script id="add-group-homepage">
-              (adsbygoogle = window.adsbygoogle || []).push({});
-            </Script>
+            <script
+              dangerouslySetInnerHTML={{
+                __html:
+                  "(window.adsbygoogle = window.adsbygoogle || []).push({});",
+              }}
+            />
           </FlexContainer>
         </div>
       </FlexContainer>

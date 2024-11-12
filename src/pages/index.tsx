@@ -215,7 +215,7 @@ export default function Home({ data }: HomeProps) {
         <div className="row-span-3 hidden h-full min-w-[325px] rounded-xl bg-zinc-100 px-3 py-2 text-sm font-medium dark:bg-zinc-800 lg:flex">
           <AdWrapper
             data-ad-slot="4210005765"
-            data-ad-format="auto"
+            // data-ad-format="auto"
             data-full-width-responsive="true"
           />
         </div>
@@ -236,7 +236,7 @@ export default function Home({ data }: HomeProps) {
           >
             <AdWrapper
               data-ad-slot="4210005765"
-              data-ad-format="auto"
+              // data-ad-format="auto"
               data-full-width-responsive="true"
             />
           </FlexContainer>
@@ -256,7 +256,7 @@ export default function Home({ data }: HomeProps) {
           >
             <AdWrapper
               data-ad-slot="4210005765"
-              data-ad-format="auto"
+              // data-ad-format="auto"
               data-full-width-responsive="true"
             />
           </FlexContainer>
@@ -278,7 +278,7 @@ export default function Home({ data }: HomeProps) {
           >
             <AdWrapper
               data-ad-slot="4210005765"
-              data-ad-format="auto"
+              // data-ad-format="auto"
               data-full-width-responsive="true"
             />
           </FlexContainer>

@@ -82,6 +82,10 @@ body {
   @apply rounded-3xl bg-indigo-600 px-4 py-2 text-xs leading-loose text-indigo-100 duration-300 hover:bg-indigo-500 hover:text-white dark:bg-indigo-800 dark:text-indigo-200;
 }
 
+.ad_infeed {
+  @apply w-full min-w-[300px] bg-gray-100 dark:bg-gray-800;
+}
+
 @media (max-width: 420px) {
   .blog_paragraph {
     @apply text-base leading-relaxed;

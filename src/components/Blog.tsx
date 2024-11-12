@@ -97,7 +97,7 @@ const renderNode: { [key: string]: (node: Node) => string } = {
   },
   [BLOCKS.HEADING_1]: (node: Node) =>
     `<h1 class="blog_heading_h1">${node.content[0].value}</h1>
-<ins class="adsbygoogle"
+  <div class="ad_infeed"><ins class="adsbygoogle"
      style="display:block; text-align:center;"
      data-ad-layout="in-article"
      data-ad-format="fluid"
@@ -105,10 +105,9 @@ const renderNode: { [key: string]: (node: Node) => string } = {
      data-ad-slot="5536160107"></ins>
 <script>
      (adsbygoogle = window.adsbygoogle || []).push({});
-</script>`,
+</script></div>`,
   [BLOCKS.HEADING_2]: (node: Node) =>
-    `<h2 class="blog_heading_h2">${node.content[0].value}</h2>
-<ins class="adsbygoogle"
+    `<h2 class="blog_heading_h2">${node.content[0].value}</h2><div class="ad_infeed"><ins class="adsbygoogle"
      style="display:block; text-align:center;"
      data-ad-layout="in-article"
      data-ad-format="fluid"
@@ -116,10 +115,9 @@ const renderNode: { [key: string]: (node: Node) => string } = {
      data-ad-slot="5536160107"></ins>
 <script>
      (adsbygoogle = window.adsbygoogle || []).push({});
-</script>`,
+</script></div>`,
   [BLOCKS.HEADING_3]: (node: Node) =>
-    `<h3 class="blog_heading_h3">${node.content[0].value}</h3>
-<ins class="adsbygoogle"
+    `<h3 class="blog_heading_h3">${node.content[0].value}</h3><div class="ad_infeed"><ins class="adsbygoogle"
      style="display:block; text-align:center;"
      data-ad-layout="in-article"
      data-ad-format="fluid"
@@ -127,10 +125,9 @@ const renderNode: { [key: string]: (node: Node) => string } = {
      data-ad-slot="5536160107"></ins>
 <script>
      (adsbygoogle = window.adsbygoogle || []).push({});
-</script>`,
+</script></div>`,
   [BLOCKS.HEADING_4]: (node: Node) =>
-    `<h4 class="blog_heading_h4">${node.content[0].value}</h4>
-<ins class="adsbygoogle"
+    `<h4 class="blog_heading_h4">${node.content[0].value}</h4><div class="ad_infeed"><ins class="adsbygoogle"
      style="display:block; text-align:center;"
      data-ad-layout="in-article"
      data-ad-format="fluid"
@@ -138,12 +135,9 @@ const renderNode: { [key: string]: (node: Node) => string } = {
      data-ad-slot="5536160107"></ins>
 <script>
      (adsbygoogle = window.adsbygoogle || []).push({});
-</script>`,
+</script></div>`,
   [BLOCKS.HEADING_5]: (node: Node) =>
-    `<h5 class="blog_heading_h5">${node.content[0].value}</h5>`,
-  [BLOCKS.HEADING_6]: (node: Node) =>
-    `<h6 class="blog_heading_h6">${node.content[0].value}</h6>
-<ins class="adsbygoogle"
+    `<h5 class="blog_heading_h5">${node.content[0].value}</h5><div class="ad_infeed"><ins class="adsbygoogle"
      style="display:block; text-align:center;"
      data-ad-layout="in-article"
      data-ad-format="fluid"
@@ -151,7 +145,17 @@ const renderNode: { [key: string]: (node: Node) => string } = {
      data-ad-slot="5536160107"></ins>
 <script>
      (adsbygoogle = window.adsbygoogle || []).push({});
-</script>`,
+</script></div>`,
+  [BLOCKS.HEADING_6]: (node: Node) =>
+    `<h6 class="blog_heading_h6">${node.content[0].value}</h6><div class="ad_infeed"><ins class="adsbygoogle"
+     style="display:block; text-align:center;"
+     data-ad-layout="in-article"
+     data-ad-format="fluid"
+     data-ad-client="ca-pub-5892936530350741"
+     data-ad-slot="5536160107"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script></div>`,
 };
 
 const BlogContent = (props: BlogContentProps) => {

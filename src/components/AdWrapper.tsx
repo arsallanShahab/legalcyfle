@@ -2,7 +2,10 @@ import React, { useEffect } from "react";
 
 declare global {
   interface Window {
-    adsbygoogle: any[];
+    adsbygoogle: {
+      loaded: boolean;
+      push: (x: any) => void;
+    };
   }
 }
 
@@ -11,7 +14,10 @@ type Props = {};
 const AdWrapper = (props: Props) => {
   useEffect(() => {
     try {
-      (window.adsbygoogle = window.adsbygoogle || []).push({});
+      if (window.adsbygoogle && !window.adsbygoogle.loaded) {
+        console.log("adsbygoogle loaded");
+        (window.adsbygoogle = window.adsbygoogle || []).push({});
+      }
     } catch (err) {
       console.log(err);
     }

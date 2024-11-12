@@ -121,8 +121,13 @@ export default function Home({ data }: HomeProps) {
           }}
         ></script>
       </Head>
-      <div className="grid max-h-[75vh] grid-cols-3 grid-rows-3 gap-5 px-3 md:px-5 lg:grid-cols-4 lg:px-10">
-        <div className="col-span-3 row-span-3">
+      <AdWrapper
+        data-ad-format="fluid"
+        data-ad-layout-key="-es-7n+gf+bp-16h"
+        data-ad-slot="7648124020"
+      />
+      <div className="grid max-h-[80vh] grid-cols-3 grid-rows-3 gap-5 px-3 md:px-5 lg:grid-cols-4 lg:px-10">
+        <div className="col-span-4 row-span-3">
           <Swiper
             spaceBetween={50}
             // slidesPerView={1}
@@ -212,76 +217,57 @@ export default function Home({ data }: HomeProps) {
             })}
           </Swiper>
         </div>
-        <div className="row-span-3 hidden h-full min-w-[325px] rounded-xl bg-zinc-100 px-3 py-2 text-sm font-medium dark:bg-zinc-800 lg:flex">
-          <AdWrapper
-            data-ad-slot="4210005765"
-            // data-ad-format="auto"
-            data-full-width-responsive="true"
-          />
-        </div>
+        {/* <div className="row-span-3 hidden h-full min-w-[325px] rounded-xl bg-zinc-100 px-3 py-2 text-sm font-medium dark:bg-zinc-800 lg:flex">
+         
+        </div> */}
       </div>
+      <AdWrapper
+        data-ad-format="fluid"
+        data-ad-layout-key="-es-7n+gf+bp-16h"
+        data-ad-slot="7648124020"
+      />
       <FlexContainer variant="column-start" className="px-3 md:px-5 lg:px-10">
         <h3 className="px-2 text-4xl font-semibold md:mb-5 md:mt-10">
           Latest Articles
         </h3>
         <div className="grid grid-cols-5 gap-5">
-          <div className="col-span-5 grid gap-y-7 md:col-span-4">
+          <div className="col-span-5 grid gap-y-7 md:col-span-5">
             {data?.latestArticles?.map((article: BlogEntry) => {
               return <ArticleCard article={article} key={article.sys.id} />;
             })}
           </div>
-          <FlexContainer
-            variant="row-center"
-            className="hidden h-full w-full rounded-xl p-5 md:flex"
-          >
-            <AdWrapper
-              data-ad-slot="4210005765"
-              // data-ad-format="auto"
-              data-full-width-responsive="true"
-            />
-          </FlexContainer>
         </div>
       </FlexContainer>
+      <AdWrapper
+        data-ad-format="fluid"
+        data-ad-layout-key="-es-7n+gf+bp-16h"
+        data-ad-slot="7648124020"
+      />
       <FlexContainer variant="column-start" className="px-3 md:px-5 lg:px-10">
         <h3 className="px-2 text-4xl font-semibold md:mb-5 md:mt-10">News</h3>
         <div className="grid grid-cols-5 gap-5">
-          <div className="col-span-5 grid gap-y-7 md:col-span-4">
+          <div className="col-span-5 grid gap-y-7 md:col-span-5">
             {data?.news?.map((article: BlogEntry) => {
               return <ArticleCard article={article} key={article.sys.id} />;
             })}
           </div>
-          <FlexContainer
-            variant="row-center"
-            className="hidden h-full w-full rounded-xl p-5 md:flex"
-          >
-            <AdWrapper
-              data-ad-slot="4210005765"
-              // data-ad-format="auto"
-              data-full-width-responsive="true"
-            />
-          </FlexContainer>
         </div>
       </FlexContainer>
+      <AdWrapper
+        data-ad-format="fluid"
+        data-ad-layout-key="-es-7n+gf+bp-16h"
+        data-ad-slot="7648124020"
+      />
       <FlexContainer variant="column-start" className="px-3 md:px-5 lg:px-10">
         <h3 className="px-2 text-4xl font-semibold md:mb-5 md:mt-10">
           Case Analysis
         </h3>
         <div className="grid grid-cols-5 gap-5">
-          <div className="col-span-5 grid gap-y-7 md:col-span-4">
+          <div className="col-span-5 grid gap-y-7 md:col-span-5">
             {data?.caseAnalysis?.map((article: BlogEntry) => {
               return <ArticleCard article={article} key={article.sys.id} />;
             })}
           </div>
-          <FlexContainer
-            variant="row-center"
-            className="hidden h-full w-full rounded-xl p-5 md:flex"
-          >
-            <AdWrapper
-              data-ad-slot="4210005765"
-              // data-ad-format="auto"
-              data-full-width-responsive="true"
-            />
-          </FlexContainer>
         </div>
       </FlexContainer>
     </main>

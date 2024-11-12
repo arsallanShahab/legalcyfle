@@ -5,7 +5,6 @@ import mongoose, { ObjectId } from "mongoose";
 import { nanoid } from "nanoid";
 import Article from "./Article";
 
-// Define the User Schema
 const userSchema = new mongoose.Schema({
   firstName: {
     type: String,
@@ -80,7 +79,6 @@ const userSchema = new mongoose.Schema({
   },
 });
 
-//set the user name before saving the user, check if the username is already taken and if it is, add a random number to the username
 userSchema.pre("save", async function (next) {
   if (this.isModified("password") || this.isNew) {
     const salt = await bcrypt.genSalt(10);

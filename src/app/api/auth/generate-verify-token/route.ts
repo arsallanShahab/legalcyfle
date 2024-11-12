@@ -14,20 +14,20 @@ export async function POST(req: NextRequest) {
 
   try {
     await connectToDatabase();
-    const exitsingUser = await User.findOne({ email: email.toLowerCase() });
-    if (!exitsingUser) {
+    const existingUser = await User.findOne({ email: email.toLowerCase() });
+    if (!existingUser) {
       return NextResponse.json({
         success: false,
         message: "User not found",
       });
     }
-    const token = exitsingUser.generateEmailVerificationToken();
-    await exitsingUser.save();
+    const token:string = existingUser.generateEmailVerificationToken();
+    await existingUser.save();
     const verificationUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/verify-email?token=${token}`;
     const message = `Please verify your email by clicking the following link: ${verificationUrl}`;
 
     await sendToken({
-      to: exitsingUser.email,
+      to: existingUser.email,
       subject: "Email Verification",
       text: message,
     });

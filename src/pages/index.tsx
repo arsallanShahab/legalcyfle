@@ -12,6 +12,7 @@ import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import Script from "next/script";
 import safeJsonStringify from "safe-json-stringify";
 import {
   Autoplay,
@@ -210,8 +211,19 @@ export default function Home({ data }: HomeProps) {
             })}
           </Swiper>
         </div>
-        <div className="row-span-3 hidden h-full min-w-[300px] rounded-xl bg-zinc-100 px-3 py-2 text-sm font-medium dark:bg-zinc-800 lg:flex">
-          ADVERTS
+        <div className="row-span-3 hidden h-full min-w-[325px] rounded-xl bg-zinc-100 px-3 py-2 text-sm font-medium dark:bg-zinc-800 lg:flex">
+          {/* ADVERTS */}
+          <ins
+            className="adsbygoogle"
+            style={{ display: "block" }}
+            data-ad-client="ca-pub-5892936530350741"
+            data-ad-slot="4210005765"
+            data-ad-format="auto"
+            data-full-width-responsive="true"
+          ></ins>
+          <Script id="add-group-homepage">
+            (adsbygoogle = window.adsbygoogle || []).push({});
+          </Script>
         </div>
       </div>
       <FlexContainer variant="column-start" className="px-3 md:px-5 lg:px-10">

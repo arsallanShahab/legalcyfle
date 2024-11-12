@@ -727,7 +727,7 @@ const Index = (props: Props) => {
           src={formatImageLink(thumbnail)}
           width={1280}
           height={720}
-          className="h-auto max-h-80 w-full rounded-xl border object-cover object-center"
+          className="h-auto w-full rounded-xl border object-cover object-center"
           alt="Cover"
         />
         <BlogContent data={props.data} />

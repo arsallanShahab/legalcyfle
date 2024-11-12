@@ -530,14 +530,6 @@ const Index = (props: Props) => {
           dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
         />
       </Head>
-      <div className="absolute left-0 top-0 hidden h-full w-[300px] rounded-xl lg:flex">
-        {" "}
-        <AdWrapper
-          data-ad-slot="4210005765"
-          data-ad-format="auto"
-          data-full-width-responsive="true"
-        />
-      </div>
       <FlexContainer
         variant="column-start"
         className="mx-auto max-w-3xl px-4 py-10 md:px-10 md:py-20"
@@ -880,12 +872,12 @@ const Index = (props: Props) => {
               <FlexContainer variant="column-end" className="w-full">
                 <FlexContainer
                   gap="none"
-                  className="relative flex w-full flex-col items-start justify-start rounded-xl bg-zinc-100 p-3"
+                  className="relative flex w-full flex-col items-start justify-start rounded-xl bg-zinc-100 p-3 dark:bg-zinc-800"
                 >
                   <p className="text-lg font-semibold">
                     {comment.author.firstName}
                   </p>
-                  <p className="text-base font-normal text-gray-700">
+                  <p className="text-base font-normal text-gray-700 dark:text-gray-200">
                     {comment.content}
                   </p>
                   {comment.author._id === user?._id && (

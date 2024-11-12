@@ -96,8 +96,7 @@ const renderNode: { [key: string]: (node: Node) => string } = {
     </p>`;
   },
   [BLOCKS.HEADING_1]: (node: Node) =>
-    `<h1 class="blog_heading_h1">${node.content[0].value}</h1>
-  <div class="ad_infeed"><ins class="adsbygoogle"
+    `<div class="ad_infeed"><ins class="adsbygoogle"
      style="display:block; text-align:center;"
      data-ad-layout="in-article"
      data-ad-format="fluid"
@@ -105,9 +104,10 @@ const renderNode: { [key: string]: (node: Node) => string } = {
      data-ad-slot="5536160107"></ins>
 <script>
      (adsbygoogle = window.adsbygoogle || []).push({});
-</script></div>`,
+</script></div><h1 class="blog_heading_h1">${node.content[0].value}</h1>
+  `,
   [BLOCKS.HEADING_2]: (node: Node) =>
-    `<h2 class="blog_heading_h2">${node.content[0].value}</h2><div class="ad_infeed"><ins class="adsbygoogle"
+    `<div class="ad_infeed"><ins class="adsbygoogle"
      style="display:block; text-align:center;"
      data-ad-layout="in-article"
      data-ad-format="fluid"
@@ -115,9 +115,9 @@ const renderNode: { [key: string]: (node: Node) => string } = {
      data-ad-slot="5536160107"></ins>
 <script>
      (adsbygoogle = window.adsbygoogle || []).push({});
-</script></div>`,
+</script></div><h2 class="blog_heading_h2">${node.content[0].value}</h2>`,
   [BLOCKS.HEADING_3]: (node: Node) =>
-    `<h3 class="blog_heading_h3">${node.content[0].value}</h3><div class="ad_infeed"><ins class="adsbygoogle"
+    `<div class="ad_infeed"><ins class="adsbygoogle"
      style="display:block; text-align:center;"
      data-ad-layout="in-article"
      data-ad-format="fluid"
@@ -125,9 +125,9 @@ const renderNode: { [key: string]: (node: Node) => string } = {
      data-ad-slot="5536160107"></ins>
 <script>
      (adsbygoogle = window.adsbygoogle || []).push({});
-</script></div>`,
+</script></div><h3 class="blog_heading_h3">${node.content[0].value}</h3>`,
   [BLOCKS.HEADING_4]: (node: Node) =>
-    `<h4 class="blog_heading_h4">${node.content[0].value}</h4><div class="ad_infeed"><ins class="adsbygoogle"
+    `<div class="ad_infeed"><ins class="adsbygoogle"
      style="display:block; text-align:center;"
      data-ad-layout="in-article"
      data-ad-format="fluid"
@@ -135,9 +135,9 @@ const renderNode: { [key: string]: (node: Node) => string } = {
      data-ad-slot="5536160107"></ins>
 <script>
      (adsbygoogle = window.adsbygoogle || []).push({});
-</script></div>`,
+</script></div><h4 class="blog_heading_h4">${node.content[0].value}</h4>`,
   [BLOCKS.HEADING_5]: (node: Node) =>
-    `<h5 class="blog_heading_h5">${node.content[0].value}</h5><div class="ad_infeed"><ins class="adsbygoogle"
+    `<div class="ad_infeed"><ins class="adsbygoogle"
      style="display:block; text-align:center;"
      data-ad-layout="in-article"
      data-ad-format="fluid"
@@ -145,9 +145,9 @@ const renderNode: { [key: string]: (node: Node) => string } = {
      data-ad-slot="5536160107"></ins>
 <script>
      (adsbygoogle = window.adsbygoogle || []).push({});
-</script></div>`,
+</script></div><h5 class="blog_heading_h5">${node.content[0].value}</h5>`,
   [BLOCKS.HEADING_6]: (node: Node) =>
-    `<h6 class="blog_heading_h6">${node.content[0].value}</h6><div class="ad_infeed"><ins class="adsbygoogle"
+    `<div class="ad_infeed"><ins class="adsbygoogle"
      style="display:block; text-align:center;"
      data-ad-layout="in-article"
      data-ad-format="fluid"
@@ -155,7 +155,8 @@ const renderNode: { [key: string]: (node: Node) => string } = {
      data-ad-slot="5536160107"></ins>
 <script>
      (adsbygoogle = window.adsbygoogle || []).push({});
-</script></div>`,
+</script></div>
+<h6 class="blog_heading_h6">${node.content[0].value}</h6>`,
 };
 
 const BlogContent = (props: BlogContentProps) => {

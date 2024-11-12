@@ -240,7 +240,17 @@ export default function Home({ data }: HomeProps) {
             variant="row-center"
             className="hidden h-full w-full rounded-xl p-5 md:flex"
           >
-            ADVERTS
+            <ins
+              className="adsbygoogle"
+              style={{ display: "block" }}
+              data-ad-client="ca-pub-5892936530350741"
+              data-ad-slot="4210005765"
+              data-ad-format="auto"
+              data-full-width-responsive="true"
+            ></ins>
+            <Script id="add-group-homepage">
+              (adsbygoogle = window.adsbygoogle || []).push({});
+            </Script>
           </FlexContainer>
         </div>
       </FlexContainer>
@@ -256,7 +266,17 @@ export default function Home({ data }: HomeProps) {
             variant="row-center"
             className="hidden h-full w-full rounded-xl p-5 md:flex"
           >
-            ADVERTS
+            <ins
+              className="adsbygoogle"
+              style={{ display: "block" }}
+              data-ad-client="ca-pub-5892936530350741"
+              data-ad-slot="4210005765"
+              data-ad-format="auto"
+              data-full-width-responsive="true"
+            ></ins>
+            <Script id="add-group-homepage">
+              (adsbygoogle = window.adsbygoogle || []).push({});
+            </Script>
           </FlexContainer>
         </div>
       </FlexContainer>
@@ -274,7 +294,17 @@ export default function Home({ data }: HomeProps) {
             variant="row-center"
             className="hidden h-full w-full rounded-xl p-5 md:flex"
           >
-            ADVERTS
+            <ins
+              className="adsbygoogle"
+              style={{ display: "block" }}
+              data-ad-client="ca-pub-5892936530350741"
+              data-ad-slot="4210005765"
+              data-ad-format="auto"
+              data-full-width-responsive="true"
+            ></ins>
+            <Script id="add-group-homepage">
+              (adsbygoogle = window.adsbygoogle || []).push({});
+            </Script>
           </FlexContainer>
         </div>
       </FlexContainer>

@@ -225,7 +225,7 @@ const Navbar = (_props: Props) => {
           <Link href="/" className="font-work text-xl font-bold text-green-600">
             LegalCyfle
           </Link>
-          <FlexContainer className="hidden *:rounded-lg *:font-rubik *:text-sm *:font-medium md:flex">
+          <FlexContainer className="hidden *:rounded-lg *:font-rubik *:text-sm *:font-medium lg:flex">
             <Link
               href="/category/publications"
               className="px-2 py-1 hover:bg-zinc-100 dark:hover:bg-zinc-800"
@@ -272,7 +272,7 @@ const Navbar = (_props: Props) => {
           </FlexContainer>
         </FlexContainer>
         <FlexContainer variant="row-end" alignItems="center" className="flex">
-          <DarkModeToggle className="hidden md:flex" />
+          <DarkModeToggle className="hidden sm:flex" />
           <Input
             placeholder="Search LegalCyfle"
             className="hidden md:flex"
@@ -358,7 +358,7 @@ const Navbar = (_props: Props) => {
             onOpenChange={(isOpen) => setSidebarOpen(isOpen)}
           >
             <SheetTrigger asChild>
-              <Button variant="ghost" size={"icon"} className="flex md:hidden">
+              <Button variant="ghost" size={"icon"} className="flex lg:hidden">
                 <Menu className="h-5 w-5" />
               </Button>
             </SheetTrigger>

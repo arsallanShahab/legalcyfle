@@ -1,3 +1,4 @@
+import AdWrapper from "@/components/AdWrapper";
 import ArticleCard from "@/components/ArticleCard";
 import FlexContainer from "@/components/FlexContainer";
 import { Badge } from "@/components/ui/badge";
@@ -212,20 +213,10 @@ export default function Home({ data }: HomeProps) {
           </Swiper>
         </div>
         <div className="row-span-3 hidden h-full min-w-[325px] rounded-xl bg-zinc-100 px-3 py-2 text-sm font-medium dark:bg-zinc-800 lg:flex">
-          {/* ADVERTS */}
-          <ins
-            className="adsbygoogle"
-            style={{ display: "block" }}
-            data-ad-client="ca-pub-5892936530350741"
+          <AdWrapper
             data-ad-slot="4210005765"
             data-ad-format="auto"
             data-full-width-responsive="true"
-          ></ins>
-          <script
-            dangerouslySetInnerHTML={{
-              __html:
-                "(window.adsbygoogle = window.adsbygoogle || []).push({});",
-            }}
           />
         </div>
       </div>
@@ -243,19 +234,10 @@ export default function Home({ data }: HomeProps) {
             variant="row-center"
             className="hidden h-full w-full rounded-xl p-5 md:flex"
           >
-            <ins
-              className="adsbygoogle"
-              style={{ display: "block" }}
-              data-ad-client="ca-pub-5892936530350741"
+            <AdWrapper
               data-ad-slot="4210005765"
               data-ad-format="auto"
               data-full-width-responsive="true"
-            ></ins>
-            <script
-              dangerouslySetInnerHTML={{
-                __html:
-                  "(window.adsbygoogle = window.adsbygoogle || []).push({});",
-              }}
             />
           </FlexContainer>
         </div>
@@ -272,19 +254,10 @@ export default function Home({ data }: HomeProps) {
             variant="row-center"
             className="hidden h-full w-full rounded-xl p-5 md:flex"
           >
-            <ins
-              className="adsbygoogle"
-              style={{ display: "block" }}
-              data-ad-client="ca-pub-5892936530350741"
+            <AdWrapper
               data-ad-slot="4210005765"
               data-ad-format="auto"
               data-full-width-responsive="true"
-            ></ins>
-            <script
-              dangerouslySetInnerHTML={{
-                __html:
-                  "(window.adsbygoogle = window.adsbygoogle || []).push({});",
-              }}
             />
           </FlexContainer>
         </div>
@@ -303,19 +276,10 @@ export default function Home({ data }: HomeProps) {
             variant="row-center"
             className="hidden h-full w-full rounded-xl p-5 md:flex"
           >
-            <ins
-              className="adsbygoogle"
-              style={{ display: "block" }}
-              data-ad-client="ca-pub-5892936530350741"
+            <AdWrapper
               data-ad-slot="4210005765"
               data-ad-format="auto"
               data-full-width-responsive="true"
-            ></ins>
-            <script
-              dangerouslySetInnerHTML={{
-                __html:
-                  "(window.adsbygoogle = window.adsbygoogle || []).push({});",
-              }}
             />
           </FlexContainer>
         </div>

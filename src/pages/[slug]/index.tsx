@@ -1,3 +1,4 @@
+import AdWrapper from "@/components/AdWrapper";
 import BlogContent from "@/components/Blog";
 import FlexContainer from "@/components/FlexContainer";
 import { Badge } from "@/components/ui/badge";
@@ -497,7 +498,7 @@ const Index = (props: Props) => {
   };
 
   return (
-    <>
+    <main className="relative">
       <Head>
         <title>{props.data.fields.title} - LegalCyfle</title>
         <meta name="description" content={props.data.fields.description} />
@@ -529,6 +530,14 @@ const Index = (props: Props) => {
           dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
         />
       </Head>
+      <div className="absolute left-0 top-0 hidden h-full w-[300px] rounded-xl lg:flex">
+        {" "}
+        <AdWrapper
+          data-ad-slot="4210005765"
+          data-ad-format="auto"
+          data-full-width-responsive="true"
+        />
+      </div>
       <FlexContainer
         variant="column-start"
         className="mx-auto max-w-3xl px-4 py-10 md:px-10 md:py-20"
@@ -971,7 +980,7 @@ const Index = (props: Props) => {
           </ModalContent>
         </Modal>
       </FlexContainer>
-    </>
+    </main>
   );
 };
 

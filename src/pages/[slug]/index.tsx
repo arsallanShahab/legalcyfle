@@ -73,6 +73,11 @@ import {
   WhatsappIcon,
 } from "react-share";
 import safeJsonStringify from "safe-json-stringify";
+import tz from "dayjs/plugin/timezone";
+import utc from "dayjs/plugin/utc";
+
+dayjs.extend(utc);
+dayjs.extend(tz);
 
 type Props = {
   data: BlogEntry;
@@ -639,9 +644,11 @@ const Index = (props: Props) => {
                 documentToHtmlString(props.data.fields.body as Document),
               )}{" "}
               min read •{" "}
-              {dayjs(props.data.fields?.date).format(
-                " hh:mm A - MMMM DD, YYYY",
-              )}
+              {props?.data?.fields?.date
+                ? dayjs(props?.data?.fields?.date)
+                    .tz("Asia/Kolkata")
+                    .format("MMMM DD, YYYY")
+                : "Date not available"}
             </p>
           </FlexContainer>
         </FlexContainer>

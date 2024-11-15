@@ -47,7 +47,7 @@ const ArticleCard = ({ article }: Props) => {
       >
         <FlexContainer variant="row-start">
           {article.fields.category?.map((category) => (
-            <Link
+            <a
               href={`/category/${category.fields.slug}`}
               key={category.sys.id}
             >
@@ -58,7 +58,7 @@ const ArticleCard = ({ article }: Props) => {
               >
                 {category.fields.name}
               </Badge>
-            </Link>
+            </a>
           ))}
         </FlexContainer>
         <Link
@@ -108,7 +108,11 @@ const ArticleCard = ({ article }: Props) => {
             <span className="hidden md:block">•</span>
             <p className="text-nowrap rounded-xl bg-zinc-200 px-2 py-1 text-xs text-black dark:bg-zinc-900 dark:text-gray-400">
               {/* july 7 2024 with time */}
-              {dayjs(article.fields?.date).format("hh:mm A - MMMM DD, YYYY")}
+              {article?.fields?.date
+                ? dayjs(article?.fields?.date)
+                    .tz("Asia/Kolkata")
+                    .format("MMMM DD, YYYY")
+                : "Date not available"}
             </p>
             <span className="hidden md:block">•</span>
             <div className="text-nowrap rounded-xl bg-zinc-200 px-2 py-1 text-xs text-black dark:bg-zinc-900 dark:text-gray-400">

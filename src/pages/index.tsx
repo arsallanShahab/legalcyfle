@@ -9,6 +9,8 @@ import { documentToHtmlString } from "@contentful/rich-text-html-renderer";
 import { Document } from "@contentful/rich-text-types";
 import { Divider } from "@nextui-org/react";
 import dayjs from "dayjs";
+import tz from "dayjs/plugin/timezone";
+import utc from "dayjs/plugin/utc";
 import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
@@ -25,6 +27,9 @@ import {
   Thumbs,
 } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
+
+dayjs.extend(utc);
+dayjs.extend(tz);
 
 interface HomeProps {
   data: {
@@ -161,7 +166,7 @@ export default function Home({ data }: HomeProps) {
                   key={article.sys.id}
                   className="relative h-[80vh] max-h-[300px] overflow-hidden rounded-xl md:max-h-[450px]"
                 >
-                  <Link href={article.fields?.slug || "#"} className="group">
+                  <a href={article.fields?.slug || "#"} className="group">
                     <Image
                       src={formatImageLink(thumbnail)}
                       alt="LegalCyfle"
@@ -184,9 +189,11 @@ export default function Home({ data }: HomeProps) {
                       >
                         <FlexContainer alignItems="center">
                           <p className="text-sm font-medium text-white md:text-medium">
-                            {dayjs(article?.fields?.date).format(
-                              "hh:mm A - MMMM DD, YYYY",
-                            )}
+                            {article?.fields?.date
+                              ? dayjs(article?.fields?.date)
+                                  .tz("Asia/Kolkata")
+                                  .format("MMMM DD, YYYY")
+                              : "Date not available"}
                           </p>
                           <Divider
                             orientation="vertical"
@@ -211,7 +218,7 @@ export default function Home({ data }: HomeProps) {
                         </p>
                       </FlexContainer>
                     </FlexContainer>
-                  </Link>
+                  </a>
                 </SwiperSlide>
               );
             })}

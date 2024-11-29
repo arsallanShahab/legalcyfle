@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import FlexContainer from "./FlexContainer";
 
 declare global {
@@ -13,14 +13,16 @@ declare global {
 type Props = {};
 
 const AdWrapper = (props: Props) => {
+  const adInitialized = useRef(false);
+
   useEffect(() => {
-    try {
-      if (window.adsbygoogle && !window.adsbygoogle.loaded) {
-        console.log("adsbygoogle loaded");
+    if (!adInitialized.current) {
+      try {
         (window.adsbygoogle = window.adsbygoogle || []).push({});
+        adInitialized.current = true;
+      } catch (err) {
+        console.log(err);
       }
-    } catch (err) {
-      console.log(err);
     }
   }, []);
 

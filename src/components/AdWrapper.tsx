@@ -27,12 +27,13 @@ const AdWrapper = (props: Props) => {
   }, []);
 
   return (
-    <FlexContainer variant="row-center">
+    <FlexContainer variant="row-center" className="w-full flex-1">
       <ins
         className="adsbygoogle adbanner-customize"
         style={{
           display: "block",
           overflow: "hidden",
+          width: "100%",
         }}
         data-ad-client={"ca-pub-5892936530350741"}
         {...props}

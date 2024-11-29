@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import FlexContainer from "./FlexContainer";
 
 declare global {
   interface Window {
@@ -24,15 +25,17 @@ const AdWrapper = (props: Props) => {
   }, []);
 
   return (
-    <ins
-      className="adsbygoogle adbanner-customize"
-      style={{
-        display: "block",
-        overflow: "hidden",
-      }}
-      data-ad-client={"ca-pub-5892936530350741"}
-      {...props}
-    />
+    <FlexContainer variant="row-center">
+      <ins
+        className="adsbygoogle adbanner-customize"
+        style={{
+          display: "block",
+          overflow: "hidden",
+        }}
+        data-ad-client={"ca-pub-5892936530350741"}
+        {...props}
+      />
+    </FlexContainer>
   );
 };
 

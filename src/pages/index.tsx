@@ -40,7 +40,7 @@ export default function Home({ data }: HomeProps) {
   const router = useRouter();
 
   return (
-    <main className="flex flex-col items-start justify-start gap-10 py-5 pb-20 *:w-full">
+    <main className="flex flex-col items-center justify-center gap-10 py-5 pb-20 *:w-full">
       <Head>
         <title>LegalCyfle - iuris occasio omnibus</title>
         <meta name="description" content="iuris occasio omnibus" />
@@ -127,7 +127,7 @@ export default function Home({ data }: HomeProps) {
         data-ad-slot="7648124020"
       />
       <div className="grid max-h-[80vh] grid-cols-3 grid-rows-3 gap-5 px-3 md:px-5 lg:grid-cols-4 lg:px-10">
-        <div className="col-span-4 row-span-3">
+        <div className="col-span-3 row-span-3">
           <Swiper
             spaceBetween={50}
             // slidesPerView={1}
@@ -217,6 +217,18 @@ export default function Home({ data }: HomeProps) {
             })}
           </Swiper>
         </div>
+        <div>
+          <AdWrapper
+            data-ad-layout="in-article"
+            data-ad-format="fluid"
+            data-ad-slot="5536160107"
+          />
+          <AdWrapper
+            data-ad-layout="in-article"
+            data-ad-format="fluid"
+            data-ad-slot="5536160107"
+          />
+        </div>
         {/* <div className="row-span-3 hidden h-full min-w-[325px] rounded-xl bg-zinc-100 px-3 py-2 text-sm font-medium dark:bg-zinc-800 lg:flex">
          
         </div> */}
@@ -231,10 +243,17 @@ export default function Home({ data }: HomeProps) {
           Latest Articles
         </h3>
         <div className="grid grid-cols-5 gap-5">
-          <div className="col-span-5 grid gap-y-7 md:col-span-5">
+          <div className="col-span-5 grid gap-y-7 md:col-span-4">
             {data?.latestArticles?.map((article: BlogEntry) => {
               return <ArticleCard article={article} key={article.sys.id} />;
             })}
+          </div>
+          <div className="col-span-2">
+            <AdWrapper
+              data-ad-layout="in-article"
+              data-ad-format="fluid"
+              data-ad-slot="5536160107"
+            />
           </div>
         </div>
       </FlexContainer>
@@ -246,10 +265,20 @@ export default function Home({ data }: HomeProps) {
       <FlexContainer variant="column-start" className="px-3 md:px-5 lg:px-10">
         <h3 className="px-2 text-4xl font-semibold md:mb-5 md:mt-10">News</h3>
         <div className="grid grid-cols-5 gap-5">
-          <div className="col-span-5 grid gap-y-7 md:col-span-5">
+          <div className="col-span-5 grid gap-y-7 md:col-span-4">
             {data?.news?.map((article: BlogEntry) => {
               return <ArticleCard article={article} key={article.sys.id} />;
             })}
+          </div>
+          <div className="col-span-2">
+            {" "}
+            <div className="col-span-2">
+              <AdWrapper
+                data-ad-layout="in-article"
+                data-ad-format="fluid"
+                data-ad-slot="5536160107"
+              />
+            </div>
           </div>
         </div>
       </FlexContainer>
@@ -263,10 +292,20 @@ export default function Home({ data }: HomeProps) {
           Case Analysis
         </h3>
         <div className="grid grid-cols-5 gap-5">
-          <div className="col-span-5 grid gap-y-7 md:col-span-5">
+          <div className="col-span-5 grid gap-y-7 md:col-span-4">
             {data?.caseAnalysis?.map((article: BlogEntry) => {
               return <ArticleCard article={article} key={article.sys.id} />;
             })}
+          </div>
+          <div>
+            {" "}
+            <div className="col-span-2">
+              <AdWrapper
+                data-ad-layout="in-article"
+                data-ad-format="fluid"
+                data-ad-slot="5536160107"
+              />
+            </div>
           </div>
         </div>
       </FlexContainer>

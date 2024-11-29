@@ -2,7 +2,6 @@ import { estimateReadingTime, formatImageLink } from "@/lib/utils";
 import { BlogEntry } from "@/types/contentful/blog";
 import { documentToHtmlString } from "@contentful/rich-text-html-renderer";
 import { Document } from "@contentful/rich-text-types";
-import { Divider } from "@nextui-org/react";
 import dayjs from "dayjs";
 import Image from "next/image";
 import Link from "next/link";
@@ -84,7 +83,7 @@ const ArticleCard = ({ article }: Props) => {
           <FlexContainer alignItems="center" className="relative" wrap="wrap">
             <FlexContainer gap="xs" alignItems="center" wrap="wrap">
               <span className="text-xs">By</span>
-              {article.fields?.authors?.map((author, index) => (
+              {article.fields?.authors?.map((author) => (
                 <Link
                   href={"/author/" + author.sys.id}
                   key={author.sys.id}
@@ -107,7 +106,6 @@ const ArticleCard = ({ article }: Props) => {
             /> */}
             <span className="hidden md:block">•</span>
             <p className="text-nowrap rounded-xl bg-zinc-200 px-2 py-1 text-xs text-black dark:bg-zinc-900 dark:text-gray-400">
-              {/* july 7 2024 with time */}
               {dayjs(article.fields?.date).format("hh:mm A - MMMM DD, YYYY")}
             </p>
             <span className="hidden md:block">•</span>

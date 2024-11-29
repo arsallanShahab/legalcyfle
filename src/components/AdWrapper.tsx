@@ -31,9 +31,12 @@ const AdWrapper = (props: Props) => {
       <ins
         className="adsbygoogle adbanner-customize"
         style={{
-          display: "block",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
           overflow: "hidden",
           width: "100%",
+          minWidth: "250px",
         }}
         data-ad-client={"ca-pub-5892936530350741"}
         {...props}

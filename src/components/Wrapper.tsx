@@ -11,7 +11,7 @@ const Wrapper = (props: Props) => {
   return (
     <div
       className={cn(
-        "mx-auto max-w-3xl px-4 py-10 md:px-10 md:py-20",
+        "mx-auto max-w-5xl px-4 py-10 md:px-10 md:py-20",
         props.className,
       )}
     >

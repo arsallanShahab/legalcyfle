@@ -279,13 +279,13 @@ const Navbar = (_props: Props) => {
             value={search}
             onValueChange={setSearch}
             startContent={
-              <button
+              <span
                 onClick={() => {
                   router.push(`/search?q=${search}`);
                 }}
               >
                 <Search className="h-5 w-5" />
-              </button>
+              </span>
             }
             onKeyUp={(e) => {
               if (e.key === "Enter") {
@@ -400,7 +400,7 @@ const Navbar = (_props: Props) => {
               <FlexContainer
                 variant="column-start"
                 gap="none"
-                className="z-[100] mt-7"
+                className="z-[100] mt-7 gap-3"
               >
                 <Link
                   href="/category/publications"
@@ -487,13 +487,13 @@ const Navbar = (_props: Props) => {
                   value={search}
                   onValueChange={setSearch}
                   startContent={
-                    <button
+                    <span
                       onClick={() => {
                         router.push(`/search?q=${search}`);
                       }}
                     >
                       <Search className="h-5 w-5" />
-                    </button>
+                    </span>
                   }
                   onKeyUp={(e) => {
                     if (e.key === "Enter") {

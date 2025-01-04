@@ -28,7 +28,7 @@ const ArticleCard = ({ article }: Props) => {
           alt={article.fields.title}
           width={500}
           height={500}
-          className="h-[200px] rounded-xl border object-cover dark:border-zinc-800 md:w-[275px]"
+          className="h-[200px] w-full rounded-xl border object-cover dark:border-zinc-800 md:w-[275px]"
         />
         <Link
           href={`/${article.fields.slug}`}

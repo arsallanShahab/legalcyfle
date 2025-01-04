@@ -46,6 +46,8 @@ import {
   useDisclosure,
 } from "@nextui-org/react";
 import dayjs from "dayjs";
+import tz from "dayjs/plugin/timezone";
+import utc from "dayjs/plugin/utc";
 import {
   Ban,
   Heart,
@@ -73,8 +75,6 @@ import {
   WhatsappIcon,
 } from "react-share";
 import safeJsonStringify from "safe-json-stringify";
-import tz from "dayjs/plugin/timezone";
-import utc from "dayjs/plugin/utc";
 
 dayjs.extend(utc);
 dayjs.extend(tz);
@@ -540,6 +540,11 @@ const Index = (props: Props) => {
         className="mx-auto max-w-3xl px-4 py-10 md:px-10 md:py-20"
         gap="2xl"
       >
+        <AdWrapper
+          data-ad-format="fluid"
+          data-ad-layout-key="-es-7n+gf+bp-16h"
+          data-ad-slot="7648124020"
+        />
         <FlexContainer variant="column-start" gap="md">
           <Breadcrumb>
             <BreadcrumbList>

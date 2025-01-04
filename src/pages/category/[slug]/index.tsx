@@ -1,3 +1,4 @@
+import AdWrapper from "@/components/AdWrapper";
 import ArticleCard from "@/components/ArticleCard";
 import Wrapper from "@/components/Wrapper";
 import client from "@/lib/contentful";
@@ -15,6 +16,11 @@ const Index = (props: Props) => {
   console.log(props.data, "category");
   return (
     <Wrapper>
+      <AdWrapper
+        data-ad-format="fluid"
+        data-ad-layout-key="-es-7n+gf+bp-16h"
+        data-ad-slot="7648124020"
+      />
       <h1 className="font-giest-sans text-4xl">
         {props.data[0]?.fields?.category[0]?.fields.name}
       </h1>

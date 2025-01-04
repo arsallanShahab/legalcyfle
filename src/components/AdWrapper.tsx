@@ -17,8 +17,9 @@ const AdWrapper = (props: Props) => {
 
   useEffect(() => {
     if (!adInitialized.current) {
+      let adsbygoogle = window.adsbygoogle || [];
       try {
-        (window.adsbygoogle = window.adsbygoogle || []).push({});
+        (adsbygoogle = window.adsbygoogle || []).push({});
         adInitialized.current = true;
       } catch (err) {
         console.log(err);

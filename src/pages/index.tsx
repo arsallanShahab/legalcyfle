@@ -223,7 +223,7 @@ export default function Home({ data }: HomeProps) {
           })}
         </Swiper>
 
-        <div className="w-[300px]">
+        <div className="md:flexw-[300px] hidden">
           <AdWrapper
             data-ad-format="fluid"
             data-ad-layout-key="-es-7n+gf+bp-16h"

@@ -79,7 +79,7 @@ body {
 } */
 
 .blog_link {
-  @apply rounded-3xl bg-indigo-600 px-4 py-2 text-xs leading-loose text-indigo-100 duration-300 hover:bg-indigo-500 hover:text-white dark:bg-indigo-800 dark:text-indigo-200;
+  @apply rounded-3xl bg-zinc-50 p-1.5 text-zinc-900 hover:bg-zinc-100 dark:bg-zinc-800 dark:text-zinc-100 dark:hover:bg-zinc-700;
 }
 
 .ad_infeed {

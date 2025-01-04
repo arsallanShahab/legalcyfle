@@ -75,7 +75,15 @@ const renderNode: { [key: string]: (node: Node) => string } = {
     return `<a href="${node.data.uri}">${node.content[0].value}</a>`;
   },
   [BLOCKS.PARAGRAPH]: (node) => {
-    return `<p class="blog_paragraph">
+    return `<div class="ad_infeed"><ins class="adsbygoogle"
+     style="display:block; text-align:center;"
+     data-ad-layout="in-article"
+     data-ad-format="fluid"
+     data-ad-client="ca-pub-5892936530350741"
+     data-ad-slot="5536160107"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script></div><p class="blog_paragraph">
       ${node.content
         .map((n) => {
           if (n.nodeType === "text") {

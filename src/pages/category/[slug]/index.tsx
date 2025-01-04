@@ -18,8 +18,8 @@ const Index = (props: Props) => {
     <Wrapper>
       <AdWrapper
         data-ad-format="fluid"
-        data-ad-layout-key="-es-7n+gf+bp-16h"
-        data-ad-slot="7648124020"
+        data-ad-layout-key="-et-7n+gx+cc-19b"
+        data-ad-slot="1973122915"
       />
       <h1 className="font-giest-sans text-4xl">
         {props.data[0]?.fields?.category[0]?.fields.name}

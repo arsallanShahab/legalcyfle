@@ -16,15 +16,20 @@ const AdWrapper = (props: Props) => {
   const adInitialized = useRef(false);
 
   useEffect(() => {
-    if (!adInitialized.current) {
-      let adsbygoogle = window.adsbygoogle || [];
-      try {
-        (adsbygoogle = window.adsbygoogle || []).push({});
-        adInitialized.current = true;
-      } catch (err) {
-        console.log(err);
+    const intervalId = setInterval(() => {
+      if (!adInitialized.current && window.adsbygoogle) {
+        let adsbygoogle = window.adsbygoogle || [];
+        try {
+          (adsbygoogle = window.adsbygoogle || []).push({});
+          adInitialized.current = true;
+          clearInterval(intervalId); // Clear the interval once adsbygoogle is available
+        } catch (err) {
+          console.log(err);
+        }
       }
-    }
+    }, 1000); // Check every second
+
+    return () => clearInterval(intervalId); // Cleanup interval on component unmount
   }, []);
 
   return (

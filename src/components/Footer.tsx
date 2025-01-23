@@ -180,21 +180,38 @@ const Footer = () => {
               Terms of Service
             </Link>
           </FlexContainer>
-          <FlexContainer variant="column-start" gap="md">
+          <FlexContainer variant="column-start">
             <h3 className="text-sm font-semibold text-black dark:text-zinc-200">
-              Resources
+              Social
             </h3>
+
             <Link
-              href="/category/blogs"
+              target="_blank"
+              href="https://www.facebook.com/share/14jA9sKyNj/?mibextid=qi2Omg"
               className="text-sm text-zinc-600 dark:text-zinc-300"
             >
-              Blog
+              Facebook
             </Link>
             <Link
-              href="/category/news"
+              target="_blank"
+              href="https://www.linkedin.com/company/legalcyfle-in/"
               className="text-sm text-zinc-600 dark:text-zinc-300"
             >
-              News
+              Linkedin
+            </Link>
+            <Link
+              target="_blank"
+              href="https://t.me/legalcyfle"
+              className="text-sm text-zinc-600 dark:text-zinc-300"
+            >
+              Telegram
+            </Link>
+            <Link
+              target="_blank"
+              href="https://www.instagram.com/legalcyfle/profilecard/?igsh=OWhvZWg0dWUxZHlu"
+              className="text-sm text-zinc-600 dark:text-zinc-300"
+            >
+              Instagram
             </Link>
           </FlexContainer>
 
@@ -220,6 +237,23 @@ const Footer = () => {
               className="text-sm text-zinc-600 dark:text-zinc-300"
             >
               Careers
+            </Link>
+          </FlexContainer>
+          <FlexContainer variant="column-start" gap="md">
+            <h3 className="text-sm font-semibold text-black dark:text-zinc-200">
+              Resources
+            </h3>
+            <Link
+              href="/category/blogs"
+              className="text-sm text-zinc-600 dark:text-zinc-300"
+            >
+              Blog
+            </Link>
+            <Link
+              href="/category/news"
+              className="text-sm text-zinc-600 dark:text-zinc-300"
+            >
+              News
             </Link>
           </FlexContainer>
         </FlexContainer>

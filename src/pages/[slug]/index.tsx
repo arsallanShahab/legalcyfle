@@ -846,30 +846,31 @@ const Index = (props: Props) => {
         <FlexContainer variant="column-start" className="mt-5" gap="xl">
           <h3 className="text-2xl font-medium">Recommended Articles</h3>
           <div className="grid items-stretch gap-5 md:grid-cols-2">
-            {props.recommendedArticles?.map((article) => {
-              console.log(article);
-              return (
-                <Link key={article.sys.id} href={`/${article.fields.slug}`}>
-                  <FlexContainer
-                    variant="column-start"
-                    className="h-full rounded-3xl bg-zinc-50 p-3 dark:bg-zinc-700"
-                  >
-                    <Image
-                      src={formatImageLink(
-                        article.fields.image.fields.file.url,
-                      )}
-                      width={300}
-                      height={200}
-                      className="h-40 w-full rounded-xl object-cover object-center"
-                      alt="Cover"
-                    />
-                    <h3 className="text-lg font-semibold">
-                      {article.fields.title}
-                    </h3>
-                  </FlexContainer>
-                </Link>
-              );
-            })}
+            {props.recommendedArticles.length &&
+              props.recommendedArticles?.map((article) => {
+                console.log(article);
+                return (
+                  <Link key={article.sys.id} href={`/${article.fields.slug}`}>
+                    <FlexContainer
+                      variant="column-start"
+                      className="h-full rounded-3xl bg-zinc-50 p-3 dark:bg-zinc-700"
+                    >
+                      <Image
+                        src={formatImageLink(
+                          article.fields.image.fields.file.url,
+                        )}
+                        width={300}
+                        height={200}
+                        className="h-40 w-full rounded-xl object-cover object-center"
+                        alt="Cover"
+                      />
+                      <h3 className="text-lg font-semibold">
+                        {article.fields.title}
+                      </h3>
+                    </FlexContainer>
+                  </Link>
+                );
+              })}
           </div>
         </FlexContainer>
         <FlexContainer variant="column-start" className="mt-5" gap="xl">

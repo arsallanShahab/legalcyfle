@@ -147,6 +147,7 @@ type BlogEntryFields = {
   body: Body;
   authors: Author[];
   category: Category[];
+  recommendedPosts: BlogEntry[];
 };
 
 export type BlogEntry = {

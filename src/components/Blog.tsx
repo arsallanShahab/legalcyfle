@@ -93,7 +93,7 @@ const renderNode: { [key: string]: (node: Node) => string } = {
           }
           if (n.nodeType === INLINES.HYPERLINK) {
             console.log(n, "HYPERLINK");
-            return `<a target="_blank" class="blog_link" href="${n.data.uri}">${n.content[0].value}</a>`;
+            return `<a class="blog_link" href="${n.data.uri}">${n.content[0].value}</a>`;
           }
           if (n.nodeType === BLOCKS.EMBEDDED_ASSET) {
             return `<img src="${n.data.target.fields.file.url}" alt="${n.data.target.fields.title}" />`;

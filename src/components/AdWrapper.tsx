@@ -32,6 +32,29 @@ const AdWrapper = (props: Props) => {
     return () => clearInterval(intervalId); // Cleanup interval on component unmount
   }, []);
 
+  if (process.env.NODE_ENV === "development") {
+    return (
+      <FlexContainer variant="row-center" className="w-full flex-1">
+        <div
+          className="adsbygoogle adbanner-customize"
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            overflow: "hidden",
+            width: "100%",
+            minWidth: "250px",
+            height: "100px",
+            backgroundColor: "rgba(0, 0, 0, 0.1)",
+          }}
+          {...props}
+        >
+          <h3 className="text-gray-400">Ads will be shown here</h3>
+        </div>
+      </FlexContainer>
+    );
+  }
+
   return (
     <FlexContainer variant="row-center" className="w-full flex-1">
       <ins

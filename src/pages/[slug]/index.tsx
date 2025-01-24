@@ -81,9 +81,11 @@ dayjs.extend(tz);
 
 type Props = {
   data: BlogEntry;
+  recommendedArticles: BlogEntry[];
 };
 
 const Index = (props: Props) => {
+  console.log(props, "props");
   const router = useRouter();
   const { user } = useGlobalContext();
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
@@ -537,7 +539,7 @@ const Index = (props: Props) => {
       </Head>
       <FlexContainer
         variant="column-start"
-        className="mx-auto max-w-3xl px-4 py-10 md:px-10 md:py-20"
+        className="mx-auto max-w-4xl px-4 py-10 pt-2.5 md:px-10 md:py-20 md:pt-2.5"
         gap="2xl"
       >
         <AdWrapper
@@ -575,7 +577,7 @@ const Index = (props: Props) => {
               </BreadcrumbItem>
             </BreadcrumbList>
           </Breadcrumb>
-          <h1 className="max-w-xl text-left font-poppins text-3xl font-semibold md:text-4xl">
+          <h1 className="max-w-3xl text-left font-poppins text-3xl font-semibold md:text-5xl">
             {props.data.fields.title}
           </h1>
         </FlexContainer>
@@ -748,7 +750,7 @@ const Index = (props: Props) => {
         <FlexContainer
           variant="column-start"
           gap="sm"
-          className="mb-2.5 rounded-xl bg-zinc-100 p-2"
+          className="mb-2.5 rounded-3xl bg-zinc-50 p-2 dark:bg-zinc-700"
         >
           <FlexContainer variant="row-between">
             <FlexContainer variant="row-start" gap="sm" alignItems="center">
@@ -759,16 +761,20 @@ const Index = (props: Props) => {
                 >
                   <Badge
                     key={category.sys.id}
-                    variant={"default"}
-                    className="rounded-3xl px-4 py-1.5 text-sm"
+                    variant={"secondary"}
+                    className="borderpx-4 rounded-3xl py-1.5 text-sm"
                   >
                     {category.fields.name}
                   </Badge>
                 </Link>
               ))}
             </FlexContainer>
-            <Button className="rounded-3xl" onClick={onOpen}>
-              <Share className="h-3.5 w-3.5 stroke-2 text-white dark:text-black" />
+            <Button
+              variant={"secondary"}
+              className="rounded-3xl"
+              onClick={onOpen}
+            >
+              <Share className="h-3.5 w-3.5 stroke-2 text-black dark:text-white" />
             </Button>
           </FlexContainer>
         </FlexContainer>
@@ -832,10 +838,39 @@ const Index = (props: Props) => {
           </Button> */}
           </FlexContainer>
           {props.data.fields?.authors.length === 1 && (
-            <p className="max-w-lg text-base font-normal text-gray-400">
+            <p className="max-w-2xl text-base font-normal text-gray-400">
               {props.data.fields.authors[0]?.fields?.bio}
             </p>
           )}
+        </FlexContainer>
+        <FlexContainer variant="column-start" className="mt-5" gap="xl">
+          <h3 className="text-2xl font-medium">Recommended Articles</h3>
+          <div className="grid items-stretch gap-5 md:grid-cols-2">
+            {props.recommendedArticles?.map((article) => {
+              console.log(article);
+              return (
+                <Link key={article.sys.id} href={`/${article.fields.slug}`}>
+                  <FlexContainer
+                    variant="column-start"
+                    className="h-full rounded-3xl bg-zinc-50 p-3 dark:bg-zinc-700"
+                  >
+                    <Image
+                      src={formatImageLink(
+                        article.fields.image.fields.file.url,
+                      )}
+                      width={300}
+                      height={200}
+                      className="h-40 w-full rounded-xl object-cover object-center"
+                      alt="Cover"
+                    />
+                    <h3 className="text-lg font-semibold">
+                      {article.fields.title}
+                    </h3>
+                  </FlexContainer>
+                </Link>
+              );
+            })}
+          </div>
         </FlexContainer>
         <FlexContainer variant="column-start" className="mt-5" gap="xl">
           <h3 className="text-2xl font-medium">Comments</h3>
@@ -1008,13 +1043,34 @@ export const getStaticProps = async (
   const articles = await client.getEntries({
     content_type: "blogPage",
     "fields.slug": slug,
+    include: 10,
+    select: ["fields"],
   });
 
+  const recommendedArticlesIds: string[] = Array.isArray(
+    articles.items[0]?.fields?.recommendedPosts,
+  )
+    ? articles.items[0].fields.recommendedPosts.map((post: any) => post?.sys.id)
+    : [];
+
+  console.log(recommendedArticlesIds, "recommendedArticlesIds");
+
+  const recommendedArticles = await client.getEntries({
+    content_type: "blogPage",
+    "sys.id[in]":
+      recommendedArticlesIds.length > 0 ? recommendedArticlesIds : [""],
+  });
+  const safeRecommendedArticles = JSON.parse(
+    safeJsonStringify(recommendedArticles.items),
+  );
+
   const safeJsonArticle = JSON.parse(safeJsonStringify(articles.items[0]));
+  console.log(safeJsonArticle, "safeJsonArticle");
   // console.log(articles.items, "articles");
   return {
     props: {
       data: safeJsonArticle,
+      recommendedArticles: safeRecommendedArticles,
     },
   };
 };

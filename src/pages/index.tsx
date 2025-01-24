@@ -396,6 +396,7 @@ export const getStaticProps = async () => {
   const safeJsonTopArticles = JSON.parse(
     safeJsonStringify(topArticles?.items[0]?.fields?.articles as BlogEntry[]),
   );
+  console.log(safeJsonTopArticles);
   return {
     props: {
       data: {

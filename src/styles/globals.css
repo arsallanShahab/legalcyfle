@@ -79,7 +79,7 @@ body {
 } */
 
 .blog_link {
-  @apply rounded-3xl bg-zinc-50 p-1.5 text-zinc-900 hover:bg-zinc-100 dark:bg-zinc-800 dark:text-zinc-100 dark:hover:bg-zinc-700;
+  @apply text-wrap break-all rounded-3xl bg-zinc-50 p-1.5 text-zinc-900 hover:bg-zinc-100 dark:bg-zinc-800 dark:text-zinc-100 dark:hover:bg-zinc-700;
 }
 
 .ad_infeed {

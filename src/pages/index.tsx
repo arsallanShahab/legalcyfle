@@ -1,9 +1,11 @@
 import AdWrapper from "@/components/AdWrapper";
 import ArticleCard from "@/components/ArticleCard";
 import FlexContainer from "@/components/FlexContainer";
+import Heading from "@/components/Heading";
 import { Badge } from "@/components/ui/badge";
+import { SocialLinks } from "@/lib/constants";
 import client from "@/lib/contentful";
-import { estimateReadingTime, formatImageLink } from "@/lib/utils";
+import { cn, estimateReadingTime, formatImageLink } from "@/lib/utils";
 import { BlogEntry } from "@/types/contentful/blog";
 import { documentToHtmlString } from "@contentful/rich-text-html-renderer";
 import { Document } from "@contentful/rich-text-types";
@@ -45,7 +47,7 @@ export default function Home({ data }: HomeProps) {
   const router = useRouter();
 
   return (
-    <main className="flex flex-col items-center justify-center gap-10 py-5 pb-20 *:w-full">
+    <main className="flex flex-col items-center justify-center gap-14 py-5 pb-20 *:w-full">
       <Head>
         <title>LegalCyfle - iuris occasio omnibus</title>
         <meta name="description" content="iuris occasio omnibus" />
@@ -244,6 +246,41 @@ export default function Home({ data }: HomeProps) {
          
         </div> */}
       </div>
+      <FlexContainer
+        variant="column-start"
+        gap="5xl"
+        className="px-3 md:px-5 lg:px-10"
+      >
+        <Heading>Connect with us on Social Media</Heading>
+        <div className="grid gap-5 sm:grid-cols-5">
+          {Object.keys(SocialLinks).map((key) => {
+            const Icon = SocialLinks[key].icon;
+            return (
+              <Link
+                href={SocialLinks[key].url}
+                target="_blank"
+                key={key}
+                className={cn(
+                  "flex items-center justify-center gap-2 rounded-xl bg-zinc-100 px-2 py-10 font-giest-sans text-xl font-medium text-zinc-900",
+                  key === "facebook" &&
+                    "bg-[#0866FF] text-white hover:bg-[#0052CC]",
+                  key === "instagram" &&
+                    "bg-[#FF0069] text-white hover:bg-[#D6005A]",
+                  key === "linkedin" &&
+                    "bg-[#0077b5] text-white hover:bg-[#006097]",
+                  key === "telegram" &&
+                    "bg-[#26A5E4] text-white hover:bg-[#1C8DD4]",
+                  key === "whatsapp" &&
+                    "bg-[#25D366] text-white hover:bg-[#128C7E]",
+                )}
+              >
+                <Icon className="h-7 w-7 fill-current" />
+                {key}
+              </Link>
+            );
+          })}
+        </div>
+      </FlexContainer>
       <AdWrapper
         data-ad-format="fluid"
         data-ad-layout-key="-es-7n+gf+bp-16h"

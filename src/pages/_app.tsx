@@ -1,3 +1,4 @@
+import FlexContainer from "@/components/FlexContainer";
 import Footer from "@/components/Footer";
 import GoogleAnalytics from "@/components/GoogleAnalytics";
 import { WhatsappIcon } from "@/components/icons";
@@ -7,6 +8,7 @@ import { useGlobalContext } from "@/context/GlobalContext";
 import "@/styles/globals.css";
 import { GeistMono } from "geist/font/mono";
 import { GeistSans } from "geist/font/sans";
+import { ChevronUp } from "lucide-react";
 import type { AppProps } from "next/app";
 import Link from "next/link";
 import Script from "next/script";
@@ -35,15 +37,23 @@ export default function App({ Component, pageProps }: AppProps) {
       <main className={`${GeistSans.variable} ${GeistMono.variable}`}>
         <Component {...pageProps} />
       </main>
-      <div className="fixed bottom-5 right-5">
+      <FlexContainer variant="column-end" className="fixed bottom-5 right-5">
+        <button
+          onClick={() => {
+            window.scrollTo({ top: 0, behavior: "smooth" });
+          }}
+          className="flex w-auto rounded-[99px] bg-zinc-700 p-5 shadow-md duration-200 active:scale-95"
+        >
+          <ChevronUp className="h-7 w-7 text-white" />
+        </button>
         <Link
           target="_blank"
           href={"https://chat.whatsapp.com/LYroveHgsMMLvbpIqVPKCe"}
-          className="flex w-auto rounded-[99px] bg-[#25D366] p-5 duration-200 hover:bg-[rgb(28,162,77)] active:scale-95"
+          className="flex w-auto rounded-[99px] bg-[#25D366] p-5 shadow-xl duration-200 hover:bg-[rgb(28,162,77)] active:scale-95"
         >
           <WhatsappIcon className="h-7 w-7 fill-white text-white" />
         </Link>
-      </div>
+      </FlexContainer>
       <Footer />
       {/* <GoogleAnalytics gaId="G-Q4PRKNHZDN" /> */}
       <GoogleAnalytics gaId="G-27Z23YH8R9" />

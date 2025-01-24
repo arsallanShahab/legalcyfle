@@ -7,7 +7,14 @@ import {
   Dropdown as NextUiDropdown,
   DropdownItem as NextUiDropdownItem,
 } from "@nextui-org/react";
-import { Loader2, Menu, Search } from "lucide-react";
+import {
+  CircleEllipsis,
+  LayoutGrid,
+  Loader2,
+  Menu,
+  Search,
+  SquareChevronRight,
+} from "lucide-react";
 import Link from "next/link";
 import { Router, useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
@@ -262,6 +269,13 @@ const Navbar = (_props: Props) => {
                 </DropdownItem>
               </DropdownContent>
             </Dropdown>
+            <Link
+              target="_blank"
+              href="https://www.indiacode.nic.in/"
+              className="px-2 py-1 hover:bg-zinc-100 dark:hover:bg-zinc-800"
+            >
+              India Code
+            </Link>
             {/* <Link
               href="/journal"
               target="_blank"
@@ -358,9 +372,9 @@ const Navbar = (_props: Props) => {
             onOpenChange={(isOpen) => setSidebarOpen(isOpen)}
           >
             <SheetTrigger asChild>
-              <Button variant="ghost" size={"icon"} className="flex lg:hidden">
-                <Menu className="h-5 w-5" />
-              </Button>
+              <button className="flex h-auto rounded-md bg-zinc-50 p-2 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 lg:hidden">
+                <LayoutGrid className="h-5 w-5" />
+              </button>
             </SheetTrigger>
             <SheetContent>
               <SheetHeader className="space-y-0 text-left">
@@ -407,6 +421,13 @@ const Navbar = (_props: Props) => {
                   className="border-b py-3 text-sm font-medium text-black dark:text-zinc-200"
                 >
                   Publications
+                </Link>
+                <Link
+                  target="_blank"
+                  href="https://www.indiacode.nic.in/"
+                  className="border-b py-3 text-sm font-medium text-black dark:text-zinc-200"
+                >
+                  India Code
                 </Link>
                 <Accordion type="single">
                   <AccordionItem value="item-1">

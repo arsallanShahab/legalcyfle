@@ -1,6 +1,7 @@
 "use client";
 
 import { useGlobalContext } from "@/context/GlobalContext";
+import { SocialLinks } from "@/lib/constants";
 import useStorage from "@/lib/hooks/use-storage";
 import {
   Button,
@@ -185,34 +186,20 @@ const Footer = () => {
               Social
             </h3>
 
-            <Link
-              target="_blank"
-              href="https://www.facebook.com/share/14jA9sKyNj/?mibextid=qi2Omg"
-              className="text-sm text-zinc-600 dark:text-zinc-300"
-            >
-              Facebook
-            </Link>
-            <Link
-              target="_blank"
-              href="https://www.linkedin.com/company/legalcyfle-in/"
-              className="text-sm text-zinc-600 dark:text-zinc-300"
-            >
-              Linkedin
-            </Link>
-            <Link
-              target="_blank"
-              href="https://t.me/legalcyfle"
-              className="text-sm text-zinc-600 dark:text-zinc-300"
-            >
-              Telegram
-            </Link>
-            <Link
-              target="_blank"
-              href="https://www.instagram.com/legalcyfle/profilecard/?igsh=OWhvZWg0dWUxZHlu"
-              className="text-sm text-zinc-600 dark:text-zinc-300"
-            >
-              Instagram
-            </Link>
+            {Object.keys(SocialLinks).map((key) => {
+              const Icon = SocialLinks[key].icon;
+              return (
+                <Link
+                  key={key}
+                  target="_blank"
+                  href={SocialLinks[key].url}
+                  className="flex items-center gap-2.5 text-sm text-zinc-600 dark:text-zinc-300"
+                >
+                  <Icon className="h-4 w-4 fill-current" />
+                  {key.charAt(0).toUpperCase() + key.slice(1)}
+                </Link>
+              );
+            })}
           </FlexContainer>
 
           <FlexContainer variant="column-start">

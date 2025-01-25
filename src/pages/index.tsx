@@ -252,7 +252,7 @@ export default function Home({ data }: HomeProps) {
         className="px-3 md:px-5 lg:px-10"
       >
         <Heading>Connect with us on Social Media</Heading>
-        <div className="grid gap-5 sm:grid-cols-5">
+        <div className="grid grid-cols-5 gap-2.5 sm:gap-5">
           {Object.keys(SocialLinks).map((key) => {
             const Icon = SocialLinks[key].icon;
             return (
@@ -261,7 +261,7 @@ export default function Home({ data }: HomeProps) {
                 target="_blank"
                 key={key}
                 className={cn(
-                  "flex items-center justify-center gap-2 rounded-xl bg-zinc-100 px-2 py-10 font-giest-sans text-xl font-medium text-zinc-900",
+                  "flex items-center justify-center gap-2 rounded-xl bg-zinc-100 px-2 py-5 font-giest-sans text-xl font-medium text-zinc-900 sm:py-10",
                   key === "facebook" &&
                     "bg-[#0866FF] text-white hover:bg-[#0052CC]",
                   key === "instagram" &&
@@ -275,7 +275,7 @@ export default function Home({ data }: HomeProps) {
                 )}
               >
                 <Icon className="h-7 w-7 fill-current" />
-                {key}
+                <span className="hidden md:block">{key}</span>
               </Link>
             );
           })}

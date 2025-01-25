@@ -30,12 +30,12 @@ const ArticleCard = ({ article }: Props) => {
           height={500}
           className="h-[200px] w-full rounded-xl border object-cover dark:border-zinc-800 md:w-[275px]"
         />
-        <Link
+        <a
           href={`/${article.fields.slug}`}
           className="absolute inset-0 h-full w-full"
         >
           <p className="sr-only">Read More</p>
-        </Link>
+        </a>
       </div>
 
       <FlexContainer
@@ -57,12 +57,12 @@ const ArticleCard = ({ article }: Props) => {
             </a>
           ))}
         </FlexContainer>
-        <Link
+        <a
           href={"/" + article.fields.slug}
           className="max-w-xl text-xl font-medium text-black hover:text-green-600 hover:underline dark:text-zinc-100"
         >
           {article.fields.title}
-        </Link>
+        </a>
         <p className="max-w-xl text-gray-700 dark:text-gray-400">
           {article.fields.description?.length > 150 ? (
             <span>{article.fields.description.substring(0, 150)}...</span>
@@ -81,14 +81,14 @@ const ArticleCard = ({ article }: Props) => {
             <FlexContainer gap="xs" alignItems="center" wrap="wrap">
               <span className="text-xs">By</span>
               {article.fields?.authors?.map((author) => (
-                <Link
+                <a
                   href={"/author/" + author.sys.id}
                   key={author.sys.id}
                   className="text-nowrap rounded-xl bg-zinc-200 px-2 py-1 text-xs text-black hover:underline dark:bg-zinc-900 dark:text-gray-400"
                 >
                   {author.fields.name}{" "}
                   {/* {index < article.fields.authors.length - 1 && ","} */}
-                </Link>
+                </a>
               ))}
             </FlexContainer>
             {/* <Link

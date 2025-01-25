@@ -226,7 +226,7 @@ const Navbar = (_props: Props) => {
       <FlexContainer
         variant="row-between"
         alignItems="center"
-        className="relative h-[80px] border-b px-5 py-5 dark:border-zinc-800 md:px-10"
+        className="sticky top-0 z-[900] h-[80px] border-b bg-zinc-50 px-5 py-5 dark:border-zinc-800 dark:bg-zinc-900 md:px-10"
       >
         <FlexContainer gap="2xl" alignItems="center">
           <Link href="/" className="font-work text-xl font-bold text-green-600">

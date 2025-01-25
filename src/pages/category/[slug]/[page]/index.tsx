@@ -13,12 +13,13 @@ import safeJsonStringify from "safe-json-stringify";
 
 type Props = {
   data: BlogEntries;
-  nextPage: number | null;
   slug: string;
+  page: number;
+  nextPage: number | null;
 };
 
 const Index = (props: Props) => {
-  console.log(props.data, "category");
+  console.log(props, "category");
   return (
     <Wrapper className="pt-2.5 md:pt-2.5">
       <AdWrapper
@@ -35,13 +36,26 @@ const Index = (props: Props) => {
       {props?.data?.map((article) => {
         return <ArticleCard article={article} key={article.sys.id} />;
       })}
-      {props.nextPage && (
-        <FlexContainer variant="row-end">
+      <FlexContainer variant="row-end">
+        {props.page > 1 ? (
+          <a href={`/category/${props.slug}/${props.page - 1}`}>
+            <Button variant={"secondary"}>Previous</Button>
+          </a>
+        ) : (
+          <Button variant={"secondary"} disabled>
+            Previous
+          </Button>
+        )}
+        {props.nextPage ? (
           <a href={`/category/${props.slug}/${props.nextPage}`}>
             <Button variant={"secondary"}>Next</Button>
           </a>
-        </FlexContainer>
-      )}
+        ) : (
+          <Button variant={"secondary"} disabled>
+            Next
+          </Button>
+        )}
+      </FlexContainer>
     </Wrapper>
   );
 };
@@ -50,37 +64,57 @@ export const getStaticPaths = async () => {
   const categories = await client.getEntries({
     content_type: "blogCategory",
   });
-  // console.log(categories, "categories");
-  const paths = categories.items.map((item) => ({
-    params: { slug: item.fields.slug },
-  }));
-  // params: { slug: item.fields.slug },
-  console.log(paths, "paths");
+
+  const paths = await Promise.all(
+    categories.items.map(async (item) => {
+      const totalArticles = await client.getEntries({
+        content_type: "blogPage",
+        "fields.category.sys.id[in]": [item.sys.id],
+        select: ["sys.id"],
+        limit: 1000,
+      });
+      //   console.log(totalArticles, "totalArticles");
+      const totalPages = Math.ceil(totalArticles.total / 5);
+      return Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => {
+        return {
+          params: {
+            slug: item.fields.slug,
+            page: page.toString(),
+            // nextPage: totalPages > page ? (page + 1).toString() : null,
+          },
+        };
+      });
+    }),
+  );
+  //   console.log(paths.flat(), "paths");
   return {
-    paths,
+    paths: paths.flat(),
     fallback: false,
   };
 };
 
 export const getStaticProps: GetStaticProps = async (ctx) => {
   const slug = ctx.params?.slug;
+  let page = parseInt(ctx.params?.page as string) || 1;
   console.log(slug, "slug");
   const category = await client.getEntries({
     content_type: "blogCategory",
     "fields.slug": slug,
   });
-  console.log(category, "category");
+  //   console.log(category, "category");
   const articles = await client.getEntries({
     content_type: "blogPage",
     "fields.category.sys.id[in]": [category?.items[0]?.sys.id],
     select: [
       "fields.title,fields.slug,fields.image,fields.category,fields.authors,fields.description",
     ],
+    // Pagination
     limit: 5,
+    skip: (page - 1) * 5,
+    // Sort
     order: ["-sys.createdAt"],
   });
-  const nextPage = articles.total > 5 ? 2 : null;
-
+  const nextPage = articles.total > page * 5 ? page + 1 : null;
   const safeJsonArticle = JSON.parse(safeJsonStringify(articles.items));
   // // Clean the articles data
   // const cleanedArticles = articles.items.map((article) =>
@@ -89,8 +123,9 @@ export const getStaticProps: GetStaticProps = async (ctx) => {
   return {
     props: {
       data: safeJsonArticle,
-      nextPage,
-      slug,
+      page: page,
+      nextPage: nextPage,
+      slug: slug,
     },
   };
 };

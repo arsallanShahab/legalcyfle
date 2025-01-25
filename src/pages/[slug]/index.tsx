@@ -62,7 +62,7 @@ import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import React, { useEffect } from "react";
+import React, { Fragment, useEffect } from "react";
 import toast from "react-hot-toast";
 import NiceAvatar, { genConfig } from "react-nice-avatar";
 import {
@@ -843,14 +843,14 @@ const Index = (props: Props) => {
             </p>
           )}
         </FlexContainer>
-        <FlexContainer variant="column-start" className="mt-5" gap="xl">
-          <h3 className="text-2xl font-medium">Recommended Articles</h3>
-          <div className="grid items-stretch gap-5 md:grid-cols-2">
-            {props.recommendedArticles.length &&
-              props.recommendedArticles?.map((article) => {
+        {props.recommendedArticles.length > 0 && (
+          <FlexContainer variant="column-start" className="mt-5" gap="xl">
+            <h3 className="text-2xl font-medium">Recommended Articles</h3>
+            <div className="grid items-stretch gap-5 md:grid-cols-2">
+              {props.recommendedArticles?.map((article) => {
                 console.log(article);
                 return (
-                  <Link key={article.sys.id} href={`/${article.fields.slug}`}>
+                  <a key={article.sys.id} href={`/${article.fields.slug}`}>
                     <FlexContainer
                       variant="column-start"
                       className="h-full rounded-3xl bg-zinc-50 p-3 dark:bg-zinc-700"
@@ -868,11 +868,12 @@ const Index = (props: Props) => {
                         {article.fields.title}
                       </h3>
                     </FlexContainer>
-                  </Link>
+                  </a>
                 );
               })}
-          </div>
-        </FlexContainer>
+            </div>
+          </FlexContainer>
+        )}
         <FlexContainer variant="column-start" className="mt-5" gap="xl">
           <h3 className="text-2xl font-medium">Comments</h3>
           {comments.length === 0 && (

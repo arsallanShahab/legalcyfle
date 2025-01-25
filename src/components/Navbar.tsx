@@ -376,7 +376,7 @@ const Navbar = (_props: Props) => {
                 <LayoutGrid className="h-5 w-5" />
               </button>
             </SheetTrigger>
-            <SheetContent>
+            <SheetContent className="z-[910]">
               <SheetHeader className="space-y-0 text-left">
                 {user && !loading && (
                   <NextUiDropdown

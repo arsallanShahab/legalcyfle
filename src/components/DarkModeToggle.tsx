@@ -27,7 +27,7 @@ export default function DarkModeToggle({ className }: Props) {
             <span className="sr-only">Toggle theme</span>
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent className="z-[100]">
+        <DropdownMenuContent className="z-[920]">
           <DropdownMenuItem key={"light"} onClick={() => setTheme("light")}>
             Light
           </DropdownMenuItem>

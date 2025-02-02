@@ -535,7 +535,7 @@ const Navbar = (_props: Props) => {
                   <span className="text-sm font-medium text-zinc-600 dark:text-zinc-200">
                     Toggle Theme
                   </span>
-                  <DarkModeToggle className="z-[100]" />
+                  <DarkModeToggle className="z-[920]" />
                 </FlexContainer>
               </FlexContainer>
             </SheetContent>

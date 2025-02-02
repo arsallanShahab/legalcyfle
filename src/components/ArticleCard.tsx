@@ -8,6 +8,11 @@ import Link from "next/link";
 import React from "react";
 import FlexContainer from "./FlexContainer";
 import { Badge } from "./ui/badge";
+// tz
+import tz from "dayjs/plugin/timezone";
+import utc from "dayjs/plugin/utc";
+dayjs.extend(utc);
+dayjs.extend(tz);
 
 type Props = {
   article: BlogEntry;

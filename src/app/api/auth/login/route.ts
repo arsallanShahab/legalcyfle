@@ -37,6 +37,7 @@ export async function POST(req: Request, res: Response) {
     cookiesList.set("token", user.generateToken(), {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
+      maxAge: 60 * 60 * 24 * 7,
       sameSite: "strict",
     });
     return NextResponse.json({

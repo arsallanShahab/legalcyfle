@@ -22,9 +22,6 @@ const Index = (props: Props) => {
   return (
     <Wrapper className="pt-2.5 md:pt-2.5">
       <AdWrapper
-        // data-ad-format="fluid"
-        // data-ad-layout-key="-et-7n+gx+cc-19b"
-        // data-ad-slot="1973122915"
         data-ad-slot="4210005765"
         data-ad-format="auto"
         data-full-width-responsive="true"
@@ -38,10 +35,20 @@ const Index = (props: Props) => {
       {props.nextPage && (
         <FlexContainer variant="row-end">
           <a href={`/category/${props.slug}/${props.nextPage}`}>
-            <Button variant={"secondary"}>Next</Button>
+            <Button
+              variant={"secondary"}
+              className="font-giest-mono text-sm font-semibold"
+            >
+              Next Page ({props.nextPage})
+            </Button>
           </a>
         </FlexContainer>
       )}
+      <AdWrapper
+        data-ad-slot="4210005765"
+        data-ad-format="auto"
+        data-full-width-responsive="true"
+      />
     </Wrapper>
   );
 };
@@ -73,19 +80,15 @@ export const getStaticProps: GetStaticProps = async (ctx) => {
   const articles = await client.getEntries({
     content_type: "blogPage",
     "fields.category.sys.id[in]": [category?.items[0]?.sys.id],
-    select: [
-      "fields.title,fields.slug,fields.image,fields.category,fields.authors,fields.description",
-    ],
+    // select: [
+    //   "fields.title,fields.slug,fields.image,fields.category,fields.authors,fields.description",
+    // ],
     limit: 5,
     order: ["-sys.createdAt"],
   });
   const nextPage = articles.total > 5 ? 2 : null;
 
   const safeJsonArticle = JSON.parse(safeJsonStringify(articles.items));
-  // // Clean the articles data
-  // const cleanedArticles = articles.items.map((article) =>
-  //   removeCircularReferences(article),
-  // );
   return {
     props: {
       data: safeJsonArticle,

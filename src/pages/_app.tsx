@@ -10,17 +10,12 @@ import { GeistMono } from "geist/font/mono";
 import { GeistSans } from "geist/font/sans";
 import { ChevronUp } from "lucide-react";
 import type { AppProps } from "next/app";
+import Head from "next/head";
 import Link from "next/link";
 import Script from "next/script";
 import "swiper/css";
 
 // TODO:- recommended post
-// - next page
-// - loading preview
-// - Back to the top button
-// - join the whatsapp group in every page
-// - social media links header / footer
-// - toggle theme in mobile not working
 // - picture size full In mobile / desktop
 // - keep me logged in option/ remember me
 // - Merge Google analytics and Google Adsense
@@ -33,6 +28,9 @@ export default function App({ Component, pageProps }: AppProps) {
         crossOrigin="anonymous"
         src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5892936530350741"
       />
+      <Head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      </Head>
       <Navbar />
       <main className={`${GeistSans.variable} ${GeistMono.variable}`}>
         <Component {...pageProps} />

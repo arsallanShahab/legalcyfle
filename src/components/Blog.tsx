@@ -58,7 +58,7 @@ const renderNode: { [key: string]: (node: Node) => string } = {
 
     switch (mimeGroup) {
       case "image":
-        return `<img src="${file.url}" alt="${title}" />`;
+        return `<img src="${file.url}" class="blog_image" alt="${title}" />`;
       case "application":
         return `<a href="${file.url}">${title}</a>`;
       default:
@@ -74,7 +74,7 @@ const renderNode: { [key: string]: (node: Node) => string } = {
     console.log(node, "HYPERLINK");
     return `<a href="${node.data.uri}">${node.content[0].value}</a>`;
   },
-  [BLOCKS.PARAGRAPH]: (node) => {
+  [BLOCKS.QUOTE]: (node) => {
     return `<div class="ad_infeed"><ins class="adsbygoogle"
      style="display:block; text-align:center;"
      data-ad-slot="4210005765"
@@ -82,7 +82,18 @@ const renderNode: { [key: string]: (node: Node) => string } = {
      data-full-width-responsive="true"></ins>
 <script>
      (adsbygoogle = window.adsbygoogle || []).push({});
-</script></div><p class="blog_paragraph">
+</script></div><div class="ad_infeed"><ins class="adsbygoogle"
+     style="display:block; text-align:center;"
+     data-ad-layout="in-article"
+     data-ad-format="fluid"
+     data-ad-client="ca-pub-5892936530350741"
+     data-ad-slot="5536160107"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script></div>`;
+  },
+  [BLOCKS.PARAGRAPH]: (node) => {
+    return `<p class="blog_paragraph">
       ${node.content
         .map((n) => {
           if (n.nodeType === "text") {
@@ -114,56 +125,15 @@ const renderNode: { [key: string]: (node: Node) => string } = {
 </script></div><h1 class="blog_heading_h1">${node.content[0].value}</h1>
   `,
   [BLOCKS.HEADING_2]: (node: Node) =>
-    `<div class="ad_infeed"><ins class="adsbygoogle"
-     style="display:block; text-align:center;"
-     data-ad-layout="in-article"
-     data-ad-format="fluid"
-     data-ad-client="ca-pub-5892936530350741"
-     data-ad-slot="5536160107"></ins>
-<script>
-     (adsbygoogle = window.adsbygoogle || []).push({});
-</script></div><h2 class="blog_heading_h2">${node.content[0].value}</h2>`,
+    `<h2 class="blog_heading_h2">${node.content[0].value}</h2>`,
   [BLOCKS.HEADING_3]: (node: Node) =>
-    `<div class="ad_infeed"><ins class="adsbygoogle"
-     style="display:block; text-align:center;"
-     data-ad-layout="in-article"
-     data-ad-format="fluid"
-     data-ad-client="ca-pub-5892936530350741"
-     data-ad-slot="5536160107"></ins>
-<script>
-     (adsbygoogle = window.adsbygoogle || []).push({});
-</script></div><h3 class="blog_heading_h3">${node.content[0].value}</h3>`,
+    `<h3 class="blog_heading_h3">${node.content[0].value}</h3>`,
   [BLOCKS.HEADING_4]: (node: Node) =>
-    `<div class="ad_infeed"><ins class="adsbygoogle"
-     style="display:block; text-align:center;"
-     data-ad-layout="in-article"
-     data-ad-format="fluid"
-     data-ad-client="ca-pub-5892936530350741"
-     data-ad-slot="5536160107"></ins>
-<script>
-     (adsbygoogle = window.adsbygoogle || []).push({});
-</script></div><h4 class="blog_heading_h4">${node.content[0].value}</h4>`,
+    `<h4 class="blog_heading_h4">${node.content[0].value}</h4>`,
   [BLOCKS.HEADING_5]: (node: Node) =>
-    `<div class="ad_infeed"><ins class="adsbygoogle"
-     style="display:block; text-align:center;"
-     data-ad-layout="in-article"
-     data-ad-format="fluid"
-     data-ad-client="ca-pub-5892936530350741"
-     data-ad-slot="5536160107"></ins>
-<script>
-     (adsbygoogle = window.adsbygoogle || []).push({});
-</script></div><h5 class="blog_heading_h5">${node.content[0].value}</h5>`,
+    `<h5 class="blog_heading_h5">${node.content[0].value}</h5>`,
   [BLOCKS.HEADING_6]: (node: Node) =>
-    `<div class="ad_infeed"><ins class="adsbygoogle"
-     style="display:block; text-align:center;"
-     data-ad-layout="in-article"
-     data-ad-format="fluid"
-     data-ad-client="ca-pub-5892936530350741"
-     data-ad-slot="5536160107"></ins>
-<script>
-     (adsbygoogle = window.adsbygoogle || []).push({});
-</script></div>
-<h6 class="blog_heading_h6">${node.content[0].value}</h6>`,
+    `<h6 class="blog_heading_h6">${node.content[0].value}</h6>`,
 };
 
 const BlogContent = (props: BlogContentProps) => {

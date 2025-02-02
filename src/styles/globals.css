@@ -74,6 +74,10 @@ body {
   @apply text-wrap break-words text-justify font-giest-sans text-lg leading-relaxed text-gray-900 dark:text-gray-300;
 }
 
+.blog_image {
+  @apply h-auto w-full rounded-lg object-cover;
+}
+
 /* .blog_paragraph a {
   @apply inline-block cursor-pointer text-wrap break-words break-all font-medium text-blue-500 dark:text-blue-400;
 } */

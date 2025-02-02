@@ -50,6 +50,7 @@ import tz from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
 import {
   Ban,
+  Eye,
   Heart,
   Loader,
   Share,
@@ -683,8 +684,7 @@ const Index = (props: Props) => {
                   <Ban className="h-4 w-4 text-white" />
                 ) : (
                   <span className="flex items-center justify-center gap-2">
-                    <Heart className="h-4 w-4 fill-white text-white" />{" "}
-                    {heartCount}
+                    <Heart className="h-4 w-4 text-white" /> {heartCount}
                   </span>
                 )}
               </Button>
@@ -707,8 +707,7 @@ const Index = (props: Props) => {
                   <Ban className="h-4 w-4 text-white" />
                 ) : (
                   <span className="flex items-center justify-center gap-2">
-                    <ThumbsUp className="h-4 w-4 fill-white text-white" />{" "}
-                    {likeCount}
+                    <ThumbsUp className="h-4 w-4 text-white" /> {likeCount}
                   </span>
                 )}
               </Button>
@@ -728,9 +727,20 @@ const Index = (props: Props) => {
                 className="gap-2 rounded-3xl bg-red-600 hover:bg-red-500 dark:bg-red-600 dark:text-white dark:hover:bg-red-500"
               >
                 <span className="flex items-center justify-center gap-2">
-                  <ThumbsDown className="h-4 w-4 fill-white text-white" />{" "}
-                  {dislikeCount}
+                  <ThumbsDown className="h-4 w-4 text-white" /> {dislikeCount}
                 </span>
+              </Button>
+            )}
+
+            {loading ? (
+              <Button className="rounded-3xl">
+                {" "}
+                <Loader className="h-4 w-4 animate-spin" />
+              </Button>
+            ) : (
+              <Button disabled={loading} className="gap-2 rounded-3xl">
+                {article?.views}
+                <Eye className="h-4 w-4 text-white" />
               </Button>
             )}
           </FlexContainer>

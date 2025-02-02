@@ -65,6 +65,7 @@ export async function GET(
       await ViewLog.create({ articleId: slug, ipHash, userId });
       await Article.updateOne({ slug }, { $inc: { views: 1 } });
     }
+    console.log("article", article);
 
     const responseData = {
       article,

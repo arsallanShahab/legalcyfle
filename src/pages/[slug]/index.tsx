@@ -740,7 +740,7 @@ const Index = (props: Props) => {
             ) : (
               <Button disabled={loading} className="gap-2 rounded-3xl">
                 {article?.views}
-                <Eye className="h-4 w-4 text-white" />
+                <Eye className="h-4 w-4 text-white dark:text-black" />
               </Button>
             )}
           </FlexContainer>

@@ -733,7 +733,7 @@ const Index = (props: Props) => {
             )}
 
             {loading ? (
-              <Button className="rounded-3xl">
+              <Button className="rounded-3xl" disabled>
                 {" "}
                 <Loader className="h-4 w-4 animate-spin" />
               </Button>
@@ -1038,6 +1038,7 @@ const Index = (props: Props) => {
 export const getStaticPaths = async () => {
   const articles = await client.getEntries({
     content_type: "blogPage",
+    limit: 1000,
   });
   const paths = articles.items.map((item) => ({
     params: { slug: item.fields.slug },
@@ -1057,6 +1058,7 @@ export const getStaticProps = async (
     "fields.slug": slug,
     include: 10,
     select: ["fields"],
+    limit: 1000,
   });
 
   const recommendedArticlesIds: string[] = Array.isArray(

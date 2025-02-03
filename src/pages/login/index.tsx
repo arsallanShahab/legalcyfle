@@ -57,7 +57,6 @@ const Index = (props: Props) => {
       actions.setSubmitting(false);
     }
   };
-  console.log("rendering");
 
   const handleSendVefificationMail = async (email: string) => {
     if (!email) {

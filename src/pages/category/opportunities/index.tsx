@@ -38,10 +38,6 @@ const Index = (props: Props) => {
 };
 
 export const getStaticProps: GetStaticProps = async (ctx) => {
-  const category = await client.getEntries({
-    content_type: "blogCategory",
-  });
-  console.log(category, "category");
   const articles = await client.getEntries({
     content_type: "blogPage",
     "fields.category.sys.id[in]": [

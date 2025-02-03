@@ -56,7 +56,6 @@ export async function getStaticProps() {
       "fields.title,fields.slug,fields.category,fields.image,fields.authors,fields.description,fields.date",
     ],
   });
-  console.log(articles, "search");
   const safeJsonArticles = articles.items;
   return {
     props: {

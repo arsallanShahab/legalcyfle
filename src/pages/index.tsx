@@ -43,7 +43,6 @@ interface HomeProps {
 }
 
 export default function Home({ data }: HomeProps) {
-  console.log(data);
   const router = useRouter();
 
   return (
@@ -154,8 +153,8 @@ export default function Home({ data }: HomeProps) {
           }}
           allowTouchMove
           loop={true}
-          onSlideChange={() => console.log("slide change")}
-          onSwiper={(swiper) => console.log(swiper)}
+          onSlideChange={() => {}}
+          onSwiper={(swiper) => {}}
           className="overflow-hidden rounded-xl"
         >
           {data?.topArticles?.map((article: BlogEntry) => {
@@ -396,7 +395,6 @@ export const getStaticProps = async () => {
   const safeJsonTopArticles = JSON.parse(
     safeJsonStringify(topArticles?.items[0]?.fields?.articles as BlogEntry[]),
   );
-  console.log(safeJsonTopArticles);
   return {
     props: {
       data: {

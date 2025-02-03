@@ -86,7 +86,6 @@ type Props = {
 };
 
 const Index = (props: Props) => {
-  console.log(props, "props");
   const router = useRouter();
   const { user } = useGlobalContext();
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
@@ -160,7 +159,6 @@ const Index = (props: Props) => {
         },
       });
       const data = (await res.json()) as ApiResponse<LikeResponse>;
-      console.log(data, "data");
       if (data.success) {
         setIsLiked(data.data?.isLiked);
         setLikeCount(data.data?.likes);
@@ -858,7 +856,6 @@ const Index = (props: Props) => {
             <h3 className="text-2xl font-medium">Recommended Articles</h3>
             <div className="grid items-stretch gap-5 md:grid-cols-2">
               {props.recommendedArticles?.map((article) => {
-                console.log(article);
                 return (
                   <a key={article.sys.id} href={`/${article.fields.slug}`}>
                     <FlexContainer
@@ -1067,8 +1064,6 @@ export const getStaticProps = async (
     ? articles.items[0].fields.recommendedPosts.map((post: any) => post?.sys.id)
     : [];
 
-  console.log(recommendedArticlesIds, "recommendedArticlesIds");
-
   const recommendedArticles = await client.getEntries({
     content_type: "blogPage",
     "sys.id[in]":
@@ -1079,8 +1074,6 @@ export const getStaticProps = async (
   );
 
   const safeJsonArticle = JSON.parse(safeJsonStringify(articles.items[0]));
-  console.log(safeJsonArticle, "safeJsonArticle");
-  // console.log(articles.items, "articles");
   return {
     props: {
       data: safeJsonArticle,

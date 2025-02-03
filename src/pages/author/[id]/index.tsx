@@ -17,7 +17,6 @@ type Props = {
 };
 
 const Index = (props: Props) => {
-  console.log(props.data);
   return (
     <Wrapper>
       <FlexContainer variant="column-start" gap="md">
@@ -66,9 +65,6 @@ export const getStaticProps: GetStaticProps = async (ctx) => {
   const authorArticles = await client.getEntries({
     content_type: "blogPage",
     "fields.authors.sys.id[in]": [id],
-    select: [
-      "fields.title,fields.slug,fields.image,fields.category,fields.authors,fields.description",
-    ],
   });
   return {
     props: {

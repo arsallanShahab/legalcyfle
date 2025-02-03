@@ -25,7 +25,6 @@ const Page = (props: Props) => {
       setSubmitting: (isSubmitting: boolean) => void;
     },
   ) => {
-    console.log(values);
     try {
       actions.setSubmitting(true);
       const res = await fetch("/api/user/send-mail", {

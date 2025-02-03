@@ -66,12 +66,10 @@ const renderNode: { [key: string]: (node: Node) => string } = {
     }
   },
   [INLINES.EMBEDDED_ENTRY]: (node) => {
-    console.log(node, "EMBEDDED_ENTRY");
     const { title, slug } = node.data.target.fields;
     return `<a href="/${slug}">${title}</a>`;
   },
   [INLINES.HYPERLINK]: (node) => {
-    console.log(node, "HYPERLINK");
     return `<a href="${node.data.uri}">${node.content[0].value}</a>`;
   },
   [BLOCKS.QUOTE]: (node) => {
@@ -103,7 +101,6 @@ const renderNode: { [key: string]: (node: Node) => string } = {
             return n.value;
           }
           if (n.nodeType === INLINES.HYPERLINK) {
-            console.log(n, "HYPERLINK");
             return `<a class="blog_link" href="${n.data.uri}">${n.content[0].value}</a>`;
           }
           if (n.nodeType === BLOCKS.EMBEDDED_ASSET) {

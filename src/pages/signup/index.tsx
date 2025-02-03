@@ -30,7 +30,6 @@ const Index = (props: Props) => {
   ) => {
     try {
       action.setSubmitting(true);
-      console.log(values);
       const response = await fetch("/api/auth/signup", {
         method: "POST",
         body: JSON.stringify(values),

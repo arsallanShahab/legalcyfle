@@ -18,7 +18,6 @@ type Props = {
 };
 
 const Index = (props: Props) => {
-  console.log(props.data, "category");
   return (
     <Wrapper className="pt-2.5 md:pt-2.5">
       <AdWrapper
@@ -57,12 +56,9 @@ export const getStaticPaths = async () => {
   const categories = await client.getEntries({
     content_type: "blogCategory",
   });
-  // console.log(categories, "categories");
   const paths = categories.items.map((item) => ({
     params: { slug: item.fields.slug },
   }));
-  // params: { slug: item.fields.slug },
-  console.log(paths, "paths");
   return {
     paths,
     fallback: false,
@@ -71,18 +67,13 @@ export const getStaticPaths = async () => {
 
 export const getStaticProps: GetStaticProps = async (ctx) => {
   const slug = ctx.params?.slug;
-  console.log(slug, "slug");
   const category = await client.getEntries({
     content_type: "blogCategory",
     "fields.slug": slug,
   });
-  console.log(category, "category");
   const articles = await client.getEntries({
     content_type: "blogPage",
     "fields.category.sys.id[in]": [category?.items[0]?.sys.id],
-    // select: [
-    //   "fields.title,fields.slug,fields.image,fields.category,fields.authors,fields.description",
-    // ],
     limit: 5,
     order: ["-sys.createdAt"],
   });

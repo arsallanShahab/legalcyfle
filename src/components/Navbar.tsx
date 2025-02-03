@@ -196,8 +196,6 @@ const Navbar = (_props: Props) => {
     }
   };
 
-  console.log(user);
-
   useEffect(() => {
     const fetchUser = async () => {
       try {

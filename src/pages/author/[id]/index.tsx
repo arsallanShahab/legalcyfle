@@ -8,6 +8,7 @@ import { BlogEntries } from "@/types/contentful/blog";
 import { GetStaticProps } from "next";
 import Image from "next/image";
 import React from "react";
+import safeJsonStringify from "safe-json-stringify";
 
 type Props = {
   data: {
@@ -66,6 +67,9 @@ export const getStaticProps: GetStaticProps = async (ctx) => {
     content_type: "blogPage",
     "fields.authors.sys.id[in]": [id],
   });
+
+  const safeJsonArticle = JSON.parse(safeJsonStringify(authorArticles.items));
+
   return {
     props: {
       data: {

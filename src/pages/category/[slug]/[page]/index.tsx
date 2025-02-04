@@ -19,7 +19,6 @@ type Props = {
 };
 
 const Index = (props: Props) => {
-  // console.log(props, "category");
   return (
     <Wrapper className="pt-2.5 md:pt-2.5">
       <AdWrapper
@@ -92,7 +91,6 @@ export const getStaticPaths = async () => {
       });
     }),
   );
-  //   console.log(paths.flat(), "paths");
   return {
     paths: paths.flat(),
     fallback: false,
@@ -102,7 +100,6 @@ export const getStaticPaths = async () => {
 export const getStaticProps: GetStaticProps = async (ctx) => {
   const slug = ctx.params?.slug;
   let page = parseInt(ctx.params?.page as string) || 1;
-  console.log(slug, "slug");
   const category = await client.getEntries({
     content_type: "blogCategory",
     "fields.slug": slug,

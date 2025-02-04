@@ -30,7 +30,7 @@ const Index = (props: Props) => {
             alt={props.data.author.fields.name}
             width={200}
             height={200}
-            className="h-20 w-20 rounded-full"
+            className="h-20 w-20 rounded-full border"
           />
         </div>
         <h3 className="text-4xl font-semibold text-green-500">
@@ -66,15 +66,19 @@ export const getStaticProps: GetStaticProps = async (ctx) => {
   const authorArticles = await client.getEntries({
     content_type: "blogPage",
     "fields.authors.sys.id[in]": [id],
+    limit: 1000,
   });
 
+  console.log(authorArticles, "authorArticles");
+
   const safeJsonArticle = JSON.parse(safeJsonStringify(authorArticles.items));
+  console.log(safeJsonArticle, "safeJsonArticle");
 
   return {
     props: {
       data: {
         author,
-        articles: authorArticles.items,
+        articles: safeJsonArticle,
       },
     },
   };

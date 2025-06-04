@@ -542,9 +542,9 @@ const Index = (props: Props) => {
         gap="2xl"
       >
         <AdWrapper
-          data-ad-slot="7886626628"
-          data-ad-layout="in-article"
-          data-ad-format="fluid"
+          data-ad-slot="4210005765"
+          data-ad-format="auto"
+          data-full-width-responsive="true"
         />
         <FlexContainer variant="column-start" gap="md">
           <Breadcrumb>

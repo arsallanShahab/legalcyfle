@@ -87,34 +87,27 @@ const renderNode: { [key: string]: (node: Node) => string } = {
     return `<a href="${node.data.uri}">${node.content[0].value}</a>`;
   },
   [BLOCKS.QUOTE]: (node) => {
-    //     return `<div class="ad_infeed"><ins class="adsbygoogle"
-    //      style="display:block; text-align:center;"
-    //      data-ad-slot="4210005765"
-    //      data-ad-format="auto"
-    //      data-full-width-responsive="true"></ins>
-    // <script>
-    //      (adsbygoogle = window.adsbygoogle || []).push({});
-    // </script></div><div class="ad_infeed"><ins class="adsbygoogle"
-    //      style="display:block; text-align:center;"
-    //      data-ad-layout="in-article"
-    //      data-ad-format="fluid"
-    //      data-ad-client="ca-pub-5892936530350741"
-    //      data-ad-slot="5536160107"></ins>
-    // <script>
-    //      (adsbygoogle = window.adsbygoogle || []).push({});
-    // </script></div>`;
-    return `<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5892936530350741"
-     crossorigin="anonymous"></script>
-<ins class="adsbygoogle"
-     style="display:block; text-align:center;"
-     data-ad-layout="in-article"
-     data-ad-format="fluid"
-     data-ad-client="ca-pub-5892936530350741"
-     data-ad-slot="7886626628"></ins>
+    return `<div class="ad_infeed"><ins class="adsbygoogle"
+  style="display:block; text-align:center;"
+  data-ad-layout="in-article"
+  data-ad-format="fluid"
+  data-ad-client="ca-pub-5892936530350741"
+  data-ad-slot="5536160107"></ins>
 <script>
-     (adsbygoogle = window.adsbygoogle || []).push({});
-</script>`;
+  (adsbygoogle = window.adsbygoogle || []).push({});
+</script></div>
+    `;
   },
+
+  // <div class="ad_infeed"><ins class="adsbygoogle"
+  //        style="display:block; text-align:center;"
+  //        data-ad-slot="4210005765"
+  //        data-ad-format="auto"
+  //        data-full-width-responsive="true"></ins>
+  //   <script>
+  //        (adsbygoogle = window.adsbygoogle || []).push({});
+  //   </script></div>
+
   [BLOCKS.PARAGRAPH]: (node) => {
     return `<p class="blog_paragraph">
       ${node.content

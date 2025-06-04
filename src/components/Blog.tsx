@@ -50,6 +50,18 @@ type BlogContentProps = {
   };
 };
 
+{/* <div class="ad_infeed">
+  <ins
+    class="adsbygoogle"
+    style="display:block; text-align:center;"
+    data-ad-layout="in-article"
+    data-ad-format="fluid"
+    data-ad-client="ca-pub-5892936530350741"
+    data-ad-slot="5536160107"
+  ></ins>
+  <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>; */}
+
 const renderNode: { [key: string]: (node: Node) => string } = {
   [BLOCKS.EMBEDDED_ASSET]: (node) => {
     const { title, file } = node.data.target.fields;
@@ -111,15 +123,7 @@ const renderNode: { [key: string]: (node: Node) => string } = {
     </p>`;
   },
   [BLOCKS.HEADING_1]: (node: Node) =>
-    `<div class="ad_infeed"><ins class="adsbygoogle"
-     style="display:block; text-align:center;"
-     data-ad-layout="in-article"
-     data-ad-format="fluid"
-     data-ad-client="ca-pub-5892936530350741"
-     data-ad-slot="5536160107"></ins>
-<script>
-     (adsbygoogle = window.adsbygoogle || []).push({});
-</script></div><h1 class="blog_heading_h1">${node.content[0].value}</h1>
+    `<h1 class="blog_heading_h1">${node.content[0].value}</h1>
   `,
   [BLOCKS.HEADING_2]: (node: Node) =>
     `<h2 class="blog_heading_h2">${node.content[0].value}</h2>`,

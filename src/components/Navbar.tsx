@@ -274,6 +274,12 @@ const Navbar = (_props: Props) => {
             >
               India Code
             </Link>
+            <Link
+              href="/internships"
+              className="px-2 py-1 hover:bg-zinc-100 dark:hover:bg-zinc-800"
+            >
+              Internships
+            </Link>
             {/* <Link
               href="/journal"
               target="_blank"

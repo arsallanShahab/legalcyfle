@@ -28,6 +28,7 @@ interface FlexContainerProps {
   justifyContent?: "start" | "center" | "end" | "between" | "around";
   className?: string;
   onClick?: () => void;
+  id?: string;
 }
 
 const getVariantClass = (variant: FlexContainerProps["variant"]) => {
@@ -96,7 +97,7 @@ const getAlignItemsClass = (alignItems: FlexContainerProps["alignItems"]) => {
 };
 
 const getJustifyContentClass = (
-  justifyContent: FlexContainerProps["justifyContent"]
+  justifyContent: FlexContainerProps["justifyContent"],
 ) => {
   switch (justifyContent) {
     case "start":
@@ -138,8 +139,9 @@ const FlexContainer = forwardRef<HTMLDivElement, FlexContainerProps>(
       justifyContent,
       className,
       onClick,
+      id = "",
     },
-    ref
+    ref,
   ) => {
     const variantClass = getVariantClass(variant);
     const gapClass = getGapClass(gap);
@@ -148,6 +150,7 @@ const FlexContainer = forwardRef<HTMLDivElement, FlexContainerProps>(
     const justifyContentClass = getJustifyContentClass(justifyContent);
     return (
       <div
+        id={id}
         ref={ref}
         onClick={onClick}
         className={cn(
@@ -157,13 +160,13 @@ const FlexContainer = forwardRef<HTMLDivElement, FlexContainerProps>(
           variantClass,
           alignItemsClass,
           justifyContentClass,
-          className
+          className,
         )}
       >
         {children}
       </div>
     );
-  }
+  },
 );
 
 FlexContainer.displayName = "FlexContainer";

@@ -393,7 +393,7 @@ const Index = (props: Props) => {
             "@type": "CommentAction",
             name: "Comment",
             target: [
-              `https://legalcyfle.in/${props.data.fields.slug}/#respond`,
+              `https://legalcyfle.in/${props.data.fields.slug}/#comment`,
             ],
           },
         ],
@@ -750,7 +750,10 @@ const Index = (props: Props) => {
           src={formatImageLink(thumbnail)}
           width={1280}
           height={720}
-          className="h-auto w-full rounded-xl border object-cover object-center"
+          onClick={() => {
+            window.open(formatImageLink(thumbnail), "_blank");
+          }}
+          className="h-[400px] w-full rounded-xl border object-cover object-top"
           alt="Cover"
         />
         <BlogContent data={props.data} />
@@ -881,7 +884,12 @@ const Index = (props: Props) => {
             </div>
           </FlexContainer>
         )}
-        <FlexContainer variant="column-start" className="mt-5" gap="xl">
+        <FlexContainer
+          id="comment"
+          variant="column-start"
+          className="mt-5"
+          gap="xl"
+        >
           <h3 className="text-2xl font-medium">Comments</h3>
           {comments.length === 0 && (
             <p className="text-lg font-normal text-gray-500">
@@ -1055,7 +1063,6 @@ export const getStaticProps = async (
     "fields.slug": slug,
     include: 10,
     select: ["fields"],
-    limit: 1000,
   });
 
   const recommendedArticlesIds: string[] = Array.isArray(

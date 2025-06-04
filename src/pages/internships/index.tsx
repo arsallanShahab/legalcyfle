@@ -57,7 +57,7 @@ const Index = ({ internships }: Props) => {
           return (
             <article key={article.sys.id}>
               <Card>
-                <CardHeader className="p-7">
+                <CardHeader className="p-4 md:p-7">
                   {/* <Image
                   alt="heroui logo"
                   height={40}
@@ -66,7 +66,7 @@ const Index = ({ internships }: Props) => {
                   width={40}
                 /> */}
                   <FlexContainer variant="column-start">
-                    <h3 className="max-w-lg font-giest-sans text-3xl">
+                    <h3 className="max-w-lg font-giest-sans text-2xl md:text-3xl">
                       {article.fields.title}
                     </h3>
                     {/* <p className="text-small text-default-500">
@@ -87,7 +87,7 @@ const Index = ({ internships }: Props) => {
                   </FlexContainer>
                 </CardHeader>
                 <Divider />
-                <CardBody className="blog-small p-7">
+                <CardBody className="blog-small p-4 md:p-7">
                   <BlogContent data={article} />
                 </CardBody>
               </Card>

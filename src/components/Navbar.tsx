@@ -418,7 +418,7 @@ const Navbar = (_props: Props) => {
               <FlexContainer
                 variant="column-start"
                 gap="none"
-                className="z-[100] mt-7 gap-3"
+                className="z-[100] mt-7"
               >
                 <Link
                   href="/category/publications"
@@ -506,6 +506,12 @@ const Navbar = (_props: Props) => {
                     </AccordionContent>
                   </AccordionItem>
                 </Accordion>
+                <Link
+                  href="/internships"
+                  className="mb-3 py-3 text-sm font-medium text-black dark:text-zinc-200"
+                >
+                  Internships
+                </Link>
                 <Input
                   placeholder="Search LegalCyfle"
                   className="w-full"

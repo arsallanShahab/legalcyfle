@@ -1083,7 +1083,7 @@ export const getStaticProps = async (
     }
 
     const mainArticle = articles.items[0] as any;
-    console.log("Main Article:", mainArticle);
+    // console.log("Main Article:", mainArticle);
 
     // Safely extract recommended posts IDs with fallbacks
     const recommendedArticlesIds = Array.isArray(
@@ -1102,7 +1102,7 @@ export const getStaticProps = async (
           recommendedArticlesIds.length > 0 ? recommendedArticlesIds : [""],
       })
       .catch((error) => {
-        console.error("Failed to fetch recommended articles:", error);
+        // console.error("Failed to fetch recommended articles:", error);
         return { items: [] };
       });
 
@@ -1122,10 +1122,10 @@ export const getStaticProps = async (
               // Process each item individually
               return JSON.parse(safeJsonStringify(item));
             } catch (itemError) {
-              console.error(
-                "Error stringifying recommended article item:",
-                itemError,
-              );
+              // console.error(
+              //   "Error stringifying recommended article item:",
+              //   itemError,
+              // );
               // Return a minimal representation if full item can't be stringified
               return item.sys && item.fields
                 ? {
@@ -1147,7 +1147,7 @@ export const getStaticProps = async (
         try {
           safeJsonArticle = JSON.parse(safeJsonStringify(mainArticle));
         } catch (mainArticleError) {
-          console.error("Error stringifying main article:", mainArticleError);
+          // console.error("Error stringifying main article:", mainArticleError);
 
           // Fall back to a minimal representation with essential fields
           if (mainArticle.sys && mainArticle.fields) {
@@ -1168,11 +1168,8 @@ export const getStaticProps = async (
         }
       }
     } catch (error) {
-      console.error("Error in overall stringification process:", error);
+      console.log("Error in overall stringification process:", error);
     }
-
-    console.log("safeRecommendedArticles:", safeRecommendedArticles);
-    console.log("safeJsonArticle:", safeJsonArticle);
 
     return {
       props: {
@@ -1183,7 +1180,7 @@ export const getStaticProps = async (
       revalidate: 3600,
     };
   } catch (error) {
-    console.error("Error in getStaticProps:", error);
+    console.log("Error in getStaticProps:", error);
     return { notFound: true };
   }
 };

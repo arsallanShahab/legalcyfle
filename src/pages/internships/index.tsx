@@ -67,7 +67,7 @@ const Index = ({ internships }: Props) => {
                 /> */}
                   <FlexContainer variant="column-start">
                     <h3 className="max-w-lg font-giest-sans text-2xl md:text-3xl">
-                      {article.fields.title}
+                      {article?.fields?.title}
                     </h3>
                     {/* <p className="text-small text-default-500">
                 {article.fields?.category
@@ -75,7 +75,7 @@ const Index = ({ internships }: Props) => {
                   .join(",")}
                   </p> */}
                     <p className="text-small text-default-500">
-                      {new Date(article.sys.createdAt).toLocaleDateString(
+                      {new Date(article?.sys?.createdAt).toLocaleDateString(
                         "en-US",
                         {
                           year: "numeric",
@@ -102,6 +102,7 @@ const Index = ({ internships }: Props) => {
 export async function getStaticProps() {
   const internships = await client.getEntries({
     content_type: "internships",
+    limit: 1000,
     // include: 3,
   });
   console.log(internships.items[0]?.fields.articles, "internships");

@@ -145,7 +145,7 @@ const renderNode: { [key: string]: (node: Node) => string } = {
 
 const BlogContent = (props: BlogContentProps) => {
   const htmlString = documentToHtmlString(
-    props.data.fields.body as unknown as Document,
+    props.data.fields?.body as unknown as Document,
     {
       renderNode: renderNode as RenderNode & {
         [key: string]: (node: Node) => string;

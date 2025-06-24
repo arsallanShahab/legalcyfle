@@ -100,25 +100,69 @@ const Index = ({ internships }: Props) => {
 };
 
 export async function getStaticProps() {
-  const internships = await client.getEntries({
-    content_type: "internships",
-    limit: 1000,
-    // include: 3,
-  });
-  console.log(internships.items[0]?.fields.articles, "internships");
-  if (!internships.items.length) {
-    return {
-      notFound: true,
+  try {
+    // Only fetch the specific fields you need
+    const internships = await client
+      .getEntries({
+        content_type: "internships",
+        select: ["fields.title", "fields.articles", "sys.id"],
+        include: 2, // Reduce include depth to 2 levels
+        limit: 1, // You only need the first item
+      })
+      .catch((error) => {
+        console.error("Error fetching internships:", error);
+        return { items: [] };
+      });
+
+    if (!internships?.items?.length) {
+      return { notFound: true };
+    }
+
+    // Extract only the data you need from each article
+    const minimalInternship = {
+      sys: { id: internships.items[0].sys.id },
+      fields: {
+        title: internships.items[0].fields.title,
+        articles: Array.isArray(internships.items[0].fields.articles)
+          ? internships.items[0].fields.articles.map((article: any) => ({
+              sys: {
+                id: article.sys.id,
+                createdAt: article.sys.createdAt,
+              },
+              fields: {
+                title: article.fields.title,
+                // For rich text, only keep essential content structure
+                body: article.fields.body
+                  ? {
+                      nodeType: article.fields.body.nodeType,
+                      content: article.fields.body.content,
+                    }
+                  : {},
+              },
+            }))
+          : [],
+      },
     };
+
+    // Safely stringify the minimal data
+    let safeJsonArticle = {};
+    try {
+      safeJsonArticle = JSON.parse(safeJsonStringify(minimalInternship));
+    } catch (error) {
+      console.error("Error stringifying minimal data:", error);
+      safeJsonArticle = minimalInternship;
+    }
+
+    return {
+      props: {
+        internships: safeJsonArticle,
+      },
+      revalidate: 3600,
+    };
+  } catch (error) {
+    console.error("Error in getStaticProps:", error);
+    return { notFound: true };
   }
-  // Remove circular references
-  const safeJsonArticle = JSON.parse(safeJsonStringify(internships.items[0]));
-  console.log(safeJsonArticle);
-  return {
-    props: {
-      internships: safeJsonArticle,
-    },
-  };
 }
 
 export default Index;

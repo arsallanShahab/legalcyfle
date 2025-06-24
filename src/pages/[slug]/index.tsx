@@ -329,9 +329,11 @@ const Index = (props: Props) => {
   //   },
   // };
 
+  console.log("Category: ", props.data.fields?.category);
+
   const keywords = generateKeywords(
-    props.data.fields.category.map((cat) => cat.fields.name),
-    props.data.fields.title,
+    props.data.fields?.category?.map((cat) => cat.fields.name),
+    props.data.fields?.title,
     props.data.fields?.description ?? "",
   );
 
@@ -506,7 +508,7 @@ const Index = (props: Props) => {
   return (
     <main className="relative">
       <Head>
-        <title>{props.data.fields.title} - LegalCyfle</title>
+        <title>{`${props.data.fields.title ?? "Home"} - LegalCyfle`}</title>
         <meta name="description" content={props.data.fields.description} />
         <meta name="keywords" content={keywords} />
         <link
@@ -1053,40 +1055,137 @@ export const getStaticPaths = async () => {
     fallback: false,
   };
 };
-
 export const getStaticProps = async (
   ctx: { params: { slug: string } } & GetStaticProps,
 ) => {
-  const { slug } = ctx.params;
-  const articles = await client.getEntries({
-    content_type: "blogPage",
-    "fields.slug": slug,
-    include: 10,
-    select: ["fields"],
-  });
+  try {
+    const { slug } = ctx.params || {};
 
-  const recommendedArticlesIds: string[] = Array.isArray(
-    articles.items[0]?.fields?.recommendedPosts,
-  )
-    ? articles.items[0].fields.recommendedPosts.map((post: any) => post?.sys.id)
-    : [];
+    if (!slug) {
+      return { notFound: true };
+    }
 
-  const recommendedArticles = await client.getEntries({
-    content_type: "blogPage",
-    "sys.id[in]":
-      recommendedArticlesIds.length > 0 ? recommendedArticlesIds : [""],
-  });
-  const safeRecommendedArticles = JSON.parse(
-    safeJsonStringify(recommendedArticles.items),
-  );
+    const articles = await client
+      .getEntries({
+        content_type: "blogPage",
+        "fields.slug": slug,
+        include: 10,
+        select: ["fields"],
+      })
+      .catch((error) => {
+        console.error("Failed to fetch article:", error);
+        return { items: [] };
+      });
 
-  const safeJsonArticle = JSON.parse(safeJsonStringify(articles.items[0]));
-  return {
-    props: {
-      data: safeJsonArticle,
-      recommendedArticles: safeRecommendedArticles,
-    },
-  };
+    // Handle case when article is not found
+    if (!articles.items || articles.items.length === 0) {
+      return { notFound: true };
+    }
+
+    const mainArticle = articles.items[0] as any;
+    console.log("Main Article:", mainArticle);
+
+    // Safely extract recommended posts IDs with fallbacks
+    const recommendedArticlesIds = Array.isArray(
+      mainArticle?.fields?.recommendedPosts,
+    )
+      ? mainArticle.fields.recommendedPosts
+          .filter((post: { sys: { id: any } }) => post?.sys?.id)
+          .map((post: any) => post?.sys?.id)
+      : [];
+
+    // Fetch recommended articles with error handling
+    const recommendedArticles = await client
+      .getEntries({
+        content_type: "blogPage",
+        "sys.id[in]":
+          recommendedArticlesIds.length > 0 ? recommendedArticlesIds : [""],
+      })
+      .catch((error) => {
+        console.error("Failed to fetch recommended articles:", error);
+        return { items: [] };
+      });
+
+    // Safely stringify with error handling
+    let safeRecommendedArticles = [];
+    let safeJsonArticle = null;
+
+    try {
+      // Handle recommended articles - process one by one to avoid size issues
+      if (
+        recommendedArticles.items &&
+        Array.isArray(recommendedArticles.items)
+      ) {
+        safeRecommendedArticles = recommendedArticles.items
+          .map((item) => {
+            try {
+              // Process each item individually
+              return JSON.parse(safeJsonStringify(item));
+            } catch (itemError) {
+              console.error(
+                "Error stringifying recommended article item:",
+                itemError,
+              );
+              // Return a minimal representation if full item can't be stringified
+              return item.sys && item.fields
+                ? {
+                    sys: { id: item.sys.id },
+                    fields: {
+                      title: item.fields.title,
+                      slug: item.fields.slug,
+                      image: item.fields.image,
+                    },
+                  }
+                : {};
+            }
+          })
+          .filter(Boolean); // Remove any null/undefined items
+      }
+
+      // Handle main article
+      if (mainArticle) {
+        try {
+          safeJsonArticle = JSON.parse(safeJsonStringify(mainArticle));
+        } catch (mainArticleError) {
+          console.error("Error stringifying main article:", mainArticleError);
+
+          // Fall back to a minimal representation with essential fields
+          if (mainArticle.sys && mainArticle.fields) {
+            safeJsonArticle = {
+              sys: { id: mainArticle.sys.id },
+              fields: {
+                title: mainArticle.fields.title,
+                slug: mainArticle.fields.slug,
+                image: mainArticle.fields.image,
+                body: mainArticle.fields.body,
+                category: mainArticle.fields.category,
+                authors: mainArticle.fields.authors,
+                date: mainArticle.fields.date,
+                description: mainArticle.fields.description,
+              },
+            };
+          }
+        }
+      }
+    } catch (error) {
+      console.error("Error in overall stringification process:", error);
+    }
+
+    console.log("safeRecommendedArticles:", safeRecommendedArticles);
+    console.log("safeJsonArticle:", safeJsonArticle);
+
+    return {
+      props: {
+        data: safeJsonArticle || {},
+        recommendedArticles: safeRecommendedArticles || [],
+      },
+      // Revalidate the page every hour
+      revalidate: 3600,
+    };
+  } catch (error) {
+    console.error("Error in getStaticProps:", error);
+    return { notFound: true };
+  }
 };
 
 export default Index;

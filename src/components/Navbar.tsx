@@ -431,7 +431,7 @@ const Navbar = (_props: Props) => {
                   href="https://www.indiacode.nic.in/"
                   className="border-b py-3 text-sm font-medium text-black dark:text-zinc-200"
                 >
-                  India Code
+                  Bare Acts
                 </Link>
                 <Accordion type="single">
                   <AccordionItem value="item-1">

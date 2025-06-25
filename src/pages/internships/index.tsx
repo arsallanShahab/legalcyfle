@@ -106,7 +106,7 @@ export async function getStaticProps() {
       .getEntries({
         content_type: "internships",
         select: ["fields.title", "fields.articles", "sys.id"],
-        include: 2, // Reduce include depth to 2 levels
+        include: 1, // Reduce include depth to 2 levels
         limit: 1, // You only need the first item
       })
       .catch((error) => {

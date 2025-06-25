@@ -1069,7 +1069,7 @@ export const getStaticProps = async (
       .getEntries({
         content_type: "blogPage",
         "fields.slug": slug,
-        include: 10,
+        include: 1,
         select: ["fields"],
       })
       .catch((error) => {
@@ -1100,6 +1100,7 @@ export const getStaticProps = async (
         content_type: "blogPage",
         "sys.id[in]":
           recommendedArticlesIds.length > 0 ? recommendedArticlesIds : [""],
+        include: 3,
       })
       .catch((error) => {
         // console.error("Failed to fetch recommended articles:", error);

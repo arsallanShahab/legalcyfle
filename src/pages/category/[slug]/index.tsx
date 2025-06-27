@@ -55,6 +55,7 @@ const Index = (props: Props) => {
 export const getStaticPaths = async () => {
   const categories = await client.getEntries({
     content_type: "blogCategory",
+    select: ["fields.slug"],
   });
   const paths = categories.items.map((item) => ({
     params: { slug: item.fields.slug },
@@ -74,6 +75,17 @@ export const getStaticProps: GetStaticProps = async (ctx) => {
   const articles = await client.getEntries({
     content_type: "blogPage",
     "fields.category.sys.id[in]": [category?.items[0]?.sys.id],
+    select: [
+      "fields.title",
+      "fields.slug",
+      "fields.description",
+      "fields.date",
+      "fields.image",
+      "fields.category",
+      "fields.authors",
+      "sys.id",
+      "sys.createdAt",
+    ],
     limit: 5,
     order: ["-sys.createdAt"],
   });

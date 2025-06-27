@@ -1,5 +1,7 @@
+import AdWrapper from "@/components/AdWrapper";
 import ArticleCard from "@/components/ArticleCard";
 import FlexContainer from "@/components/FlexContainer";
+import { Button } from "@/components/ui/button";
 import Wrapper from "@/components/Wrapper";
 import client from "@/lib/contentful";
 import { formatImageLink } from "@/lib/utils";
@@ -14,12 +16,18 @@ type Props = {
   data: {
     author: Author;
     articles: BlogEntries;
+    nextPage: number | null;
   };
 };
 
 const Index = (props: Props) => {
   return (
     <Wrapper>
+      <AdWrapper
+        data-ad-slot="4210005765"
+        data-ad-format="auto"
+        data-full-width-responsive="true"
+      />
       <FlexContainer variant="column-start" gap="md">
         <div>
           <Image
@@ -43,6 +51,25 @@ const Index = (props: Props) => {
       {props.data.articles.map((article) => (
         <ArticleCard article={article} key={article?.sys?.id} />
       ))}
+      <FlexContainer variant="row-end" alignItems="center">
+        {props.data.nextPage ? (
+          <a
+            href={`/author/${props.data.author.sys.id}/${props.data.nextPage}`}
+          >
+            <Button variant={"secondary"}>Next Page</Button>
+          </a>
+        ) : (
+          <Button variant={"secondary"} disabled>
+            Next Page
+          </Button>
+        )}
+      </FlexContainer>
+
+      <AdWrapper
+        data-ad-slot="4210005765"
+        data-ad-format="auto"
+        data-full-width-responsive="true"
+      />
     </Wrapper>
   );
 };
@@ -50,6 +77,7 @@ const Index = (props: Props) => {
 export const getStaticPaths = async () => {
   const authors = await client.getEntries({
     content_type: "author",
+    select: ["sys.id"],
   });
   const paths = authors.items.map((item) => ({
     params: { id: item.sys.id },
@@ -63,22 +91,96 @@ export const getStaticPaths = async () => {
 export const getStaticProps: GetStaticProps = async (ctx) => {
   const id = ctx.params?.id as string;
   const author = await client.getEntry(id);
-  const authorArticles = await client.getEntries({
+  const authorArticles = (await client.getEntries({
     content_type: "blogPage",
     "fields.authors.sys.id[in]": [id],
-    limit: 1000,
-  });
+    include: 1,
+    select: [
+      "fields.title",
+      "fields.slug",
+      "fields.description",
+      "fields.date",
+      "fields.image",
+      "fields.category",
+      "sys.id",
+      "sys.createdAt",
+    ],
+    limit: 5,
+  })) as any;
 
-  console.log(authorArticles, "authorArticles");
+  let safeJsonArticle = [];
 
-  const safeJsonArticle = JSON.parse(safeJsonStringify(authorArticles.items));
-  console.log(safeJsonArticle, "safeJsonArticle");
+  try {
+    safeJsonArticle = JSON.parse(safeJsonStringify(authorArticles.items));
+  } catch (error) {
+    const minimalArticles = authorArticles.items.map(
+      (article: {
+        sys: { id: any; createdAt: any };
+        fields: {
+          title: any;
+          slug: any;
+          description: any;
+          date: any;
+          image: {
+            sys: { id: any };
+            fields: { title: any; file: { url: any; details: { image: any } } };
+          };
+          category: { sys: { id: any }; fields: { name: any; slug: any } }[];
+        };
+      }) => ({
+        sys: {
+          id: article.sys.id,
+          createdAt: article.sys.createdAt,
+        },
+        fields: {
+          title: article.fields.title,
+          slug: article.fields.slug,
+          description: article.fields.description,
+          date: article.fields.date,
+          // Only essential image data
+          image: article.fields.image
+            ? {
+                sys: { id: article.fields.image.sys.id },
+                fields: {
+                  title: article.fields.image.fields.title,
+                  file: {
+                    url: article.fields.image.fields.file.url,
+                    details: {
+                      image: article.fields.image.fields.file.details?.image,
+                    },
+                  },
+                },
+              }
+            : null,
+          // Only essential category data
+          category: Array.isArray(article.fields.category)
+            ? article.fields.category.map(
+                (cat: {
+                  sys: { id: any };
+                  fields: { name: any; slug: any };
+                }) => ({
+                  sys: { id: cat.sys.id },
+                  fields: {
+                    name: cat.fields.name,
+                    slug: cat.fields.slug,
+                  },
+                }),
+              )
+            : [],
+        },
+      }),
+    );
+    safeJsonArticle = minimalArticles;
+  }
+
+  const nextPage = authorArticles.total > 5 ? 2 : null;
 
   return {
     props: {
       data: {
         author,
         articles: safeJsonArticle,
+        nextPage,
       },
     },
   };

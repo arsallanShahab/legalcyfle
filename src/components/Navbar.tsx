@@ -251,14 +251,22 @@ const Navbar = (_props: Props) => {
                 </DropdownItem>
               </DropdownContent>
             </Dropdown>
-            <Dropdown title="Blogs & News">
+            <Link
+              href="/jobs"
+              className="px-2 py-1 hover:bg-zinc-100 dark:hover:bg-zinc-800"
+            >
+              Jobs
+            </Link>
+            <Link
+              href="/internships"
+              className="px-2 py-1 hover:bg-zinc-100 dark:hover:bg-zinc-800"
+            >
+              Internships
+            </Link>
+            <Dropdown title="Resources">
               <DropdownContent>
                 <DropdownItem href="/category/blogs">Blog</DropdownItem>
                 <DropdownItem href="/category/news">News</DropdownItem>
-              </DropdownContent>
-            </Dropdown>
-            <Dropdown title="Resources">
-              <DropdownContent>
                 <DropdownItem href="/category/law-notes">
                   Law Notes
                 </DropdownItem>
@@ -273,12 +281,6 @@ const Navbar = (_props: Props) => {
               className="px-2 py-1 hover:bg-zinc-100 dark:hover:bg-zinc-800"
             >
               Bare Acts
-            </Link>
-            <Link
-              href="/internships"
-              className="px-2 py-1 hover:bg-zinc-100 dark:hover:bg-zinc-800"
-            >
-              Internships
             </Link>
             {/* <Link
               href="/journal"
@@ -511,6 +513,12 @@ const Navbar = (_props: Props) => {
                   className="mb-3 py-3 text-sm font-medium text-black dark:text-zinc-200"
                 >
                   Internships
+                </Link>
+                <Link
+                  href="/jobs"
+                  className="mb-3 py-3 text-sm font-medium text-black dark:text-zinc-200"
+                >
+                  Jobs
                 </Link>
                 <Input
                   placeholder="Search LegalCyfle"

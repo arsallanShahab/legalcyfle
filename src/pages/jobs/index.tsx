@@ -12,7 +12,7 @@ import { Eye } from "lucide-react";
 import React, { useEffect } from "react";
 
 type Props = {
-  internships: {
+  jobs: {
     fields: {
       articles: BlogEntry[];
       title: string;
@@ -20,30 +20,26 @@ type Props = {
   };
 };
 
-const Index = ({ internships }: Props) => {
+const Index = ({ jobs }: Props) => {
   const { getData, loading, data, error, refresh } = useGet<
     ApiResponse<MetricsResponse>
   >({ showToast: true });
 
-  const reversedArticles = [...internships.fields?.articles].reverse();
+  const reversedArticles = [...jobs.fields?.articles].reverse();
 
   useEffect(() => {
-    getData(
-      `/api/articles/internships-metrics/metrics`,
-      "internships-metrics",
-      {
-        loading: "Loading metrics...",
-        success: "Metrics loaded successfully",
-        failure: "Failed to load metrics",
-      },
-    );
+    getData(`/api/articles/jobs-metrics/metrics`, "jobs-metrics", {
+      loading: "Loading metrics...",
+      success: "Metrics loaded successfully",
+      failure: "Failed to load metrics",
+    });
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [internships]);
+  }, [jobs]);
   return (
     <Wrapper>
       <FlexContainer variant="row-between">
-        <Heading>{internships.fields?.title}</Heading>
+        <Heading>{jobs.fields?.title}</Heading>
         <Button variant={"secondary"}>
           <Eye className="h-4 w-4" />
           {data?.data?.view}
@@ -88,15 +84,16 @@ export async function getStaticProps() {
   try {
     const internships = await client
       .getEntries({
-        content_type: "internships",
+        content_type: "job",
         select: ["fields.title", "fields.articles", "sys.id"],
-        include: 1,
         limit: 1,
       })
       .catch((error) => {
         console.error("Error fetching internships:", error);
         return { items: [] };
       });
+
+    console.log("Internships fetched:", internships);
 
     if (!internships?.items?.length) {
       return { notFound: true };
@@ -114,12 +111,7 @@ export async function getStaticProps() {
               },
               fields: {
                 title: article.fields.title,
-                body: article.fields.body
-                  ? {
-                      nodeType: article.fields.body.nodeType,
-                      content: article.fields.body.content,
-                    }
-                  : {},
+                body: article.fields.body,
               },
             }))
           : [],
@@ -128,7 +120,7 @@ export async function getStaticProps() {
 
     return {
       props: {
-        internships: minimalInternship,
+        jobs: minimalInternship,
       },
       revalidate: 3600,
     };

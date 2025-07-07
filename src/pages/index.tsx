@@ -14,6 +14,7 @@ import { Divider } from "@nextui-org/react";
 import dayjs from "dayjs";
 import tz from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
+import dynamic from "next/dynamic";
 import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
@@ -30,6 +31,13 @@ import {
   Thumbs,
 } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
+
+const DynamicAdWrapper = dynamic(() => import("../components/DynamicAd"), {
+  ssr: false,
+  loading: () => (
+    <div style={{ width: "100%", minWidth: "250px", height: "100px" }} />
+  ),
+});
 
 dayjs.extend(utc);
 dayjs.extend(tz);
@@ -331,10 +339,15 @@ export default function Home({ data }: HomeProps) {
           })}
         </div>
       </FlexContainer>
-      <AdWrapper
+      {/* <AdWrapper
         data-ad-format="fluid"
         data-ad-layout-key="-es-7n+gf+bp-16h"
         data-ad-slot="7648124020"
+      /> */}
+      <DynamicAdWrapper
+        slot="1973122915"
+        format="fluid"
+        layoutKey="-et-7n+gx+cc-19b"
       />
       <FlexContainer variant="column-start" className="px-3 md:px-5 lg:px-10">
         <h3 className="px-2 text-4xl font-semibold md:mb-5 md:mt-10">

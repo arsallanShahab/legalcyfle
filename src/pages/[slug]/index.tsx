@@ -556,10 +556,15 @@ const Index = (props: Props) => {
           data-ad-format="auto"
           data-full-width-responsive="true"
         /> */}
-        <DynamicAdWrapper
+        {/* <DynamicAdWrapper
           slot="1973122915"
           format="fluid"
           layoutKey="-et-7n+gx+cc-19b"
+        /> */}
+        <AdWrapper
+          data-ad-format="fluid"
+          data-ad-layout-key="-et-7n+gx+cc-19b"
+          data-ad-slot="1973122915"
         />
         <FlexContainer variant="column-start" gap="md">
           <Breadcrumb>

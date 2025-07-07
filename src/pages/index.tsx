@@ -339,16 +339,18 @@ export default function Home({ data }: HomeProps) {
           })}
         </div>
       </FlexContainer>
-      {/* <AdWrapper
+      <AdWrapper
         data-ad-format="fluid"
-        data-ad-layout-key="-es-7n+gf+bp-16h"
-        data-ad-slot="7648124020"
-      /> */}
-      <DynamicAdWrapper
-        slot="1973122915"
-        format="fluid"
-        layoutKey="-et-7n+gx+cc-19b"
+        data-ad-layout-key="-et-7n+gx+cc-19b"
+        data-ad-slot="1973122915"
       />
+      {/* <FlexContainer variant="row-center">
+        <DynamicAdWrapper
+          slot="1973122915"
+          format="fluid"
+          layoutKey="-et-7n+gx+cc-19b"
+        />
+      </FlexContainer> */}
       <FlexContainer variant="column-start" className="px-3 md:px-5 lg:px-10">
         <h3 className="px-2 text-4xl font-semibold md:mb-5 md:mt-10">
           Latest Articles

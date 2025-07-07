@@ -37,7 +37,10 @@ const SimpleAdWrapper: React.FC<Props> = ({
   // Development preview
   if (process.env.NODE_ENV === "development") {
     return (
-      <FlexContainer variant="row-center" className={`w-full ${className}`}>
+      <FlexContainer
+        variant="row-center"
+        className={`w-full ${className} min-w-[250px]`}
+      >
         <div
           className="border-2 border-dashed border-gray-300"
           style={{
@@ -63,7 +66,10 @@ const SimpleAdWrapper: React.FC<Props> = ({
 
   // Production - Exact Google AdSense code
   return (
-    <FlexContainer variant="row-center" className={`w-full ${className}`}>
+    <FlexContainer
+      variant="row-center"
+      className={`w-full ${className} min-w-[250px]`}
+    >
       <ins
         className="adsbygoogle"
         style={{

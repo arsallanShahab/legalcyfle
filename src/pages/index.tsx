@@ -245,7 +245,7 @@ export default function Home({ data }: HomeProps) {
                 </h3>
                 {data?.employeeOfTheMonth?.fields?.authors?.map((author) => (
                   <Link
-                    href={`/authors/${author.sys.id}`}
+                    href={`/author/${author.sys.id}`}
                     key={author.sys.id}
                     className="flex items-center gap-3 rounded-xl bg-zinc-200 p-3 hover:bg-zinc-300 dark:bg-zinc-700 dark:hover:bg-zinc-600"
                   >

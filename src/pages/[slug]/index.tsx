@@ -59,6 +59,7 @@ import {
   Trash,
 } from "lucide-react";
 import { GetStaticProps } from "next";
+import dynamic from "next/dynamic";
 import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
@@ -76,6 +77,13 @@ import {
   WhatsappIcon,
 } from "react-share";
 import safeJsonStringify from "safe-json-stringify";
+
+const DynamicAdWrapper = dynamic(() => import("../../components/DynamicAd"), {
+  ssr: false,
+  loading: () => (
+    <div style={{ width: "100%", minWidth: "250px", height: "100px" }} />
+  ),
+});
 
 dayjs.extend(utc);
 dayjs.extend(tz);
@@ -543,10 +551,16 @@ const Index = (props: Props) => {
         className="mx-auto max-w-4xl px-4 py-10 pt-2.5 md:px-10 md:py-20 md:pt-2.5"
         gap="2xl"
       >
-        <AdWrapper
+        {/* <AdWrapper
           data-ad-slot="4210005765"
           data-ad-format="auto"
           data-full-width-responsive="true"
+        /> */}
+        <DynamicAdWrapper
+          format="fluid"
+          layoutKey="-et-7n+gx+cc-19b"
+          slot="1973122915"
+          testMode
         />
         <FlexContainer variant="column-start" gap="md">
           <Breadcrumb>
@@ -1070,7 +1084,7 @@ export const getStaticProps = async (
         content_type: "blogPage",
         "fields.slug": slug,
         include: 1,
-        select: ["fields"],
+        select: ["fields", "sys.id"],
       })
       .catch((error) => {
         console.error("Failed to fetch article:", error);

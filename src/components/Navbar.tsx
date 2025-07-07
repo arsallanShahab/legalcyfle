@@ -468,8 +468,8 @@ const Navbar = (_props: Props) => {
                     </AccordionContent>
                   </AccordionItem>
 
-                  <AccordionItem value="item-2">
-                    <AccordionTrigger>Blogs & News</AccordionTrigger>
+                  <AccordionItem value="item-3">
+                    <AccordionTrigger>Resources</AccordionTrigger>
                     <AccordionContent>
                       <FlexContainer variant="column-start">
                         <Link
@@ -484,14 +484,6 @@ const Navbar = (_props: Props) => {
                         >
                           News
                         </Link>
-                      </FlexContainer>
-                    </AccordionContent>
-                  </AccordionItem>
-
-                  <AccordionItem value="item-3">
-                    <AccordionTrigger>Resources</AccordionTrigger>
-                    <AccordionContent>
-                      <FlexContainer variant="column-start">
                         <Link
                           href="/category/law-notes"
                           className="text-sm text-zinc-700 dark:text-zinc-200"

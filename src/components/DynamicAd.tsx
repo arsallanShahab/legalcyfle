@@ -8,6 +8,7 @@ interface Props {
   style?: React.CSSProperties;
   className?: string;
   responsive?: boolean;
+  test?: boolean;
 }
 
 const SimpleAdWrapper: React.FC<Props> = ({
@@ -17,6 +18,7 @@ const SimpleAdWrapper: React.FC<Props> = ({
   style,
   className = "",
   responsive = true,
+  test = false,
   ...props
 }) => {
   useEffect(() => {
@@ -35,7 +37,7 @@ const SimpleAdWrapper: React.FC<Props> = ({
   }, []);
 
   // Development preview
-  if (process.env.NODE_ENV === "development") {
+  if (process.env.NODE_ENV === "development" && !test) {
     return (
       <FlexContainer
         variant="row-center"
@@ -68,12 +70,13 @@ const SimpleAdWrapper: React.FC<Props> = ({
   return (
     <FlexContainer
       variant="row-center"
-      className={`w-full ${className} min-w-[250px]`}
+      className={`w-full ${className} min-w-[250px] overflow-hidden`}
     >
       <ins
         className="adsbygoogle"
         style={{
           display: "block",
+          width: format === "fluid" ? "100%" : "300px",
           ...style,
         }}
         data-ad-format={format}

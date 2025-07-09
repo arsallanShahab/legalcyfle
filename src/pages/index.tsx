@@ -149,140 +149,137 @@ export default function Home({ data }: HomeProps) {
         data-ad-layout-key="-es-7n+gf+bp-16h"
         data-ad-slot="7648124020"
       /> */}
-      <div className="flex gap-5 px-3 md:px-5 lg:max-h-[80vh] lg:px-10">
-        <div className="grid grid-cols-4 grid-rows-2 gap-5 lg:grid-rows-3">
-          {" "}
-          <div className="col-span-4 row-span-1 lg:col-span-3 lg:row-span-3">
-            {" "}
-            <Swiper
-              spaceBetween={50}
-              // slidesPerView={1}
-              modules={[
-                Autoplay,
-                Mousewheel,
-                Parallax,
-                Thumbs,
-                Controller,
-                Navigation,
-                Pagination,
-              ]}
-              pagination={{}}
-              // effect="fade"
-              autoplay={{
-                delay: 3000,
-                disableOnInteraction: true,
-              }}
-              allowTouchMove
-              loop={true}
-              onSlideChange={() => {}}
-              onSwiper={(swiper) => {}}
-              className="overflow-hidden rounded-xl"
-            >
-              {data?.topArticles?.map((article: BlogEntry) => {
-                const thumbnail =
-                  article?.fields?.image?.fields?.file?.url ||
-                  "https://picsum.photos/500/500";
-                return (
-                  <SwiperSlide
-                    key={article.sys.id}
-                    className="relative overflow-hidden rounded-xl md:max-h-[450px] lg:h-[80vh]"
+      <div className="flex flex-wrap gap-5 px-3 md:flex-nowrap md:px-5 lg:max-h-[80vh] lg:px-10">
+        <Swiper
+          spaceBetween={50}
+          // slidesPerView={1}
+          modules={[
+            Autoplay,
+            Mousewheel,
+            Parallax,
+            Thumbs,
+            Controller,
+            Navigation,
+            Pagination,
+          ]}
+          pagination={{}}
+          // effect="fade"
+          autoplay={{
+            delay: 3000,
+            disableOnInteraction: true,
+          }}
+          allowTouchMove
+          loop={true}
+          onSlideChange={() => {}}
+          onSwiper={(swiper) => {}}
+          className="flex overflow-hidden rounded-xl"
+        >
+          {data?.topArticles?.map((article: BlogEntry) => {
+            const thumbnail =
+              article?.fields?.image?.fields?.file?.url ||
+              "https://picsum.photos/500/500";
+            return (
+              <SwiperSlide
+                key={article.sys.id}
+                className="relative overflow-hidden rounded-xl md:max-h-[450px] lg:h-[80vh]"
+              >
+                <a href={article.fields?.slug || "#"} className="group">
+                  <Image
+                    src={formatImageLink(thumbnail)}
+                    alt="LegalCyfle"
+                    width={1280}
+                    height={720}
+                    className="z-10 h-full w-full object-cover transition-transform duration-500 ease-in-out group-hover:scale-105"
+                  />
+                  <FlexContainer
+                    variant="column-start"
+                    gap="sm"
+                    className="absolute inset-x-0 bottom-0 z-20 bg-gradient-to-t from-green-950 to-transparent p-5 pt-32"
                   >
-                    <a href={article.fields?.slug || "#"} className="group">
-                      <Image
-                        src={formatImageLink(thumbnail)}
-                        alt="LegalCyfle"
-                        width={1280}
-                        height={720}
-                        className="z-10 h-full w-full object-cover transition-transform duration-500 ease-in-out group-hover:scale-105"
-                      />
-                      <FlexContainer
-                        variant="column-start"
-                        gap="sm"
-                        className="absolute inset-x-0 bottom-0 z-20 bg-gradient-to-t from-green-950 to-transparent p-5 pt-32"
-                      >
-                        <p className="inline-block max-w-xl text-xl font-medium text-white md:text-3xl">
-                          {article.fields?.title}
+                    <p className="inline-block max-w-xl text-xl font-medium text-white md:text-3xl">
+                      {article.fields?.title}
+                    </p>
+                    <FlexContainer
+                      variant="row-between"
+                      alignItems="center"
+                      wrap="wrap"
+                    >
+                      <FlexContainer alignItems="center">
+                        <p className="text-sm font-medium text-white md:text-medium">
+                          {article?.fields?.date
+                            ? dayjs(article?.fields?.date)
+                                .tz("Asia/Kolkata")
+                                .format("MMMM DD, YYYY")
+                            : "Date not available"}
                         </p>
-                        <FlexContainer
-                          variant="row-between"
-                          alignItems="center"
-                          wrap="wrap"
-                        >
-                          <FlexContainer alignItems="center">
-                            <p className="text-sm font-medium text-white md:text-medium">
-                              {article?.fields?.date
-                                ? dayjs(article?.fields?.date)
-                                    .tz("Asia/Kolkata")
-                                    .format("MMMM DD, YYYY")
-                                : "Date not available"}
-                            </p>
-                            <Divider
-                              orientation="vertical"
-                              className="h-4 w-[1.5px] bg-white"
-                            />
-                            <p className="text-sm font-medium text-white md:text-medium">
-                              By{" "}
-                              {article?.fields?.authors
-                                .map((author) => {
-                                  return author.fields.name;
-                                })
-                                .join(", ")}
-                            </p>
-                          </FlexContainer>
-                          <p className="text-sm font-medium text-white md:text-medium">
-                            {estimateReadingTime(
-                              documentToHtmlString(
-                                article?.fields?.body as Document,
-                              ),
-                            )}{" "}
-                            min read
-                          </p>
-                        </FlexContainer>
+                        <Divider
+                          orientation="vertical"
+                          className="h-4 w-[1.5px] bg-white"
+                        />
+                        <p className="text-sm font-medium text-white md:text-medium">
+                          By{" "}
+                          {article?.fields?.authors
+                            .map((author) => {
+                              return author.fields.name;
+                            })
+                            .join(", ")}
+                        </p>
                       </FlexContainer>
-                    </a>
-                  </SwiperSlide>
-                );
-              })}
-            </Swiper>
-          </div>
-          <div className="col-span-4 row-span-1 lg:col-span-1 lg:row-span-3">
-            {data?.employeeOfTheMonth && (
-              <div className="flex h-full flex-col gap-5 rounded-xl bg-zinc-100 p-3 dark:bg-zinc-800">
-                <h3 className="text-2xl font-semibold">
-                  Co-ordinator of the Month
-                </h3>
-                {data?.employeeOfTheMonth?.fields?.authors?.map((author) => (
-                  <Link
-                    href={`/author/${author.sys.id}`}
-                    key={author.sys.id}
-                    className="flex items-center gap-3 rounded-xl bg-zinc-200 p-3 hover:bg-zinc-300 dark:bg-zinc-700 dark:hover:bg-zinc-600"
-                  >
-                    <Image
-                      src={formatImageLink(
-                        author.fields?.avatar?.fields?.file?.url ||
-                          "https://picsum.photos/200/200",
-                      )}
-                      alt={author.fields.name}
-                      width={100}
-                      height={100}
-                      className="h-16 w-16 shrink-0 rounded-full object-cover"
-                    />
-                    <div>
-                      <p className="text-lg font-semibold">
-                        {author.fields.name}
+                      <p className="text-sm font-medium text-white md:text-medium">
+                        {estimateReadingTime(
+                          documentToHtmlString(
+                            article?.fields?.body as Document,
+                          ),
+                        )}{" "}
+                        min read
                       </p>
-                      <p className="text-sm text-zinc-600 dark:text-zinc-400">
-                        {author.fields.bio.length > 70
-                          ? `${author.fields.bio.slice(0, 70)}...`
-                          : author.fields.bio}
-                      </p>
-                    </div>
-                  </Link>
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
+                    </FlexContainer>
+                  </FlexContainer>
+                </a>
+              </SwiperSlide>
+            );
+          })}
+        </Swiper>
+        {data?.employeeOfTheMonth &&
+          data?.employeeOfTheMonth?.fields?.authors?.length > 0 && (
+            <div className="flex h-full min-w-[300px] flex-col gap-3 rounded-xl bg-zinc-100 p-3 dark:bg-zinc-800">
+              <h3 className="text-xl font-semibold">
+                Co-ordinator of the Month
+              </h3>
+              <h3 className="text-base font-semibold">
+                {data?.employeeOfTheMonth?.fields?.month}
+              </h3>
+              {data?.employeeOfTheMonth?.fields?.authors?.map((author) => (
+                <Link
+                  href={`/author/${author.sys.id}`}
+                  key={author.sys.id}
+                  className="flex items-center gap-3 rounded-xl bg-zinc-200 p-3 hover:bg-zinc-300 dark:bg-zinc-700 dark:hover:bg-zinc-600"
+                >
+                  <Image
+                    src={formatImageLink(
+                      author.fields?.avatar?.fields?.file?.url ||
+                        "https://picsum.photos/200/200",
+                    )}
+                    alt={author.fields.name}
+                    width={100}
+                    height={100}
+                    className="h-16 w-16 shrink-0 rounded-full object-cover"
+                  />
+                  <div>
+                    <p className="text-lg font-semibold">
+                      {author.fields.name}
+                    </p>
+                    <p className="text-sm text-zinc-600 dark:text-zinc-400">
+                      {author.fields.bio.length > 70
+                        ? `${author.fields.bio.slice(0, 70)}...`
+                        : author.fields.bio}
+                    </p>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          )}
+
         {/* <div className="md:flexw-[300px] hidden">
           <AdWrapper
             data-ad-format="fluid"

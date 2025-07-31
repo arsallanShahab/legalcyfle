@@ -65,6 +65,8 @@ type Fields = {
   avatar: Avatar;
   address: Address;
   bio: string;
+  // type: "guest-author" | "co-ordinators" | "legalcyfle-team";
+  type: string;
 };
 
 export type Author = {

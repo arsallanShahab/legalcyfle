@@ -44,7 +44,7 @@ const Index = (props: Props) => {
         <h3 className="text-4xl font-semibold text-green-500">
           {props.data.author.fields.name}
         </h3>
-        <p className="max-w-xl text-base text-gray-600">
+        <p className="max-w-xl text-base text-gray-600 dark:text-gray-100">
           {props.data.author.fields?.bio}
         </p>
       </FlexContainer>

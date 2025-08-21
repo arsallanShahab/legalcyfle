@@ -23,13 +23,33 @@ import "swiper/css";
 export default function App({ Component, pageProps }: AppProps) {
   return (
     <Providers>
-      <Script
-        id="adsbygoogle-init"
-        crossOrigin="anonymous"
-        src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5892936530350741"
-      />
       <Head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5892936530350741"
+          crossOrigin="anonymous"
+        ></script>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              // Handle MRAID and AdSense errors gracefully
+              window.addEventListener('error', function(e) {
+                if (e.filename && e.filename.includes('mraid.js')) {
+                  console.warn('MRAID script error handled:', e.message);
+                  e.preventDefault();
+                }
+                if (e.message && e.message.includes('adsbygoogle')) {
+                  console.warn('AdSense error handled:', e.message);
+                  e.preventDefault();
+                }
+              });
+              
+              // Ensure adsbygoogle array exists
+              window.adsbygoogle = window.adsbygoogle || [];
+            `,
+          }}
+        />
       </Head>
       <Navbar />
       <main className={`${GeistSans.variable} ${GeistMono.variable}`}>

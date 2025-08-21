@@ -16,20 +16,52 @@ const AdWrapper = (props: Props) => {
   const adInitialized = useRef(false);
 
   useEffect(() => {
-    const intervalId = setInterval(() => {
-      if (!adInitialized.current && window.adsbygoogle) {
-        let adsbygoogle = window.adsbygoogle || [];
-        try {
-          (adsbygoogle = window.adsbygoogle || []).push({});
+    // Only initialize ads in production
+    if (process.env.NODE_ENV !== "production") {
+      return;
+    }
+
+    let retries = 0;
+    const maxRetries = 5;
+
+    const tryInitializeAd = () => {
+      if (adInitialized.current) return;
+
+      try {
+        if (typeof window !== "undefined" && window.adsbygoogle) {
+          (window.adsbygoogle = window.adsbygoogle || []).push({});
           adInitialized.current = true;
-          clearInterval(intervalId); // Clear the interval once adsbygoogle is available
-        } catch (err) {
-          console.log(err);
+          return true;
+        }
+      } catch (err) {
+        console.error("AdSense initialization error:", err);
+        retries++;
+        if (retries < maxRetries) {
+          setTimeout(tryInitializeAd, 1000 * retries); // Exponential backoff
         }
       }
-    }, 1000); // Check every second
+      return false;
+    };
 
-    return () => clearInterval(intervalId); // Cleanup interval on component unmount
+    // Initial attempt
+    if (!tryInitializeAd()) {
+      // Fallback: check periodically
+      const intervalId = setInterval(() => {
+        if (tryInitializeAd()) {
+          clearInterval(intervalId);
+        }
+      }, 2000);
+
+      // Cleanup after 30 seconds
+      const timeoutId = setTimeout(() => {
+        clearInterval(intervalId);
+      }, 30000);
+
+      return () => {
+        clearInterval(intervalId);
+        clearTimeout(timeoutId);
+      };
+    }
   }, []);
 
   if (process.env.NODE_ENV === "development") {

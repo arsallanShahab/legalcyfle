@@ -14,9 +14,6 @@ import Head from "next/head";
 import Link from "next/link";
 import Script from "next/script";
 import "swiper/css";
-import "swiper/css/navigation";
-import "swiper/css/pagination";
-import "swiper/css/autoplay";
 
 // TODO:- recommended post
 // - picture size full In mobile / desktop

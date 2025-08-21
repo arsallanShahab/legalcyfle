@@ -52,13 +52,12 @@ const ArticleCard = ({ article }: Props) => {
         <FlexContainer variant="row-start" className="gap-1">
           {article.fields.category?.map((category) => (
             <a href={`/category/${category.fields.slug}`} key={category.sys.id}>
-              <Badge
+              <span
                 key={category.sys.id}
-                variant={"default"}
-                className="border-0 bg-transparent px-0 py-0 text-xs font-bold uppercase tracking-wider text-blue-600 transition-colors hover:bg-transparent hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
+                className="border-0 bg-transparent px-1 py-0 text-xs font-bold uppercase tracking-wider text-blue-600 transition-colors hover:bg-transparent hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
               >
                 {category.fields.name}
-              </Badge>
+              </span>
             </a>
           ))}
         </FlexContainer>

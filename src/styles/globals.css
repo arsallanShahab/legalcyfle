@@ -145,6 +145,55 @@ body {
   @apply text-xl;
 }
 
+/* Responsive Table Styles */
+.blog_table_wrapper {
+  @apply w-full overflow-x-auto rounded-lg border border-gray-200 shadow-sm dark:border-gray-700;
+}
+
+.blog_table {
+  @apply w-full min-w-full border-collapse bg-white text-sm dark:bg-gray-900;
+}
+
+.blog_table_header {
+  @apply border-b border-gray-200 bg-gray-50 px-4 py-3 text-left font-semibold text-gray-900 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100;
+}
+
+.blog_table_cell {
+  @apply border-b border-gray-200 px-4 py-3 text-gray-700 dark:border-gray-700 dark:text-gray-300;
+}
+
+.blog_table_row:hover {
+  @apply bg-gray-50 dark:bg-gray-800;
+}
+
+.blog_table_row:last-child .blog_table_cell {
+  @apply border-b-0;
+}
+
+/* Mobile horizontal scroll */
+@media (max-width: 768px) {
+  .blog_table_wrapper {
+    @apply overflow-x-auto;
+  }
+
+  .blog_table {
+    @apply min-w-max;
+  }
+
+  .blog_table_header,
+  .blog_table_cell {
+    @apply whitespace-nowrap px-3 py-2 text-xs;
+  }
+}
+
+/* Tablet responsive adjustments */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .blog_table_header,
+  .blog_table_cell {
+    @apply px-3 py-2 text-sm;
+  }
+}
+
 @media (max-width: 420px) {
   .blog_paragraph {
     @apply text-base leading-relaxed;

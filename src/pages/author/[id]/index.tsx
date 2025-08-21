@@ -75,115 +75,162 @@ const Index = (props: Props) => {
 };
 
 export const getStaticPaths = async () => {
-  const authors = await client.getEntries({
-    content_type: "author",
-    select: ["sys.id"],
-  });
-  const paths = authors.items.map((item) => ({
-    params: { id: item.sys.id },
-  }));
-  return {
-    paths,
-    fallback: false,
-  };
+  try {
+    // Only pre-build the most popular/important authors
+    const authors = await client.getEntries({
+      content_type: "author",
+      select: ["sys.id"],
+      limit: 10, // Only pre-build top 10 authors
+      order: ["-sys.createdAt"], // Most recent first, or use view count if available
+    });
+
+    const paths = authors.items.map((item) => ({
+      params: { id: item.sys.id },
+    }));
+
+    return {
+      paths,
+      fallback: "blocking", // Generate pages on-demand for other authors
+    };
+  } catch (error) {
+    console.error("Error in getStaticPaths:", error);
+    return {
+      paths: [],
+      fallback: "blocking",
+    };
+  }
 };
 
 export const getStaticProps: GetStaticProps = async (ctx) => {
-  const id = ctx.params?.id as string;
-  const author = await client.getEntry(id);
-  const authorArticles = (await client.getEntries({
-    content_type: "blogPage",
-    "fields.authors.sys.id[in]": [id],
-    include: 1,
-    select: [
-      "fields.title",
-      "fields.slug",
-      "fields.description",
-      "fields.date",
-      "fields.image",
-      "fields.category",
-      "sys.id",
-      "sys.createdAt",
-    ],
-    limit: 5,
-  })) as any;
-
-  let safeJsonArticle = [];
-
   try {
-    safeJsonArticle = JSON.parse(safeJsonStringify(authorArticles.items));
-  } catch (error) {
-    const minimalArticles = authorArticles.items.map(
-      (article: {
-        sys: { id: any; createdAt: any };
-        fields: {
-          title: any;
-          slug: any;
-          description: any;
-          date: any;
-          image: {
-            sys: { id: any };
-            fields: { title: any; file: { url: any; details: { image: any } } };
+    const id = ctx.params?.id as string;
+
+    if (!id) {
+      return { notFound: true };
+    }
+
+    // Get only necessary author fields
+    const author = await client.getEntry(id).catch((error) => {
+      console.error("Error fetching author:", error);
+      return null;
+    });
+
+    if (!author) {
+      return { notFound: true };
+    }
+
+    const authorArticles = (await client
+      .getEntries({
+        content_type: "blogPage",
+        "fields.authors.sys.id[in]": [id],
+        include: 1,
+        select: [
+          "fields.title",
+          "fields.slug",
+          "fields.description",
+          "fields.date",
+          "fields.image",
+          "fields.category",
+          "sys.id",
+          "sys.createdAt",
+        ],
+        limit: 5,
+      })
+      .catch((error) => {
+        console.error("Error fetching author articles:", error);
+        return { items: [], total: 0 };
+      })) as any;
+
+    let safeJsonArticle = [];
+    let safeJsonAuthor = {};
+
+    try {
+      safeJsonArticle = JSON.parse(safeJsonStringify(authorArticles.items));
+      safeJsonAuthor = JSON.parse(safeJsonStringify(author));
+    } catch (error) {
+      console.error("Error stringifying data:", error);
+
+      const minimalArticles = authorArticles.items.map(
+        (article: {
+          sys: { id: any; createdAt: any };
+          fields: {
+            title: any;
+            slug: any;
+            description: any;
+            date: any;
+            image: {
+              sys: { id: any };
+              fields: {
+                title: any;
+                file: { url: any; details: { image: any } };
+              };
+            };
+            category: { sys: { id: any }; fields: { name: any; slug: any } }[];
           };
-          category: { sys: { id: any }; fields: { name: any; slug: any } }[];
-        };
-      }) => ({
-        sys: {
-          id: article.sys.id,
-          createdAt: article.sys.createdAt,
-        },
-        fields: {
-          title: article.fields.title,
-          slug: article.fields.slug,
-          description: article.fields.description,
-          date: article.fields.date,
-          // Only essential image data
-          image: article.fields.image
-            ? {
-                sys: { id: article.fields.image.sys.id },
-                fields: {
-                  title: article.fields.image.fields.title,
-                  file: {
-                    url: article.fields.image.fields.file.url,
-                    details: {
-                      image: article.fields.image.fields.file.details?.image,
+        }) => ({
+          sys: {
+            id: article.sys.id,
+            createdAt: article.sys.createdAt,
+          },
+          fields: {
+            title: article.fields.title,
+            slug: article.fields.slug,
+            description: article.fields.description,
+            date: article.fields.date,
+            // Only essential image data
+            image: article.fields.image
+              ? {
+                  sys: { id: article.fields.image.sys.id },
+                  fields: {
+                    title: article.fields.image.fields.title,
+                    file: {
+                      url: article.fields.image.fields.file.url,
+                      details: {
+                        image: article.fields.image.fields.file.details?.image,
+                      },
                     },
                   },
-                },
-              }
-            : null,
-          // Only essential category data
-          category: Array.isArray(article.fields.category)
-            ? article.fields.category.map(
-                (cat: {
-                  sys: { id: any };
-                  fields: { name: any; slug: any };
-                }) => ({
-                  sys: { id: cat.sys.id },
-                  fields: {
-                    name: cat.fields.name,
-                    slug: cat.fields.slug,
-                  },
-                }),
-              )
-            : [],
+                }
+              : null,
+            // Only essential category data
+            category: Array.isArray(article.fields.category)
+              ? article.fields.category.map(
+                  (cat: {
+                    sys: { id: any };
+                    fields: { name: any; slug: any };
+                  }) => ({
+                    sys: { id: cat.sys.id },
+                    fields: {
+                      name: cat.fields.name,
+                      slug: cat.fields.slug,
+                    },
+                  }),
+                )
+              : [],
+          },
+        }),
+      );
+      safeJsonArticle = minimalArticles;
+      safeJsonAuthor = author;
+    }
+
+    const nextPage = authorArticles.total > 5 ? 2 : null;
+
+    return {
+      props: {
+        data: {
+          author: safeJsonAuthor,
+          articles: safeJsonArticle,
+          nextPage,
         },
-      }),
-    );
-    safeJsonArticle = minimalArticles;
-  }
-
-  const nextPage = authorArticles.total > 5 ? 2 : null;
-
-  return {
-    props: {
-      data: {
-        author,
-        articles: safeJsonArticle,
-        nextPage,
       },
-    },
-  };
+      // ISR: Revalidate every hour
+      revalidate: 3600,
+    };
+  } catch (error) {
+    console.error("Error in getStaticProps:", error);
+    return { notFound: true };
+  }
 };
 
 export default Index;

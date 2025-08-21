@@ -53,52 +53,100 @@ const Index = (props: Props) => {
 };
 
 export const getStaticPaths = async () => {
-  const categories = await client.getEntries({
-    content_type: "blogCategory",
-    select: ["fields.slug"],
-  });
-  const paths = categories.items.map((item) => ({
-    params: { slug: item.fields.slug },
-  }));
-  return {
-    paths,
-    fallback: false,
-  };
+  try {
+    // Only pre-build the most popular categories
+    const categories = await client.getEntries({
+      content_type: "blogCategory",
+      select: ["fields.slug"],
+      limit: 5, // Only pre-build top 5 categories
+    });
+
+    const paths = categories.items.map((item) => ({
+      params: { slug: item.fields.slug },
+    }));
+
+    return {
+      paths,
+      fallback: "blocking", // Generate other categories on-demand
+    };
+  } catch (error) {
+    console.error("Error in getStaticPaths:", error);
+    return {
+      paths: [],
+      fallback: "blocking",
+    };
+  }
 };
 
 export const getStaticProps: GetStaticProps = async (ctx) => {
-  const slug = ctx.params?.slug;
-  const category = await client.getEntries({
-    content_type: "blogCategory",
-    "fields.slug": slug,
-  });
-  const articles = await client.getEntries({
-    content_type: "blogPage",
-    "fields.category.sys.id[in]": [category?.items[0]?.sys.id],
-    select: [
-      "fields.title",
-      "fields.slug",
-      "fields.description",
-      "fields.date",
-      "fields.image",
-      "fields.category",
-      "fields.authors",
-      "sys.id",
-      "sys.createdAt",
-    ],
-    limit: 5,
-    order: ["-sys.createdAt"],
-  });
-  const nextPage = articles.total > 5 ? 2 : null;
+  try {
+    const slug = ctx.params?.slug;
 
-  const safeJsonArticle = JSON.parse(safeJsonStringify(articles.items));
-  return {
-    props: {
-      data: safeJsonArticle,
-      nextPage,
-      slug,
-    },
-  };
+    if (!slug) {
+      return { notFound: true };
+    }
+
+    const category = await client
+      .getEntries({
+        content_type: "blogCategory",
+        "fields.slug": slug,
+        select: ["sys.id", "fields.name", "fields.slug"],
+      })
+      .catch((error) => {
+        console.error("Error fetching category:", error);
+        return { items: [] };
+      });
+
+    if (!category?.items?.length) {
+      return { notFound: true };
+    }
+
+    const articles = await client
+      .getEntries({
+        content_type: "blogPage",
+        "fields.category.sys.id[in]": [category?.items[0]?.sys.id],
+        select: [
+          "fields.title",
+          "fields.slug",
+          "fields.description",
+          "fields.date",
+          "fields.image",
+          "fields.category",
+          "fields.authors",
+          "sys.id",
+          "sys.createdAt",
+        ],
+        limit: 5,
+        order: ["-sys.createdAt"],
+      })
+      .catch((error) => {
+        console.error("Error fetching articles:", error);
+        return { items: [], total: 0 };
+      });
+
+    const nextPage = articles.total > 5 ? 2 : null;
+
+    let safeJsonArticle = [];
+    try {
+      safeJsonArticle = JSON.parse(safeJsonStringify(articles.items));
+    } catch (error) {
+      console.error("Error stringifying articles:", error);
+      safeJsonArticle = articles.items;
+    }
+
+    return {
+      props: {
+        data: safeJsonArticle,
+        nextPage,
+        slug,
+      },
+      // ISR: Revalidate every 30 minutes
+      revalidate: 1800,
+    };
+  } catch (error) {
+    console.error("Error in getStaticProps:", error);
+    return { notFound: true };
+  }
 };
 
 export default Index;

@@ -98,6 +98,78 @@ const renderNode: { [key: string]: (node: Node) => string } = {
 </script></div>
     `;
   },
+  [BLOCKS.TABLE]: (node) => {
+    let headerLabels: string[] = [];
+
+    // First pass: collect header labels
+    node.content.forEach((row: any, rowIndex: number) => {
+      if (row.nodeType === BLOCKS.TABLE_ROW && rowIndex === 0) {
+        headerLabels = row.content.map((cell: any) => {
+          if (
+            cell.nodeType === BLOCKS.TABLE_CELL ||
+            cell.nodeType === BLOCKS.TABLE_HEADER_CELL
+          ) {
+            return (
+              cell.content
+                .map((p: any) => p.content?.[0]?.value || "")
+                .join(" ") || `Column ${rowIndex + 1}`
+            );
+          }
+          return `Column ${rowIndex + 1}`;
+        });
+      }
+    });
+
+    const tableContent = node.content
+      .map((row: any, rowIndex: number) => {
+        if (row.nodeType === BLOCKS.TABLE_ROW) {
+          const cellsContent = row.content
+            .map((cell: any, cellIndex: number) => {
+              if (
+                cell.nodeType === BLOCKS.TABLE_CELL ||
+                cell.nodeType === BLOCKS.TABLE_HEADER_CELL
+              ) {
+                const cellText = cell.content
+                  .map((p: any) => p.content?.[0]?.value || "")
+                  .join(" ");
+                const isHeader =
+                  cell.nodeType === BLOCKS.TABLE_HEADER_CELL || rowIndex === 0;
+                const dataLabel =
+                  headerLabels[cellIndex] || `Column ${cellIndex + 1}`;
+
+                return isHeader
+                  ? `<th class="blog_table_header">${cellText}</th>`
+                  : `<td class="blog_table_cell" data-label="${dataLabel}">${cellText}</td>`;
+              }
+              return "";
+            })
+            .join("");
+          return `<tr class="blog_table_row">${cellsContent}</tr>`;
+        }
+        return "";
+      })
+      .join("");
+
+    return `
+      <div class="blog_table_wrapper">
+        <table class="blog_table">
+          ${tableContent}
+        </table>
+      </div>
+    `;
+  },
+  [BLOCKS.TABLE_ROW]: (node) => {
+    // This will be handled by the TABLE block
+    return "";
+  },
+  [BLOCKS.TABLE_CELL]: (node) => {
+    // This will be handled by the TABLE block
+    return "";
+  },
+  [BLOCKS.TABLE_HEADER_CELL]: (node) => {
+    // This will be handled by the TABLE block
+    return "";
+  },
 
   // <div class="ad_infeed"><ins class="adsbygoogle"
   //        style="display:block; text-align:center;"

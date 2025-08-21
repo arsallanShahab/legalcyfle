@@ -1061,17 +1061,30 @@ const Index = (props: Props) => {
 };
 
 export const getStaticPaths = async () => {
-  const articles = await client.getEntries({
-    content_type: "blogPage",
-    limit: 1000,
-  });
-  const paths = articles.items.map((item) => ({
-    params: { slug: item.fields.slug },
-  }));
-  return {
-    paths,
-    fallback: false,
-  };
+  try {
+    // Only pre-build the most recent/popular articles
+    const articles = await client.getEntries({
+      content_type: "blogPage",
+      select: ["fields.slug"],
+      limit: 50, // Pre-build only 50 most recent articles
+      order: ["-sys.createdAt"],
+    });
+
+    const paths = articles.items.map((item) => ({
+      params: { slug: item.fields.slug },
+    }));
+
+    return {
+      paths,
+      fallback: "blocking", // Generate other articles on-demand
+    };
+  } catch (error) {
+    console.error("Error in getStaticPaths:", error);
+    return {
+      paths: [],
+      fallback: "blocking",
+    };
+  }
 };
 export const getStaticProps = async (
   ctx: { params: { slug: string } } & GetStaticProps,

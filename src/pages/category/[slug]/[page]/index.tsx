@@ -67,66 +67,130 @@ const Index = (props: Props) => {
 };
 
 export const getStaticPaths = async () => {
-  const categories = await client.getEntries({
-    content_type: "blogCategory",
-  });
+  try {
+    const categories = await client.getEntries({
+      content_type: "blogCategory",
+      select: ["fields.slug", "sys.id"],
+      limit: 5, // Only pre-build paths for top 5 categories
+    });
 
-  const paths = await Promise.all(
-    categories.items.map(async (item) => {
-      const totalArticles = await client.getEntries({
-        content_type: "blogPage",
-        "fields.category.sys.id[in]": [item.sys.id],
-        select: ["sys.id"],
-        limit: 1000,
-      });
-      const totalPages = Math.ceil(totalArticles.total / 5);
-      return Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => {
-        return {
-          params: {
-            slug: item.fields.slug,
-            page: page.toString(),
-            // nextPage: totalPages > page ? (page + 1).toString() : null,
-          },
-        };
-      });
-    }),
-  );
-  return {
-    paths: paths.flat(),
-    fallback: false,
-  };
+    const paths = await Promise.all(
+      categories.items.map(async (item) => {
+        try {
+          // Just get total count, not actual entries
+          const totalArticles = await client.getEntries({
+            content_type: "blogPage",
+            "fields.category.sys.id[in]": [item.sys.id],
+            select: ["sys.id"],
+            limit: 1, // We only need the total count
+          });
+
+          const totalPages = Math.ceil(totalArticles.total / 5);
+          // Only generate paths for first 5 pages max to avoid excessive builds
+          const pagesToGenerate = Math.min(totalPages, 5);
+
+          return Array.from({ length: pagesToGenerate }, (_, i) => ({
+            params: {
+              slug: item.fields.slug,
+              page: (i + 1).toString(),
+            },
+          }));
+        } catch (error) {
+          console.error(
+            `Error generating paths for category ${item.fields.slug}:`,
+            error,
+          );
+          return [];
+        }
+      }),
+    );
+
+    return {
+      paths: paths.flat().filter(Boolean),
+      fallback: "blocking", // Generate other pages on-demand
+    };
+  } catch (error) {
+    console.error("Error in getStaticPaths:", error);
+    return {
+      paths: [],
+      fallback: "blocking",
+    };
+  }
 };
 
 export const getStaticProps: GetStaticProps = async (ctx) => {
-  const slug = ctx.params?.slug;
-  let page = parseInt(ctx.params?.page as string) || 1;
-  const category = await client.getEntries({
-    content_type: "blogCategory",
-    "fields.slug": slug,
-  });
-  const articles = await client.getEntries({
-    content_type: "blogPage",
-    "fields.category.sys.id[in]": [category?.items[0]?.sys.id],
-    // Pagination
-    limit: 5,
-    skip: (page - 1) * 5,
-    // Sort
-    order: ["-sys.createdAt"],
-  });
-  const nextPage = articles.total > page * 5 ? page + 1 : null;
-  const safeJsonArticle = JSON.parse(safeJsonStringify(articles.items));
-  // // Clean the articles data
-  // const cleanedArticles = articles.items.map((article) =>
-  //   removeCircularReferences(article),
-  // );
-  return {
-    props: {
-      data: safeJsonArticle,
-      page: page,
-      nextPage: nextPage,
-      slug: slug,
-    },
-  };
+  try {
+    const slug = ctx.params?.slug;
+    let page = parseInt(ctx.params?.page as string) || 1;
+
+    if (!slug) {
+      return { notFound: true };
+    }
+
+    // Get only category ID to use in article query
+    const category = await client
+      .getEntries({
+        content_type: "blogCategory",
+        "fields.slug": slug,
+        select: ["sys.id", "fields.name", "fields.slug"],
+      })
+      .catch((error) => {
+        console.error("Error fetching category:", error);
+        return { items: [] };
+      });
+
+    if (!category?.items?.length) {
+      return { notFound: true };
+    }
+
+    // Get only necessary fields from articles
+    const articles = await client
+      .getEntries({
+        content_type: "blogPage",
+        "fields.category.sys.id[in]": [category?.items[0]?.sys.id],
+        select: [
+          "fields.title",
+          "fields.slug",
+          "fields.description",
+          "fields.date",
+          "fields.image",
+          "fields.category",
+          "sys.id",
+          "sys.createdAt",
+        ],
+        limit: 5,
+        skip: (page - 1) * 5,
+        order: ["-sys.createdAt"],
+      })
+      .catch((error) => {
+        console.error("Error fetching articles:", error);
+        return { items: [], total: 0 };
+      });
+
+    const nextPage = articles.total > page * 5 ? page + 1 : null;
+
+    let safeJsonArticle = [];
+    try {
+      safeJsonArticle = JSON.parse(safeJsonStringify(articles.items));
+    } catch (error) {
+      console.error("Error stringifying articles:", error);
+      safeJsonArticle = articles.items;
+    }
+
+    return {
+      props: {
+        data: safeJsonArticle,
+        page: page,
+        nextPage: nextPage,
+        slug: slug,
+      },
+      // ISR: Revalidate every 30 minutes
+      revalidate: 1800,
+    };
+  } catch (error) {
+    console.error("Error in getStaticProps:", error);
+    return { notFound: true };
+  }
 };
 
 export default Index;

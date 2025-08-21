@@ -12,7 +12,8 @@ export default async function handler(
     // Log the entire request for debugging
     console.log("=== CONTENTFUL WEBHOOK DEBUG ===");
     console.log("Headers:", JSON.stringify(req.headers, null, 2));
-    console.log("Body:", JSON.stringify(req.body, null, 2));
+    console.log("Raw Body Type:", typeof req.body);
+    console.log("Raw Body:", req.body);
     console.log("===============================");
 
     // Verify it's a Contentful webhook
@@ -22,7 +23,23 @@ export default async function handler(
       return res.status(400).json({ message: "Invalid webhook source" });
     }
 
-    const { sys, fields } = req.body;
+    // Parse body if it's a string
+    let parsedBody;
+    if (typeof req.body === "string") {
+      try {
+        parsedBody = JSON.parse(req.body);
+        console.log("Parsed body from string:", parsedBody);
+      } catch (parseError) {
+        console.log("Failed to parse body as JSON:", parseError);
+        return res
+          .status(400)
+          .json({ message: "Invalid JSON in webhook payload" });
+      }
+    } else {
+      parsedBody = req.body;
+    }
+
+    const { sys, fields } = parsedBody;
 
     console.log("Extracted sys:", sys);
     console.log("Extracted fields:", fields);
@@ -59,11 +76,63 @@ export default async function handler(
     console.log(`Received webhook for content type: ${contentType}`);
     console.log(`Entry ID: ${sys.id}`);
     console.log(`Webhook topic: ${contentfulTopic}`);
+    console.log(`Entry type: ${sys.type}`);
 
     // Helper function to extract field values from Contentful's nested structure
     const getFieldValue = (field: any, locale = "en-US") => {
       return field?.[locale] || field;
     };
+
+    // Handle deleted entries - they don't have fields
+    if (sys.type === "DeletedEntry") {
+      console.log(`Processing deleted entry for ID: ${sys.id}`);
+
+      // For deleted entries, we still want to revalidate related pages
+      switch (contentType) {
+        case "blogPage":
+          console.log(`Processing deleted blog page for ID: ${sys.id}`);
+          // Revalidate homepage and category pages since we can't get specific slug
+          await fetch(
+            `${baseUrl}/api/revalidate?secret=${revalidationSecret}`,
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                path: "/",
+              }),
+            },
+          );
+          break;
+
+        case "author":
+          console.log(`Processing deleted author for ID: ${sys.id}`);
+          // Revalidate homepage since author pages might be affected
+          await fetch(
+            `${baseUrl}/api/revalidate?secret=${revalidationSecret}`,
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                path: "/",
+              }),
+            },
+          );
+          break;
+
+        default:
+          console.log(
+            `Deleted entry for unhandled content type: ${contentType}`,
+          );
+      }
+
+      return res.json({
+        success: true,
+        contentType,
+        entryId: sys.id,
+        topic: contentfulTopic,
+        action: "deleted",
+      });
+    }
 
     switch (contentType) {
       case "blogPage":

@@ -9,6 +9,12 @@ export default async function handler(
   }
 
   try {
+    // Log the entire request for debugging
+    console.log("=== CONTENTFUL WEBHOOK DEBUG ===");
+    console.log("Headers:", JSON.stringify(req.headers, null, 2));
+    console.log("Body:", JSON.stringify(req.body, null, 2));
+    console.log("===============================");
+
     // Verify it's a Contentful webhook
     const contentfulTopic = req.headers["x-contentful-topic"];
     if (!contentfulTopic) {
@@ -18,12 +24,35 @@ export default async function handler(
 
     const { sys, fields } = req.body;
 
-    if (!sys || !sys.contentType) {
-      console.log("Missing sys or contentType in payload");
-      return res.status(400).json({ message: "Invalid webhook payload" });
+    console.log("Extracted sys:", sys);
+    console.log("Extracted fields:", fields);
+    console.log("sys.contentType:", sys?.contentType);
+
+    if (!sys) {
+      console.log("Missing sys in payload");
+      return res
+        .status(400)
+        .json({ message: "Invalid webhook payload - missing sys" });
     }
 
-    const contentType = sys.contentType.sys.id;
+    if (!sys.contentType) {
+      console.log("Missing contentType in sys");
+      return res
+        .status(400)
+        .json({ message: "Invalid webhook payload - missing contentType" });
+    }
+
+    // Handle different contentType structures
+    let contentType;
+    if (typeof sys.contentType === "string") {
+      contentType = sys.contentType;
+    } else if (sys.contentType.sys && sys.contentType.sys.id) {
+      contentType = sys.contentType.sys.id;
+    } else {
+      console.log("Invalid contentType structure:", sys.contentType);
+      return res.status(400).json({ message: "Invalid contentType structure" });
+    }
+
     const revalidationSecret = process.env.REVALIDATION_SECRET;
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
 

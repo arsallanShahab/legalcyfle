@@ -149,10 +149,10 @@ export default function Home({ data }: HomeProps) {
         data-ad-layout-key="-es-7n+gf+bp-16h"
         data-ad-slot="7648124020"
       /> */}
-      <div className="flex flex-wrap gap-5 px-3 md:flex-nowrap md:px-5 lg:max-h-[80vh] lg:px-10">
+      <div className="flex flex-col gap-5 px-3 md:px-5 lg:h-[500px] lg:flex-row lg:px-10">
         <Swiper
-          spaceBetween={50}
-          // slidesPerView={1}
+          spaceBetween={20}
+          slidesPerView={1}
           modules={[
             Autoplay,
             Mousewheel,
@@ -162,17 +162,30 @@ export default function Home({ data }: HomeProps) {
             Navigation,
             Pagination,
           ]}
-          pagination={{}}
-          // effect="fade"
+          pagination={{
+            clickable: true,
+            dynamicBullets: true,
+          }}
           autoplay={{
             delay: 3000,
-            disableOnInteraction: true,
+            disableOnInteraction: false,
           }}
           allowTouchMove
           loop={true}
+          breakpoints={{
+            640: {
+              spaceBetween: 30,
+            },
+            768: {
+              spaceBetween: 40,
+            },
+            1024: {
+              spaceBetween: 50,
+            },
+          }}
           onSlideChange={() => {}}
           onSwiper={(swiper) => {}}
-          className="flex overflow-hidden rounded-xl"
+          className="h-[300px] w-full overflow-hidden rounded-none sm:h-[400px] md:h-[450px] lg:h-full lg:flex-1"
         >
           {data?.topArticles?.map((article: BlogEntry) => {
             const thumbnail =
@@ -181,9 +194,12 @@ export default function Home({ data }: HomeProps) {
             return (
               <SwiperSlide
                 key={article.sys.id}
-                className="relative overflow-hidden rounded-xl md:max-h-[450px] lg:h-[80vh]"
+                className="relative h-full w-full overflow-hidden"
               >
-                <a href={article.fields?.slug || "#"} className="group">
+                <a
+                  href={article.fields?.slug || "#"}
+                  className="group block h-full w-full"
+                >
                   <Image
                     src={formatImageLink(thumbnail)}
                     alt="LegalCyfle"
@@ -194,45 +210,65 @@ export default function Home({ data }: HomeProps) {
                   <FlexContainer
                     variant="column-start"
                     gap="sm"
-                    className="absolute inset-x-0 bottom-0 z-20 bg-gradient-to-t from-green-950 to-transparent p-5 pt-32"
+                    className="absolute inset-x-0 bottom-0 z-20 bg-gradient-to-t from-black/90 via-black/50 to-transparent p-4 pt-20 sm:p-6 sm:pt-32"
                   >
-                    <p className="inline-block max-w-xl text-xl font-medium text-white md:text-3xl">
+                    <FlexContainer
+                      variant="row-start"
+                      className="mb-2 gap-2 sm:mb-3"
+                    >
+                      {article.fields.category?.slice(0, 1).map((category) => (
+                        <Badge
+                          key={category.sys.id}
+                          className="border-0 bg-transparent px-0 py-0 text-xs font-bold uppercase tracking-wider text-blue-400"
+                        >
+                          {category.fields.name}
+                        </Badge>
+                      ))}
+                    </FlexContainer>
+                    <p className="inline-block max-w-none text-lg font-bold leading-tight text-white sm:text-2xl md:text-3xl lg:text-4xl">
                       {article.fields?.title}
                     </p>
                     <FlexContainer
-                      variant="row-between"
+                      variant="row-start"
                       alignItems="center"
                       wrap="wrap"
+                      className="mt-2 gap-2 sm:mt-4 sm:gap-3"
                     >
-                      <FlexContainer alignItems="center">
-                        <p className="text-sm font-medium text-white md:text-medium">
-                          {article?.fields?.date
-                            ? dayjs(article?.fields?.date)
-                                .tz("Asia/Kolkata")
-                                .format("MMMM DD, YYYY")
-                            : "Date not available"}
-                        </p>
-                        <Divider
-                          orientation="vertical"
-                          className="h-4 w-[1.5px] bg-white"
-                        />
-                        <p className="text-sm font-medium text-white md:text-medium">
-                          By{" "}
+                      <FlexContainer
+                        alignItems="center"
+                        wrap="wrap"
+                        className="gap-2 sm:gap-3"
+                      >
+                        <p className="text-xs font-bold uppercase tracking-wider text-green-400">
                           {article?.fields?.authors
+                            .slice(0, 1)
                             .map((author) => {
                               return author.fields.name;
                             })
                             .join(", ")}
                         </p>
+                        <span className="hidden text-xs font-bold text-white/60 sm:inline">
+                          •
+                        </span>
+                        <p className="text-xs font-medium uppercase tracking-wider text-white/80">
+                          {article?.fields?.date
+                            ? dayjs(article?.fields?.date)
+                                .tz("Asia/Kolkata")
+                                .format("MMM DD")
+                            : "Date not available"}
+                        </p>
+                        <span className="hidden text-xs font-bold text-white/60 sm:inline">
+                          •
+                        </span>
+                        <p className="hidden text-xs font-medium uppercase tracking-wider text-white/80 sm:block">
+                          {estimateReadingTime(
+                            documentToHtmlString(
+                              article?.fields?.body as Document,
+                            ),
+                          )}{" "}
+                          min read
+                        </p>
                       </FlexContainer>
-                      <p className="text-sm font-medium text-white md:text-medium">
-                        {estimateReadingTime(
-                          documentToHtmlString(
-                            article?.fields?.body as Document,
-                          ),
-                        )}{" "}
-                        min read
-                      </p>
                     </FlexContainer>
                   </FlexContainer>
                 </a>
@@ -242,41 +278,45 @@ export default function Home({ data }: HomeProps) {
         </Swiper>
         {data?.employeeOfTheMonth &&
           data?.employeeOfTheMonth?.fields?.authors?.length > 0 && (
-            <div className="flex h-full min-w-[300px] flex-col gap-3 rounded-xl bg-zinc-100 p-3 dark:bg-zinc-800">
-              <h3 className="text-xl font-semibold">
-                Co-ordinator of the Month
-              </h3>
-              <h3 className="text-base font-semibold">
-                {data?.employeeOfTheMonth?.fields?.month}
-              </h3>
-              {data?.employeeOfTheMonth?.fields?.authors?.map((author) => (
-                <Link
-                  href={`/author/${author.sys.id}`}
-                  key={author.sys.id}
-                  className="flex items-center gap-3 rounded-xl bg-zinc-200 p-3 hover:bg-zinc-300 dark:bg-zinc-700 dark:hover:bg-zinc-600"
-                >
-                  <Image
-                    src={formatImageLink(
-                      author.fields?.avatar?.fields?.file?.url ||
-                        "https://picsum.photos/200/200",
-                    )}
-                    alt={author.fields.name}
-                    width={100}
-                    height={100}
-                    className="h-16 w-16 shrink-0 rounded-full object-cover"
-                  />
-                  <div>
-                    <p className="text-lg font-semibold">
-                      {author.fields.name}
-                    </p>
-                    <p className="text-sm text-zinc-600 dark:text-zinc-400">
-                      {author.fields.bio.length > 70
-                        ? `${author.fields.bio.slice(0, 70)}...`
-                        : author.fields.bio}
-                    </p>
-                  </div>
-                </Link>
-              ))}
+            <div className="flex flex-col gap-5 bg-white dark:bg-gray-900 lg:h-full lg:min-h-[500px] lg:w-[350px]">
+              <div className="pb-2">
+                <h3 className="mb-1 text-lg font-bold text-gray-900 dark:text-white">
+                  Co-ordinator of the Month
+                </h3>
+                <p className="text-xs font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400">
+                  {data?.employeeOfTheMonth?.fields?.month}
+                </p>
+              </div>
+              <div className="flex-1 space-y-4 overflow-y-auto">
+                {data?.employeeOfTheMonth?.fields?.authors.map((author) => (
+                  <Link
+                    href={`/author/${author.sys.id}`}
+                    key={author.sys.id}
+                    className="flex items-start gap-4 rounded p-2 transition-colors duration-200 hover:bg-gray-50 dark:hover:bg-gray-800"
+                  >
+                    <Image
+                      src={formatImageLink(
+                        author.fields?.avatar?.fields?.file?.url ||
+                          "https://picsum.photos/200/200",
+                      )}
+                      alt={author.fields.name}
+                      width={100}
+                      height={100}
+                      className="h-16 w-16 shrink-0 object-cover"
+                    />
+                    <div className="flex-1">
+                      <p className="mb-2 text-lg font-bold leading-tight text-gray-900 dark:text-white">
+                        {author.fields.name}
+                      </p>
+                      <p className="text-sm leading-relaxed text-gray-600 dark:text-gray-400">
+                        {author.fields.bio.length > 60
+                          ? `${author.fields.bio.slice(0, 60)}...`
+                          : author.fields.bio}
+                      </p>
+                    </div>
+                  </Link>
+                ))}
+              </div>
             </div>
           )}
 
@@ -303,11 +343,13 @@ export default function Home({ data }: HomeProps) {
       </div>
       <FlexContainer
         variant="column-start"
-        gap="5xl"
+        gap="lg"
         className="px-3 md:px-5 lg:px-10"
       >
-        <Heading>Connect with us on Social Media</Heading>
-        <div className="grid grid-cols-5 gap-2.5 sm:gap-5">
+        <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+          Connect with us on Social Media
+        </h2>
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-5 sm:gap-4">
           {Object.keys(SocialLinks).map((key) => {
             const Icon = SocialLinks[key].icon;
             return (
@@ -315,22 +357,12 @@ export default function Home({ data }: HomeProps) {
                 href={SocialLinks[key].url}
                 target="_blank"
                 key={key}
-                className={cn(
-                  "flex items-center justify-center gap-2 rounded-xl bg-zinc-100 px-2 py-5 font-giest-sans text-xl font-medium text-zinc-900 sm:py-10",
-                  key === "facebook" &&
-                    "bg-[#0866FF] text-white hover:bg-[#0052CC]",
-                  key === "instagram" &&
-                    "bg-[#FF0069] text-white hover:bg-[#D6005A]",
-                  key === "linkedin" &&
-                    "bg-[#0077b5] text-white hover:bg-[#006097]",
-                  key === "telegram" &&
-                    "bg-[#26A5E4] text-white hover:bg-[#1C8DD4]",
-                  key === "whatsapp" &&
-                    "bg-[#25D366] text-white hover:bg-[#128C7E]",
-                )}
+                className="group flex items-center justify-center gap-3 border border-gray-200 bg-white px-4 py-6 font-medium text-gray-700 transition-all duration-200 hover:border-gray-300 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 dark:hover:border-gray-600 dark:hover:bg-gray-800 sm:flex-col sm:gap-2 sm:py-8"
               >
-                <Icon className="h-7 w-7 fill-current" />
-                <span className="hidden md:block">{key}</span>
+                <Icon className="h-6 w-6 fill-current transition-transform duration-200 group-hover:scale-110" />
+                <span className="text-sm font-bold uppercase tracking-wider">
+                  {key}
+                </span>
               </Link>
             );
           })}

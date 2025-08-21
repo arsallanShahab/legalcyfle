@@ -224,16 +224,19 @@ const Navbar = (_props: Props) => {
       <FlexContainer
         variant="row-between"
         alignItems="center"
-        className="sticky top-0 z-[900] h-[80px] border-b bg-zinc-50 px-5 py-5 dark:border-zinc-800 dark:bg-zinc-900 md:px-10"
+        className="sticky top-0 z-[900] h-[80px] border-b border-gray-200 bg-white px-5 py-5 dark:border-gray-700 dark:bg-gray-900 md:px-10"
       >
         <FlexContainer gap="2xl" alignItems="center">
-          <Link href="/" className="font-work text-xl font-bold text-green-600">
+          <Link
+            href="/"
+            className="text-xl font-bold text-gray-900 dark:text-white"
+          >
             LegalCyfle
           </Link>
-          <FlexContainer className="hidden *:rounded-lg *:font-rubik *:text-sm *:font-medium lg:flex">
+          <FlexContainer className="hidden items-center *:text-xs *:font-bold *:uppercase *:tracking-wider lg:flex">
             <Link
               href="/category/publications"
-              className="px-2 py-1 hover:bg-zinc-100 dark:hover:bg-zinc-800"
+              className="px-3 py-2 text-gray-700 transition-colors duration-200 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
             >
               Publications
             </Link>
@@ -253,13 +256,13 @@ const Navbar = (_props: Props) => {
             </Dropdown>
             <Link
               href="/jobs"
-              className="px-2 py-1 hover:bg-zinc-100 dark:hover:bg-zinc-800"
+              className="px-3 py-2 text-gray-700 transition-colors duration-200 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
             >
               Jobs
             </Link>
             <Link
               href="/internships"
-              className="px-2 py-1 hover:bg-zinc-100 dark:hover:bg-zinc-800"
+              className="px-3 py-2 text-gray-700 transition-colors duration-200 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
             >
               Internships
             </Link>
@@ -278,14 +281,14 @@ const Navbar = (_props: Props) => {
             <Link
               target="_blank"
               href="https://www.indiacode.nic.in/"
-              className="px-2 py-1 hover:bg-zinc-100 dark:hover:bg-zinc-800"
+              className="px-3 py-2 text-gray-700 transition-colors duration-200 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
             >
               Bare Acts
             </Link>
             {/* <Link
               href="/journal"
               target="_blank"
-              className="px-2 py-1 hover:bg-zinc-100 dark:hover:bg-zinc-800"
+              className="px-3 py-2 text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white transition-colors duration-200"
             >
               Journal
             </Link> */}
@@ -314,16 +317,19 @@ const Navbar = (_props: Props) => {
             }}
           />
           {loading && (
-            <div className="rounded-xl bg-zinc-100 p-2">
-              <Loader2 className="h-4 w-4 animate-spin" />
+            <div className="border border-gray-200 bg-white p-2 dark:border-gray-700 dark:bg-gray-900">
+              <Loader2 className="h-4 w-4 animate-spin text-gray-600 dark:text-gray-400" />
             </div>
           )}
           {user && !loading && (
             <NextUiDropdown
-              classNames={{ content: "bg-white dark:bg-zinc-800" }}
+              classNames={{
+                content:
+                  "bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700",
+              }}
             >
               <DropdownTrigger>
-                <div className="hidden cursor-pointer items-center justify-center gap-3 rounded-2xl bg-zinc-100 p-2 hover:bg-zinc-200 dark:bg-zinc-900 dark:hover:bg-zinc-800 sm:flex">
+                <div className="hidden cursor-pointer items-center justify-center gap-3 border border-gray-200 bg-white p-2 transition-all duration-200 hover:border-gray-300 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-900 dark:hover:border-gray-600 dark:hover:bg-gray-800 sm:flex">
                   <Avatar
                     className="h-8 w-8"
                     {...genConfig({
@@ -331,10 +337,10 @@ const Navbar = (_props: Props) => {
                     })}
                   />
                   <FlexContainer variant="column-start" gap="none">
-                    <p className="text-nowrap text-sm font-semibold">
+                    <p className="text-nowrap text-sm font-semibold text-gray-900 dark:text-white">
                       {user.firstName + " " + user.lastName}
                     </p>
-                    <span className="text-xs text-gray-500">
+                    <span className="text-xs text-gray-500 dark:text-gray-400">
                       {user.username}
                     </span>
                   </FlexContainer>
@@ -359,14 +365,14 @@ const Navbar = (_props: Props) => {
               <Link href={"/signup"}>
                 <Button
                   variant={"ghost"}
-                  className="hidden h-auto rounded-xl py-2.5 md:inline-flex"
+                  className="hidden h-auto border-0 px-4 py-2 text-sm font-medium uppercase tracking-wider text-gray-700 transition-colors duration-200 hover:bg-transparent hover:text-gray-900 dark:text-gray-300 dark:hover:text-white md:inline-flex"
                 >
                   Signup
                 </Button>
               </Link>
 
               <Link href={"/login"}>
-                <Button className="hidden h-auto rounded-xl py-2.5 md:inline-flex">
+                <Button className="hidden h-auto border border-gray-200 bg-white px-4 py-2 text-sm font-medium uppercase tracking-wider text-gray-900 transition-all duration-200 hover:border-gray-300 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-900 dark:text-white dark:hover:border-gray-600 dark:hover:bg-gray-800 md:inline-flex">
                   Login
                 </Button>
               </Link>
@@ -378,27 +384,30 @@ const Navbar = (_props: Props) => {
             onOpenChange={(isOpen) => setSidebarOpen(isOpen)}
           >
             <SheetTrigger asChild>
-              <button className="flex h-auto rounded-md bg-zinc-50 p-2 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 lg:hidden">
-                <LayoutGrid className="h-5 w-5" />
+              <button className="flex h-auto border border-gray-200 bg-white p-2 transition-all duration-200 hover:border-gray-300 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-900 dark:hover:border-gray-600 dark:hover:bg-gray-800 lg:hidden">
+                <LayoutGrid className="h-5 w-5 text-gray-700 dark:text-gray-300" />
               </button>
             </SheetTrigger>
             <SheetContent className="z-[910]">
               <SheetHeader className="space-y-0 text-left">
                 {user && !loading && (
                   <NextUiDropdown
-                    classNames={{ content: "bg-white dark:bg-zinc-800" }}
+                    classNames={{
+                      content:
+                        "bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700",
+                    }}
                   >
                     <DropdownTrigger>
-                      <div className="mt-5 flex cursor-pointer items-center justify-center gap-3 rounded-2xl bg-zinc-100 p-2 hover:bg-zinc-200 dark:bg-zinc-900 dark:hover:bg-zinc-800">
+                      <div className="mt-5 flex cursor-pointer items-center justify-center gap-3 border border-gray-200 bg-white p-2 transition-all duration-200 hover:border-gray-300 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-900 dark:hover:border-gray-600 dark:hover:bg-gray-800">
                         <Avatar
                           className="h-10 w-10"
                           {...genConfig(user.firstName)}
                         />
                         <FlexContainer variant="column-start" gap="none">
-                          <p className="text-sm font-semibold">
+                          <p className="text-sm font-semibold text-gray-900 dark:text-white">
                             {user.firstName + " " + user.lastName}
                           </p>
-                          <span className="text-xs text-gray-500">
+                          <span className="text-xs text-gray-500 dark:text-gray-400">
                             {user.username}
                           </span>
                         </FlexContainer>
@@ -424,43 +433,51 @@ const Navbar = (_props: Props) => {
               >
                 <Link
                   href="/category/publications"
-                  className="border-b py-3 text-sm font-medium text-black dark:text-zinc-200"
+                  className="border-b border-gray-200 py-3 text-sm font-medium uppercase tracking-wider text-gray-900 dark:border-gray-700 dark:text-gray-200"
                 >
                   Publications
                 </Link>
                 <Link
                   target="_blank"
                   href="https://www.indiacode.nic.in/"
-                  className="border-b py-3 text-sm font-medium text-black dark:text-zinc-200"
+                  className="border-b border-gray-200 py-3 text-sm font-medium uppercase tracking-wider text-gray-900 dark:border-gray-700 dark:text-gray-200"
                 >
                   Bare Acts
                 </Link>
                 <Accordion type="single">
-                  <AccordionItem value="item-1">
-                    <AccordionTrigger>Oppurtunities</AccordionTrigger>
+                  <AccordionItem
+                    value="item-1"
+                    className="border-b border-gray-200 dark:border-gray-700"
+                  >
+                    <AccordionTrigger className="text-sm font-medium uppercase tracking-wider text-gray-900 dark:text-gray-200">
+                      Opportunities
+                    </AccordionTrigger>
                     <AccordionContent>
-                      <FlexContainer variant="column-start">
+                      <FlexContainer
+                        variant="column-start"
+                        className="space-y-2 pb-3"
+                      >
                         <Link
                           href="/category/jobs"
-                          className="text-sm text-zinc-700 dark:text-zinc-200"
+                          className="text-sm font-medium text-gray-700 transition-colors duration-200 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
                         >
                           Jobs
                         </Link>
                         <Link
                           href="/category/internships"
-                          className="text-sm text-zinc-700 dark:text-zinc-200"
+                          className="text-sm font-medium text-gray-700 transition-colors duration-200 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
                         >
                           Internships
                         </Link>
                         <Link
                           href="/category/competitions"
-                          className="text-sm text-zinc-700 dark:text-zinc-200"
+                          className="text-sm font-medium text-gray-700 transition-colors duration-200 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
                         >
                           Competitions
                         </Link>
                         <Link
                           href="/category/call-for-papers"
-                          className="text-sm text-zinc-700 dark:text-zinc-200"
+                          className="text-sm font-medium text-gray-700 transition-colors duration-200 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
                         >
                           Call for Papers
                         </Link>
@@ -468,31 +485,39 @@ const Navbar = (_props: Props) => {
                     </AccordionContent>
                   </AccordionItem>
 
-                  <AccordionItem value="item-3">
-                    <AccordionTrigger>Resources</AccordionTrigger>
+                  <AccordionItem
+                    value="item-3"
+                    className="border-b border-gray-200 dark:border-gray-700"
+                  >
+                    <AccordionTrigger className="text-sm font-medium uppercase tracking-wider text-gray-900 dark:text-gray-200">
+                      Resources
+                    </AccordionTrigger>
                     <AccordionContent>
-                      <FlexContainer variant="column-start">
+                      <FlexContainer
+                        variant="column-start"
+                        className="space-y-2 pb-3"
+                      >
                         <Link
                           href="/category/blogs"
-                          className="text-sm text-zinc-700 dark:text-zinc-200"
+                          className="text-sm font-medium text-gray-700 transition-colors duration-200 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
                         >
                           Blogs
                         </Link>
                         <Link
                           href="/category/news"
-                          className="text-sm text-zinc-700 dark:text-zinc-200"
+                          className="text-sm font-medium text-gray-700 transition-colors duration-200 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
                         >
                           News
                         </Link>
                         <Link
                           href="/category/law-notes"
-                          className="text-sm text-zinc-700 dark:text-zinc-200"
+                          className="text-sm font-medium text-gray-700 transition-colors duration-200 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
                         >
                           Law Notes
                         </Link>
                         <Link
                           href="/category/case-analysis"
-                          className="text-sm text-zinc-700 dark:text-zinc-200"
+                          className="text-sm font-medium text-gray-700 transition-colors duration-200 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
                         >
                           Case Analysis
                         </Link>
@@ -502,13 +527,13 @@ const Navbar = (_props: Props) => {
                 </Accordion>
                 <Link
                   href="/internships"
-                  className="mb-3 py-3 text-sm font-medium text-black dark:text-zinc-200"
+                  className="mb-3 py-3 text-sm font-medium uppercase tracking-wider text-gray-900 dark:text-gray-200"
                 >
                   Internships
                 </Link>
                 <Link
                   href="/jobs"
-                  className="mb-3 py-3 text-sm font-medium text-black dark:text-zinc-200"
+                  className="mb-3 py-3 text-sm font-medium uppercase tracking-wider text-gray-900 dark:text-gray-200"
                 >
                   Jobs
                 </Link>
@@ -533,16 +558,16 @@ const Navbar = (_props: Props) => {
                   }}
                 />
                 <Link href={"/login"} className="mt-3 w-full">
-                  <Button className="h-auto w-full rounded-xl py-2.5">
+                  <Button className="h-auto w-full border border-gray-200 bg-white px-4 py-3 text-sm font-medium uppercase tracking-wider text-gray-900 transition-all duration-200 hover:border-gray-300 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-900 dark:text-white dark:hover:border-gray-600 dark:hover:bg-gray-800">
                     Login
                   </Button>
                 </Link>
                 <FlexContainer
                   variant="row-between"
                   alignItems="center"
-                  className="z-[100] mt-3"
+                  className="z-[100] mt-5 border-t border-gray-200 pt-5 dark:border-gray-700"
                 >
-                  <span className="text-sm font-medium text-zinc-600 dark:text-zinc-200">
+                  <span className="text-sm font-medium uppercase tracking-wider text-gray-700 dark:text-gray-300">
                     Toggle Theme
                   </span>
                   <DarkModeToggle className="z-[920]" />

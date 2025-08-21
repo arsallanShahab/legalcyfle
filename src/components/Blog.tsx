@@ -166,8 +166,74 @@ const renderNode: { [key: string]: (node: Node) => string } = {
     // This will be handled by the TABLE block
     return "";
   },
-  [BLOCKS.TABLE_HEADER_CELL]: (node) => {
-    // This will be handled by the TABLE block
+  [BLOCKS.UL_LIST]: (node) => {
+    const listItems = node.content
+      .map((listItem: any) => {
+        if (listItem.nodeType === BLOCKS.LIST_ITEM) {
+          const itemContent = listItem.content
+            .map((paragraph: any) => {
+              if (paragraph.nodeType === BLOCKS.PARAGRAPH) {
+                return paragraph.content
+                  .map((n: any) => {
+                    if (n.nodeType === "text") {
+                      if (n.marks && n.marks.length > 0) {
+                        return `<strong>${n.value}</strong>`;
+                      }
+                      return n.value;
+                    }
+                    if (n.nodeType === INLINES.HYPERLINK) {
+                      return `<a class="blog_link" href="${n.data.uri}">${n.content[0].value}</a>`;
+                    }
+                    return "";
+                  })
+                  .join("");
+              }
+              return "";
+            })
+            .join("");
+          return `<li>${itemContent}</li>`;
+        }
+        return "";
+      })
+      .join("");
+
+    return `<ul>${listItems}</ul>`;
+  },
+  [BLOCKS.OL_LIST]: (node) => {
+    const listItems = node.content
+      .map((listItem: any) => {
+        if (listItem.nodeType === BLOCKS.LIST_ITEM) {
+          const itemContent = listItem.content
+            .map((paragraph: any) => {
+              if (paragraph.nodeType === BLOCKS.PARAGRAPH) {
+                return paragraph.content
+                  .map((n: any) => {
+                    if (n.nodeType === "text") {
+                      if (n.marks && n.marks.length > 0) {
+                        return `<strong>${n.value}</strong>`;
+                      }
+                      return n.value;
+                    }
+                    if (n.nodeType === INLINES.HYPERLINK) {
+                      return `<a class="blog_link" href="${n.data.uri}">${n.content[0].value}</a>`;
+                    }
+                    return "";
+                  })
+                  .join("");
+              }
+              return "";
+            })
+            .join("");
+          return `<li>${itemContent}</li>`;
+        }
+        return "";
+      })
+      .join("");
+
+    return `<ol>${listItems}</ol>`;
+  },
+  [BLOCKS.LIST_ITEM]: (node) => {
+    // This will be handled by UL_LIST and OL_LIST blocks
     return "";
   },
 

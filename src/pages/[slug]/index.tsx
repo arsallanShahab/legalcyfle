@@ -1,6 +1,8 @@
 import AdWrapper from "@/components/AdWrapper";
 import BlogContent from "@/components/Blog";
+import generateFAQSchema from "@/components/FAQSchema";
 import FlexContainer from "@/components/FlexContainer";
+import SEOAnalytics from "@/components/SEOAnalytics";
 import { Badge } from "@/components/ui/badge";
 import {
   Breadcrumb,
@@ -268,7 +270,32 @@ const Index = (props: Props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.data, deviceId]);
 
-  console.log("Category: ", props.data.fields?.category);
+  // Calculate advanced SEO metrics
+  const readingTime = estimateReadingTime(
+    documentToHtmlString(props.data.fields.body as Document),
+  );
+  const articleContent = documentToHtmlString(
+    props.data.fields.body as Document,
+  );
+  const wordCount = articleContent
+    .replace(/<[^>]*>/g, "")
+    .split(" ")
+    .filter((word) => word.length > 0).length;
+  const publishDate = props.data.fields.date || props.data.sys.createdAt;
+  const modifiedDate = props.data.sys.updatedAt;
+  const authorNames = props.data.fields.authors
+    .map((author) => author.fields.name)
+    .join(", ");
+  const categoryNames = props.data.fields.category
+    .map((cat) => cat.fields.name)
+    .join(", ");
+
+  // Enhanced meta description with optimal length (150-160 chars)
+  const optimizedMetaDescription =
+    props.data.fields.description && props.data.fields.description.length > 160
+      ? props.data.fields.description.substring(0, 157) + "..."
+      : props.data.fields.description ||
+        `Expert legal insights on ${props.data.fields.title}. Read analysis by ${authorNames} on LegalCyfle.`;
 
   const keywords = generateKeywords(
     props.data.fields?.category?.map((cat) => cat.fields.name),
@@ -284,60 +311,124 @@ const Index = (props: Props) => {
         "@id": `https://legalcyfle.in/${props.data.fields.slug}/#article`,
         isPartOf: { "@id": `https://legalcyfle.in/${props.data.fields.slug}/` },
         author: props.data.fields.authors.map((author) => ({
-          "@id": `https://legalcyfle.in/#/schema/person/image/${author.sys.id}`,
+          "@id": `https://legalcyfle.in/author/${author.sys.id}/#person`,
           "@type": "Person",
           name: author.fields.name,
           url: `https://legalcyfle.in/author/${author.sys.id}/`,
           image: {
             "@type": "ImageObject",
             inLanguage: "en-US",
-            "@id": `https://legalcyfle.in/#/schema/person/image/${author.sys.id}`,
+            "@id": `https://legalcyfle.in/author/${author.sys.id}/#image`,
             url: formatImageLink(author?.fields?.avatar?.fields?.file?.url),
             contentUrl: formatImageLink(
               author?.fields?.avatar?.fields?.file?.url,
             ),
             caption: author.fields.name,
+            width:
+              author?.fields?.avatar?.fields?.file?.details?.image?.width ||
+              400,
+            height:
+              author?.fields?.avatar?.fields?.file?.details?.image?.height ||
+              400,
           },
-          sameAs: [], // Add social links if available
-          description: author?.fields?.bio,
+          sameAs: [],
+          description:
+            author?.fields?.bio || `Legal expert and contributor at LegalCyfle`,
+          jobTitle: "Legal Expert",
+          worksFor: {
+            "@type": "Organization",
+            "@id": "https://legalcyfle.in/#organization",
+            name: "LegalCyfle",
+          },
+          knowsAbout: props.data.fields.category.map((cat) => cat.fields.name),
         })),
         headline: props.data.fields.title,
-        datePublished: props.data.fields.date,
-        dateModified: props.data.sys.updatedAt,
+        alternativeHeadline: props.data.fields.title,
+        description: optimizedMetaDescription,
+        datePublished: publishDate,
+        dateModified: modifiedDate,
+        dateCreated: props.data.sys.createdAt,
         mainEntityOfPage: {
+          "@type": "WebPage",
           "@id": `https://legalcyfle.in/${props.data.fields.slug}/`,
         },
-        wordCount: props.data?.fields?.body?.content?.reduce(
-          (count, node) =>
-            count +
-            node.content.reduce(
-              (innerCount, innerNode) =>
-                innerCount +
-                (innerNode.value ? innerNode.value.split(" ").length : 0),
-              0,
-            ),
-          0,
-        ),
-        commentCount: comments.length, // Update with actual comment count if available
-        publisher: { "@id": "https://legalcyfle.in/#organization" },
-        image: {
-          "@id": `https://legalcyfle.in/${props.data.fields.slug}/#primaryimage`,
+        publisher: {
+          "@type": "Organization",
+          "@id": "https://legalcyfle.in/#organization",
+          name: "LegalCyfle",
+          logo: {
+            "@type": "ImageObject",
+            "@id": "https://legalcyfle.in/#logo",
+            inLanguage: "en-US",
+            url: "https://legalcyfle.in/logo-black.png",
+            contentUrl: "https://legalcyfle.in/logo-black.png",
+            width: 1500,
+            height: 1500,
+            caption: "LegalCyfle",
+          },
         },
-        thumbnailUrl: formatImageLink(props.data.fields.image.fields.file.url),
+        image: {
+          "@type": "ImageObject",
+          "@id": `https://legalcyfle.in/${props.data.fields.slug}/#primaryimage`,
+          inLanguage: "en-US",
+          url: formatImageLink(thumbnail),
+          contentUrl: formatImageLink(thumbnail),
+          width:
+            props.data?.fields?.image?.fields?.file?.details?.image?.width ||
+            1280,
+          height:
+            props.data?.fields?.image?.fields?.file?.details?.image?.height ||
+            720,
+          caption: props.data.fields.title,
+          representativeOfPage: true,
+        },
+        thumbnailUrl: formatImageLink(thumbnail),
         keywords: keywords,
-        articleSection: props.data.fields.category.map(
-          (cat) => cat.fields.name,
-        ),
+        articleSection: categoryNames,
+        articleBody: articleContent.replace(/<[^>]*>/g, ""),
+        wordCount: wordCount,
+        timeRequired: `PT${readingTime}M`,
         inLanguage: "en-US",
+        copyrightYear: new Date(publishDate).getFullYear(),
+        copyrightHolder: {
+          "@type": "Organization",
+          "@id": "https://legalcyfle.in/#organization",
+          name: "LegalCyfle",
+        },
+        license: "https://creativecommons.org/licenses/by-nc-sa/4.0/",
         potentialAction: [
           {
-            "@type": "CommentAction",
-            name: "Comment",
-            target: [
-              `https://legalcyfle.in/${props.data.fields.slug}/#comment`,
-            ],
+            "@type": "ReadAction",
+            target: [`https://legalcyfle.in/${props.data.fields.slug}/`],
+          },
+          {
+            "@type": "ShareAction",
+            target: [`https://legalcyfle.in/${props.data.fields.slug}/`],
           },
         ],
+        about: props.data.fields.category.map((cat) => ({
+          "@type": "Thing",
+          name: cat.fields.name,
+          url: `https://legalcyfle.in/category/${cat.fields.slug}/`,
+          sameAs: `https://legalcyfle.in/category/${cat.fields.slug}/`,
+        })),
+        mentions: props.data.fields.category.map((cat) => ({
+          "@type": "Thing",
+          name: cat.fields.name,
+          url: `https://legalcyfle.in/category/${cat.fields.slug}/`,
+        })),
+        isAccessibleForFree: true,
+        hasPart: [
+          {
+            "@type": "WebPageElement",
+            isAccessibleForFree: true,
+            cssSelector: ".article-content",
+          },
+        ],
+        speakable: {
+          "@type": "SpeakableSpecification",
+          cssSelector: ["h1", ".article-intro", ".article-summary"],
+        },
       },
       {
         "@type": "WebPage",
@@ -446,32 +537,145 @@ const Index = (props: Props) => {
 
   return (
     <main className="relative">
+      {/* SEO Analytics Tracking */}
+      <SEOAnalytics
+        articleData={{
+          title: props.data.fields.title,
+          slug: props.data.fields.slug,
+          category: props.data.fields.category.map((cat) => cat.fields.name),
+          publishDate: publishDate,
+          modifiedDate: modifiedDate,
+          wordCount: wordCount,
+          readingTime: readingTime,
+        }}
+      />
+
       <Head>
-        <title>{`${props.data.fields.title ?? "Home"} - LegalCyfle`}</title>
-        <meta name="description" content={props.data.fields.description} />
+        {/* Primary Meta Tags */}
+        <title>{`${props.data.fields.title} - LegalCyfle`}</title>
+        <meta
+          name="title"
+          content={`${props.data.fields.title} - LegalCyfle`}
+        />
+        <meta name="description" content={optimizedMetaDescription} />
         <meta name="keywords" content={keywords} />
+        <meta name="author" content={authorNames} />
+        <meta
+          name="robots"
+          content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+        />
+        <meta
+          name="googlebot"
+          content="index, follow, max-video-preview:-1, max-image-preview:large, max-snippet:-1"
+        />
+
+        {/* Canonical URL */}
         <link
           rel="canonical"
           href={`https://legalcyfle.in/${props.data.fields.slug}`}
         />
-        <meta property="og:title" content={props.data.fields.title} />
-        <meta
-          property="og:description"
-          content={props.data.fields.description}
-        />
-        <meta property="og:image" content={formatImageLink(thumbnail)} />
+
+        {/* Language and Region */}
+        <meta httpEquiv="content-language" content="en-US" />
+        <meta name="geo.region" content="IN" />
+        <meta name="geo.country" content="India" />
+
+        {/* Article-specific meta */}
+        <meta name="article:published_time" content={publishDate} />
+        <meta name="article:modified_time" content={modifiedDate} />
+        <meta name="article:author" content={authorNames} />
+        <meta name="article:section" content={categoryNames} />
+        <meta name="article:tag" content={keywords} />
+
+        {/* Reading time and word count */}
+        <meta name="reading_time" content={`${readingTime} minutes`} />
+        <meta name="word_count" content={wordCount.toString()} />
+
+        {/* Open Graph / Facebook */}
+        <meta property="og:type" content="article" />
         <meta
           property="og:url"
           content={`https://legalcyfle.in/${props.data.fields.slug}`}
         />
-        <meta property="og:type" content="article" />
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={props.data.fields.title} />
+        <meta property="og:title" content={props.data.fields.title} />
+        <meta property="og:description" content={optimizedMetaDescription} />
+        <meta property="og:image" content={formatImageLink(thumbnail)} />
         <meta
-          name="twitter:description"
-          content={props.data.fields.description}
+          property="og:image:secure_url"
+          content={formatImageLink(thumbnail)}
         />
-        <meta name="twitter:image" content={formatImageLink(thumbnail)} />
+        <meta
+          property="og:image:width"
+          content={(
+            props.data?.fields?.image?.fields?.file?.details?.image?.width ||
+            1280
+          ).toString()}
+        />
+        <meta
+          property="og:image:height"
+          content={(
+            props.data?.fields?.image?.fields?.file?.details?.image?.height ||
+            720
+          ).toString()}
+        />
+        <meta property="og:image:alt" content={props.data.fields.title} />
+        <meta property="og:site_name" content="LegalCyfle" />
+        <meta property="og:locale" content="en_US" />
+        <meta property="article:published_time" content={publishDate} />
+        <meta property="article:modified_time" content={modifiedDate} />
+        <meta property="article:author" content={authorNames} />
+        <meta property="article:section" content={categoryNames} />
+
+        {/* Twitter */}
+        <meta property="twitter:card" content="summary_large_image" />
+        <meta
+          property="twitter:url"
+          content={`https://legalcyfle.in/${props.data.fields.slug}`}
+        />
+        <meta property="twitter:title" content={props.data.fields.title} />
+        <meta
+          property="twitter:description"
+          content={optimizedMetaDescription}
+        />
+        <meta property="twitter:image" content={formatImageLink(thumbnail)} />
+        <meta property="twitter:image:alt" content={props.data.fields.title} />
+        <meta name="twitter:creator" content="@legalcyfle" />
+        <meta name="twitter:site" content="@legalcyfle" />
+
+        {/* Additional SEO meta tags */}
+        <meta name="format-detection" content="telephone=no" />
+        <meta name="mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+
+        {/* Schema.org for Google */}
+        <meta itemProp="name" content={props.data.fields.title} />
+        <meta itemProp="description" content={optimizedMetaDescription} />
+        <meta itemProp="image" content={formatImageLink(thumbnail)} />
+
+        {/* Performance and Preloading */}
+        <link
+          rel="preload"
+          href={formatImageLink(thumbnail)}
+          as="image"
+          type="image/webp"
+        />
+        <link rel="dns-prefetch" href="//images.ctfassets.net" />
+        <link
+          rel="preconnect"
+          href="https://images.ctfassets.net"
+          crossOrigin=""
+        />
+
+        {/* Alternate URLs for different formats/languages */}
+        <link
+          rel="alternate"
+          type="application/rss+xml"
+          title="LegalCyfle RSS Feed"
+          href="https://legalcyfle.in/rss.xml"
+        />
+
+        {/* Structured Data */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
@@ -497,118 +701,155 @@ const Index = (props: Props) => {
           data-ad-layout-key="-et-7n+gx+cc-19b"
           data-ad-slot="1973122915"
         />
-        <FlexContainer variant="column-start" gap="md">
-          <Breadcrumb>
-            <BreadcrumbList>
-              <BreadcrumbItem>
-                <BreadcrumbLink
-                  className="font-giest-sans font-normal"
-                  href="/"
-                >
-                  Home
-                </BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbSeparator />
-              <BreadcrumbItem>
-                <BreadcrumbLink
-                  className="font-giest-sans font-normal"
-                  href={
-                    "/category/" + props.data.fields.category[0]?.fields?.slug
-                  }
-                >
-                  {props.data.fields.category[0]?.fields?.name}
-                </BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbSeparator />
-              <BreadcrumbItem>
-                <BreadcrumbPage className="font-giest-sans font-medium text-amber-600">
-                  {excerpt(props.data.fields.title, 50)}
-                </BreadcrumbPage>
-              </BreadcrumbItem>
-            </BreadcrumbList>
-          </Breadcrumb>
-          <h1 className="max-w-3xl text-left font-poppins text-3xl font-semibold md:text-5xl">
-            {props.data.fields.title}
-          </h1>
-        </FlexContainer>
-        <FlexContainer variant="row-start" alignItems="center">
-          {props.data.fields?.authors?.length > 1 && (
-            <AvatarGroup isBordered>
-              {props.data.fields?.authors.map((author) => (
-                <Tooltip
-                  showArrow
-                  placement="right"
-                  classNames={{
-                    base: [
-                      // arrow color
-                      "before:bg-neutral-400 dark:before:bg-white",
-                    ],
-                    content: [
-                      "py-2 px-4 shadow-xl text-nowrap break-keep text-center w-auto",
-                      "text-black bg-gradient-to-br from-white to-neutral-400",
-                    ],
-                  }}
-                  key={author.sys.id}
-                  content={author.fields.name}
-                >
-                  <Avatar
-                    src={formatImageLink(
-                      author?.fields?.avatar?.fields?.file?.url ??
-                        "https://via.placeholder.com/100x100",
-                    )}
-                    // size="md"
-                    className="h-12 w-12 rounded-[80px] object-cover object-center"
-                    alt={author.fields.name}
-                  />
-                </Tooltip>
-              ))}
-            </AvatarGroup>
-          )}
 
-          {props.data.fields?.authors?.length === 1 && (
-            <Image
-              src={formatImageLink(
-                props?.data?.fields?.authors[0]?.fields?.avatar?.fields?.file
-                  ?.url ?? "https://via.placeholder.com/100x100",
-              )}
-              width={100}
-              height={100}
-              className="h-12 w-12 rounded-[80px] object-cover object-center"
-              alt="Profile"
-            />
-          )}
-          <FlexContainer variant="column-start" alignItems="center" gap="none">
-            <p className="flex gap-2.5 text-sm font-semibold">
-              {props.data.fields.authors.map((author, index) => (
-                <Link
-                  key={author.sys.id}
-                  href={`/author/${author.sys.id}`}
-                  className="hover:underline"
-                >
-                  {author.fields.name}{" "}
-                  {index < props.data.fields.authors.length - 1 && ","}
-                </Link>
-              ))}
-            </p>
-            {/* <Link
+        {/* Article Header with Semantic HTML */}
+        <header className="article-header">
+          <FlexContainer variant="column-start" gap="md">
+            <nav aria-label="Breadcrumb">
+              <Breadcrumb>
+                <BreadcrumbList>
+                  <BreadcrumbItem>
+                    <BreadcrumbLink
+                      className="font-giest-sans font-normal"
+                      href="/"
+                    >
+                      Home
+                    </BreadcrumbLink>
+                  </BreadcrumbItem>
+                  <BreadcrumbSeparator />
+                  <BreadcrumbItem>
+                    <BreadcrumbLink
+                      className="font-giest-sans font-normal"
+                      href={
+                        "/category/" +
+                        props.data.fields.category[0]?.fields?.slug
+                      }
+                    >
+                      {props.data.fields.category[0]?.fields?.name}
+                    </BreadcrumbLink>
+                  </BreadcrumbItem>
+                  <BreadcrumbSeparator />
+                  <BreadcrumbItem>
+                    <BreadcrumbPage className="font-giest-sans font-medium text-amber-600">
+                      {excerpt(props.data.fields.title, 50)}
+                    </BreadcrumbPage>
+                  </BreadcrumbItem>
+                </BreadcrumbList>
+              </Breadcrumb>
+            </nav>
+            <h1
+              className="max-w-3xl text-left font-poppins text-3xl font-semibold md:text-5xl"
+              itemProp="headline"
+            >
+              {props.data.fields.title}
+            </h1>
+          </FlexContainer>
+        </header>
+
+        {/* Article Metadata with Schema.org microdata */}
+        <section
+          className="article-meta"
+          itemScope
+          itemType="https://schema.org/Article"
+        >
+          <meta itemProp="headline" content={props.data.fields.title} />
+          <meta itemProp="datePublished" content={publishDate} />
+          <meta itemProp="dateModified" content={modifiedDate} />
+          <meta itemProp="wordCount" content={wordCount.toString()} />
+          <meta itemProp="timeRequired" content={`PT${readingTime}M`} />
+          <meta itemProp="inLanguage" content="en-US" />
+          <meta
+            itemProp="url"
+            content={`https://legalcyfle.in/${props.data.fields.slug}`}
+          />
+
+          <FlexContainer variant="row-start" alignItems="center">
+            {props.data.fields?.authors?.length > 1 && (
+              <AvatarGroup isBordered>
+                {props.data.fields?.authors.map((author) => (
+                  <Tooltip
+                    showArrow
+                    placement="right"
+                    classNames={{
+                      base: [
+                        // arrow color
+                        "before:bg-neutral-400 dark:before:bg-white",
+                      ],
+                      content: [
+                        "py-2 px-4 shadow-xl text-nowrap break-keep text-center w-auto",
+                        "text-black bg-gradient-to-br from-white to-neutral-400",
+                      ],
+                    }}
+                    key={author.sys.id}
+                    content={author.fields.name}
+                  >
+                    <Avatar
+                      src={formatImageLink(
+                        author?.fields?.avatar?.fields?.file?.url ??
+                          "https://via.placeholder.com/100x100",
+                      )}
+                      // size="md"
+                      className="h-12 w-12 rounded-[80px] object-cover object-center"
+                      alt={author.fields.name}
+                    />
+                  </Tooltip>
+                ))}
+              </AvatarGroup>
+            )}
+
+            {props.data.fields?.authors?.length === 1 && (
+              <Image
+                src={formatImageLink(
+                  props?.data?.fields?.authors[0]?.fields?.avatar?.fields?.file
+                    ?.url ?? "https://via.placeholder.com/100x100",
+                )}
+                width={100}
+                height={100}
+                className="h-12 w-12 rounded-[80px] object-cover object-center"
+                alt="Profile"
+              />
+            )}
+            <FlexContainer
+              variant="column-start"
+              alignItems="center"
+              gap="none"
+            >
+              <p className="flex gap-2.5 text-sm font-semibold">
+                {props.data.fields.authors.map((author, index) => (
+                  <Link
+                    key={author.sys.id}
+                    href={`/author/${author.sys.id}`}
+                    className="hover:underline"
+                  >
+                    {author.fields.name}{" "}
+                    {index < props.data.fields.authors.length - 1 && ","}
+                  </Link>
+                ))}
+              </p>
+              {/* <Link
             href={`/author/${props.data.fields?.author?.sys?.id}`}
             className="text-base font-semibold hover:underline"
           >
             {props.data.fields.author.fields.name}
           </Link> */}
-            <p className="text-sm font-medium text-gray-500">
-              {estimateReadingTime(
-                documentToHtmlString(props.data.fields.body as Document),
-              )}{" "}
-              min read •{" "}
-              {props?.data?.fields?.date
-                ? dayjs(props?.data?.fields?.date)
-                    .tz("Asia/Kolkata")
-                    .format("MMMM DD, YYYY")
-                : "Date not available"}
-            </p>
+              <p className="text-sm font-medium text-gray-500">
+                <time itemProp="datePublished" dateTime={publishDate}>
+                  {estimateReadingTime(
+                    documentToHtmlString(props.data.fields.body as Document),
+                  )}{" "}
+                  min read •{" "}
+                  {props?.data?.fields?.date
+                    ? dayjs(props?.data?.fields?.date)
+                        .tz("Asia/Kolkata")
+                        .format("MMMM DD, YYYY")
+                    : "Date not available"}
+                </time>
+              </p>
+            </FlexContainer>
           </FlexContainer>
-        </FlexContainer>
+        </section>
+
+        {/* Article Interaction and Content Section */}
         <FlexContainer
           variant="row-between"
           // className="border-y border-zinc-100 py-5"
@@ -697,161 +938,180 @@ const Index = (props: Props) => {
             <Share className="h-3.5 w-3.5 stroke-2 text-white dark:text-black" />
           </Button>
         </FlexContainer>
-        <Image
-          src={formatImageLink(thumbnail)}
-          width={1280}
-          height={720}
-          onClick={() => {
-            window.open(formatImageLink(thumbnail), "_blank");
-          }}
-          className="h-[400px] w-full rounded-xl border object-cover object-top"
-          alt="Cover"
-        />
-        <BlogContent data={props.data} />
-        <span className="block pl-2 pt-2 text-sm font-medium">TAGS:</span>
-        <FlexContainer
-          variant="column-start"
-          gap="sm"
-          className="mb-2.5 rounded-3xl bg-zinc-50 p-2 dark:bg-zinc-700"
-        >
-          <FlexContainer variant="row-between">
-            <FlexContainer variant="row-start" gap="sm" alignItems="center">
-              {props.data.fields.category.map((category) => (
-                <Link
-                  key={category.sys.id}
-                  href={`/category/${category.fields.slug}`}
-                >
-                  <Badge
-                    key={category.sys.id}
-                    variant={"secondary"}
-                    className="borderpx-4 rounded-3xl py-1.5 text-sm"
-                  >
-                    {category.fields.name}
-                  </Badge>
-                </Link>
-              ))}
-            </FlexContainer>
-            <Button
-              variant={"secondary"}
-              className="rounded-3xl"
-              onClick={onOpen}
-            >
-              <Share className="h-3.5 w-3.5 stroke-2 text-black dark:text-white" />
-            </Button>
-          </FlexContainer>
-        </FlexContainer>
 
-        <FlexContainer variant="column-start" className="mt-5">
-          <FlexContainer variant="row-start" gap="sm">
-            {props.data.fields?.authors?.length > 1 && (
-              <AvatarGroup isBordered>
-                {props.data.fields?.authors.map((author) => (
-                  <Tooltip
-                    showArrow
-                    placement="right"
-                    classNames={{
-                      base: [
-                        // arrow color
-                        "before:bg-neutral-400 dark:before:bg-white",
-                      ],
-                      content: [
-                        "py-2 px-4 shadow-xl text-nowrap break-keep text-center w-auto",
-                        "text-black bg-gradient-to-br from-white to-neutral-400",
-                      ],
-                    }}
-                    key={author.sys.id}
-                    content={author.fields.name}
+        {/* Main Article Content */}
+        <article className="article-content" itemProp="articleBody">
+          <Image
+            src={formatImageLink(thumbnail)}
+            width={1280}
+            height={720}
+            onClick={() => {
+              window.open(formatImageLink(thumbnail), "_blank");
+            }}
+            className="h-[400px] w-full rounded-xl border object-cover object-top"
+            alt={props.data.fields.title}
+            itemProp="image"
+            priority
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          />
+          <BlogContent data={props.data} />
+        </article>
+
+        {/* Article Tags and Categories */}
+        <aside className="article-aside">
+          <span className="block pl-2 pt-2 text-sm font-medium">TAGS:</span>
+          <FlexContainer
+            variant="column-start"
+            gap="sm"
+            className="mb-2.5 rounded-3xl bg-zinc-50 p-2 dark:bg-zinc-700"
+          >
+            <FlexContainer variant="row-between">
+              <FlexContainer variant="row-start" gap="sm" alignItems="center">
+                {props.data.fields.category.map((category) => (
+                  <Link
+                    key={category.sys.id}
+                    href={`/category/${category.fields.slug}`}
                   >
-                    <Avatar
-                      src={formatImageLink(
-                        author?.fields?.avatar?.fields?.file?.url ??
-                          "https://via.placeholder.com/100x100",
-                      )}
-                      // size="md"
-                      className="h-20 w-20 rounded-[80px] object-cover object-center"
-                      alt={author.fields.name}
-                    />
-                  </Tooltip>
+                    <Badge
+                      key={category.sys.id}
+                      variant={"secondary"}
+                      className="borderpx-4 rounded-3xl py-1.5 text-sm"
+                    >
+                      {category.fields.name}
+                    </Badge>
+                  </Link>
                 ))}
-              </AvatarGroup>
-            )}{" "}
-            {props.data.fields?.authors?.length === 1 && (
-              <Image
-                src={formatImageLink(
-                  props?.data?.fields?.authors[0]?.fields?.avatar?.fields?.file
-                    ?.url ?? "https://via.placeholder.com/100x100",
-                )}
-                width={100}
-                height={100}
-                className="h-20 w-20 rounded-[80px] object-cover object-center"
-                alt="Profile"
-              />
-            )}
+              </FlexContainer>
+              <Button
+                variant={"secondary"}
+                className="rounded-3xl"
+                onClick={onOpen}
+              >
+                <Share className="h-3.5 w-3.5 stroke-2 text-black dark:text-white" />
+              </Button>
+            </FlexContainer>
           </FlexContainer>
-          <FlexContainer variant="row-between" alignItems="center">
-            <h3 className="text-2xl font-medium">
-              Written By{" "}
-              {props.data.fields?.authors
-                .map((author) => author.fields.name)
-                .join(", ")}
-            </h3>
-            {/* <Button className="rounded-3xl bg-blue-600 hover:bg-blue-500 dark:bg-blue-600 dark:text-white dark:hover:bg-blue-500">
+        </aside>
+
+        {/* Author Information Section */}
+        <section className="author-section">
+          <FlexContainer variant="column-start" className="mt-5">
+            <FlexContainer variant="row-start" gap="sm">
+              {props.data.fields?.authors?.length > 1 && (
+                <AvatarGroup isBordered>
+                  {props.data.fields?.authors.map((author) => (
+                    <Tooltip
+                      showArrow
+                      placement="right"
+                      classNames={{
+                        base: [
+                          // arrow color
+                          "before:bg-neutral-400 dark:before:bg-white",
+                        ],
+                        content: [
+                          "py-2 px-4 shadow-xl text-nowrap break-keep text-center w-auto",
+                          "text-black bg-gradient-to-br from-white to-neutral-400",
+                        ],
+                      }}
+                      key={author.sys.id}
+                      content={author.fields.name}
+                    >
+                      <Avatar
+                        src={formatImageLink(
+                          author?.fields?.avatar?.fields?.file?.url ??
+                            "https://via.placeholder.com/100x100",
+                        )}
+                        // size="md"
+                        className="h-20 w-20 rounded-[80px] object-cover object-center"
+                        alt={author.fields.name}
+                      />
+                    </Tooltip>
+                  ))}
+                </AvatarGroup>
+              )}{" "}
+              {props.data.fields?.authors?.length === 1 && (
+                <Image
+                  src={formatImageLink(
+                    props?.data?.fields?.authors[0]?.fields?.avatar?.fields
+                      ?.file?.url ?? "https://via.placeholder.com/100x100",
+                  )}
+                  width={100}
+                  height={100}
+                  className="h-20 w-20 rounded-[80px] object-cover object-center"
+                  alt="Profile"
+                />
+              )}
+            </FlexContainer>
+            <FlexContainer variant="row-between" alignItems="center">
+              <h3 className="text-2xl font-medium">
+                Written By{" "}
+                {props.data.fields?.authors
+                  .map((author) => author.fields.name)
+                  .join(", ")}
+              </h3>
+              {/* <Button className="rounded-3xl bg-blue-600 hover:bg-blue-500 dark:bg-blue-600 dark:text-white dark:hover:bg-blue-500">
             Follow
           </Button> */}
+            </FlexContainer>
+            {props.data.fields?.authors.length === 1 && (
+              <p className="max-w-2xl text-base font-normal text-gray-400">
+                {props.data.fields.authors[0]?.fields?.bio}
+              </p>
+            )}
           </FlexContainer>
-          {props.data.fields?.authors.length === 1 && (
-            <p className="max-w-2xl text-base font-normal text-gray-400">
-              {props.data.fields.authors[0]?.fields?.bio}
-            </p>
-          )}
-        </FlexContainer>
+        </section>
+
+        {/* Recommended Articles Section */}
         {props.recommendedArticles.length > 0 && (
+          <section className="recommended-articles">
+            <FlexContainer variant="column-start" className="mt-5" gap="xl">
+              <h3 className="text-2xl font-medium">Recommended Articles</h3>
+              <div className="grid items-stretch gap-5 md:grid-cols-2">
+                {props.recommendedArticles?.map((article) => {
+                  return (
+                    <a key={article.sys.id} href={`/${article.fields.slug}`}>
+                      <FlexContainer
+                        variant="column-start"
+                        className="h-full rounded-3xl bg-zinc-50 p-3 dark:bg-zinc-700"
+                      >
+                        <Image
+                          src={formatImageLink(
+                            article.fields.image.fields.file.url,
+                          )}
+                          width={300}
+                          height={200}
+                          className="h-40 w-full rounded-xl object-cover object-center"
+                          alt="Cover"
+                        />
+                        <h3 className="text-lg font-semibold">
+                          {article.fields.title}
+                        </h3>
+                      </FlexContainer>
+                    </a>
+                  );
+                })}
+              </div>
+            </FlexContainer>
+          </section>
+        )}
+
+        {/* Comments Section */}
+        <section id="comment" className="comments-section">
           <FlexContainer variant="column-start" className="mt-5" gap="xl">
-            <h3 className="text-2xl font-medium">Recommended Articles</h3>
-            <div className="grid items-stretch gap-5 md:grid-cols-2">
-              {props.recommendedArticles?.map((article) => {
-                return (
-                  <a key={article.sys.id} href={`/${article.fields.slug}`}>
-                    <FlexContainer
-                      variant="column-start"
-                      className="h-full rounded-3xl bg-zinc-50 p-3 dark:bg-zinc-700"
-                    >
-                      <Image
-                        src={formatImageLink(
-                          article.fields.image.fields.file.url,
-                        )}
-                        width={300}
-                        height={200}
-                        className="h-40 w-full rounded-xl object-cover object-center"
-                        alt="Cover"
-                      />
-                      <h3 className="text-lg font-semibold">
-                        {article.fields.title}
-                      </h3>
-                    </FlexContainer>
-                  </a>
-                );
-              })}
+            <h3 className="text-2xl font-medium">Comments</h3>
+            <div className="rounded-lg bg-gray-50 p-6 text-center dark:bg-gray-800">
+              <p className="text-lg font-medium text-gray-600 dark:text-gray-300">
+                💬 Comments Coming Soon!
+              </p>
+              <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
+                We&apos;re working on bringing you an enhanced commenting
+                experience. Stay tuned!
+              </p>
             </div>
           </FlexContainer>
-        )}
-        <FlexContainer
-          id="comment"
-          variant="column-start"
-          className="mt-5"
-          gap="xl"
-        >
-          <h3 className="text-2xl font-medium">Comments</h3>
-          <div className="rounded-lg bg-gray-50 p-6 text-center dark:bg-gray-800">
-            <p className="text-lg font-medium text-gray-600 dark:text-gray-300">
-              💬 Comments Coming Soon!
-            </p>
-            <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
-              We&apos;re working on bringing you an enhanced commenting
-              experience. Stay tuned!
-            </p>
-          </div>
-        </FlexContainer>
+        </section>
+
+        {/* Social Sharing Modal */}
         <Modal
           isOpen={isOpen}
           size="xl"
@@ -921,6 +1181,31 @@ const Index = (props: Props) => {
             )}
           </ModalContent>
         </Modal>
+
+        {/* FAQ Schema Component - for articles that have Q&A content */}
+        {/* {(() => {
+          // Extract potential FAQs from article content
+          const faqPattern =
+            /(?:Q(?:uestion)?[:\s]*([^?]+\?)\s*A(?:nswer)?[:\s]*([^Q]+))/gi;
+          const matches: { question: string; answer: string }[] = [];
+          let match;
+
+          while ((match = faqPattern.exec(articleContent)) !== null) {
+            matches.push({
+              question: match[1].trim(),
+              answer: match[2].replace(/<[^>]*>/g, "").trim(),
+            });
+          }
+
+          if (matches.length > 0) {
+            return generateFAQSchema({
+              faqs: matches,
+              articleTitle: props.data.fields.title,
+              articleUrl: `https://legalcyfle.in/${props.data.fields.slug}`,
+            });
+          }
+          return null;
+        })()} */}
       </FlexContainer>
     </main>
   );

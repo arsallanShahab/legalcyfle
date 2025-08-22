@@ -1,12 +1,4 @@
-import { useGlobalContext } from "@/context/GlobalContext";
-import IUser from "@/types/global/user";
-import {
-  DropdownMenu,
-  DropdownTrigger,
-  Input,
-  Dropdown as NextUiDropdown,
-  DropdownItem as NextUiDropdownItem,
-} from "@nextui-org/react";
+import { Input } from "@nextui-org/react";
 import {
   CircleEllipsis,
   LayoutGrid,
@@ -18,8 +10,6 @@ import {
 import Link from "next/link";
 import { Router, useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
-import toast from "react-hot-toast";
-import Avatar, { AvatarFullConfig, genConfig } from "react-nice-avatar";
 import DarkModeToggle from "./DarkModeToggle";
 import { Dropdown, DropdownContent, DropdownItem } from "./Dropdown";
 import FlexContainer from "./FlexContainer";
@@ -172,49 +162,10 @@ type Props = {
 };
 
 const Navbar = (_props: Props) => {
-  const { user, setUser, loading, setLoading } = useGlobalContext();
-  const [avatarConfig, setAvatarConfig] = useState<AvatarFullConfig | null>(
-    null,
-  );
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [search, setSearch] = useState("");
   const router = useRouter();
   const path = router.pathname;
-  const handleLogout = async () => {
-    try {
-      const res = await fetch("/api/auth/logout", {
-        method: "GET",
-      });
-      const data = await res.json();
-      if (data.success) {
-        setUser(null);
-        router.reload();
-        toast.success(data.message);
-      }
-    } catch (error) {
-      console.log(error, "error from navbar logout");
-    }
-  };
-
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const user = await fetch("/api/auth/me", {
-          method: "GET",
-        });
-        const data = await user.json();
-        const config = genConfig(data?.firstName);
-        setAvatarConfig(config);
-        setUser(data.data);
-      } catch (error) {
-        console.log(error, "error from navbar fetch user");
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchUser();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   useEffect(() => {
     setSidebarOpen(false);
@@ -316,68 +267,8 @@ const Navbar = (_props: Props) => {
               }
             }}
           />
-          {loading && (
-            <div className="border border-gray-200 bg-white p-2 dark:border-gray-700 dark:bg-gray-900">
-              <Loader2 className="h-4 w-4 animate-spin text-gray-600 dark:text-gray-400" />
-            </div>
-          )}
-          {user && !loading && (
-            <NextUiDropdown
-              classNames={{
-                content:
-                  "bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700",
-              }}
-            >
-              <DropdownTrigger>
-                <div className="hidden cursor-pointer items-center justify-center gap-3 border border-gray-200 bg-white p-2 transition-all duration-200 hover:border-gray-300 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-900 dark:hover:border-gray-600 dark:hover:bg-gray-800 sm:flex">
-                  <Avatar
-                    className="h-8 w-8"
-                    {...genConfig({
-                      sex: user.gender !== "male" ? "woman" : "man",
-                    })}
-                  />
-                  <FlexContainer variant="column-start" gap="none">
-                    <p className="text-nowrap text-sm font-semibold text-gray-900 dark:text-white">
-                      {user.firstName + " " + user.lastName}
-                    </p>
-                    <span className="text-xs text-gray-500 dark:text-gray-400">
-                      {user.username}
-                    </span>
-                  </FlexContainer>
-                </div>
-              </DropdownTrigger>
-              <DropdownMenu aria-label="Static Actions">
-                {/* <NextUiDropdownItem key="profile">Profile</NextUiDropdownItem> */}
-                {/* <NextUiDropdownItem key="settings">Settings</NextUiDropdownItem> */}
-                <NextUiDropdownItem
-                  key="logout"
-                  className="text-danger"
-                  color="danger"
-                  onPress={handleLogout}
-                >
-                  Logout
-                </NextUiDropdownItem>
-              </DropdownMenu>
-            </NextUiDropdown>
-          )}
-          {!user && (
-            <FlexContainer>
-              <Link href={"/signup"}>
-                <Button
-                  variant={"ghost"}
-                  className="hidden h-auto border-0 px-4 py-2 text-sm font-medium uppercase tracking-wider text-gray-700 transition-colors duration-200 hover:bg-transparent hover:text-gray-900 dark:text-gray-300 dark:hover:text-white md:inline-flex"
-                >
-                  Signup
-                </Button>
-              </Link>
-
-              <Link href={"/login"}>
-                <Button className="hidden h-auto border border-gray-200 bg-white px-4 py-2 text-sm font-medium uppercase tracking-wider text-gray-900 transition-all duration-200 hover:border-gray-300 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-900 dark:text-white dark:hover:border-gray-600 dark:hover:bg-gray-800 md:inline-flex">
-                  Login
-                </Button>
-              </Link>
-            </FlexContainer>
-          )}
+          {/* Loading state removed */}
+          {/* User authentication removed - now using device-based interactions */}
 
           <Sheet
             open={sidebarOpen}
@@ -390,41 +281,7 @@ const Navbar = (_props: Props) => {
             </SheetTrigger>
             <SheetContent className="z-[910]">
               <SheetHeader className="space-y-0 text-left">
-                {user && !loading && (
-                  <NextUiDropdown
-                    classNames={{
-                      content:
-                        "bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700",
-                    }}
-                  >
-                    <DropdownTrigger>
-                      <div className="mt-5 flex cursor-pointer items-center justify-center gap-3 border border-gray-200 bg-white p-2 transition-all duration-200 hover:border-gray-300 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-900 dark:hover:border-gray-600 dark:hover:bg-gray-800">
-                        <Avatar
-                          className="h-10 w-10"
-                          {...genConfig(user.firstName)}
-                        />
-                        <FlexContainer variant="column-start" gap="none">
-                          <p className="text-sm font-semibold text-gray-900 dark:text-white">
-                            {user.firstName + " " + user.lastName}
-                          </p>
-                          <span className="text-xs text-gray-500 dark:text-gray-400">
-                            {user.username}
-                          </span>
-                        </FlexContainer>
-                      </div>
-                    </DropdownTrigger>
-                    <DropdownMenu aria-label="Static Actions">
-                      <NextUiDropdownItem
-                        key="logout"
-                        className="text-danger"
-                        color="danger"
-                        onPress={handleLogout}
-                      >
-                        Logout
-                      </NextUiDropdownItem>
-                    </DropdownMenu>
-                  </NextUiDropdown>
-                )}
+                {/* User authentication removed */}
               </SheetHeader>
               <FlexContainer
                 variant="column-start"
@@ -557,11 +414,7 @@ const Navbar = (_props: Props) => {
                     }
                   }}
                 />
-                <Link href={"/login"} className="mt-3 w-full">
-                  <Button className="h-auto w-full border border-gray-200 bg-white px-4 py-3 text-sm font-medium uppercase tracking-wider text-gray-900 transition-all duration-200 hover:border-gray-300 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-900 dark:text-white dark:hover:border-gray-600 dark:hover:bg-gray-800">
-                    Login
-                  </Button>
-                </Link>
+                {/* Login removed - using device-based interactions */}
                 <FlexContainer
                   variant="row-between"
                   alignItems="center"

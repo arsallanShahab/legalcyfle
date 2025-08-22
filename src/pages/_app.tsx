@@ -15,11 +15,6 @@ import Link from "next/link";
 import Script from "next/script";
 import "swiper/css";
 
-// TODO:- recommended post
-// - picture size full In mobile / desktop
-// - keep me logged in option/ remember me
-// - Merge Google analytics and Google Adsense
-
 export default function App({ Component, pageProps }: AppProps) {
   return (
     <Providers>

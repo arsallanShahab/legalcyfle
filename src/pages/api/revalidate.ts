@@ -1,3 +1,4 @@
+import client from "@/lib/contentful";
 import { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(
@@ -11,8 +12,7 @@ export default async function handler(
     // Get all categories from Contentful to revalidate dynamically
     const getAllCategories = async () => {
       try {
-        const contentful = require("@/lib/contentful").default;
-        const categories = await contentful.getEntries({
+        const categories = await client.getEntries({
           content_type: "blogCategory",
           limit: 100,
         });

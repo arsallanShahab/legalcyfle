@@ -1,12 +1,9 @@
-import IUser from "@/types/global/user";
 import React, { createContext, ReactNode, useContext, useState } from "react";
 
 // Define the shape of the context state
 interface GlobalState {
   loading: boolean;
   setLoading: (loading: boolean) => void;
-  user: IUser | null;
-  setUser: (user: IUser | null) => void;
   disclaimerAccepted: boolean;
   setDisclaimerAccepted: (disclaimerAccepted: boolean) => void;
 }
@@ -20,15 +17,12 @@ interface GlobalProviderProps {
 }
 
 export const GlobalProvider: React.FC<GlobalProviderProps> = ({ children }) => {
-  const [user, setUser] = useState<IUser | null>(null);
   const [disclaimerAccepted, setDisclaimerAccepted] = useState<boolean>(false);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
 
   return (
     <GlobalContext.Provider
       value={{
-        user,
-        setUser,
         disclaimerAccepted,
         setDisclaimerAccepted,
         loading,

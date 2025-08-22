@@ -13,6 +13,10 @@ const articleSchema = new mongoose.Schema({
   dislikes: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
   hearts: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
   comments: [{ type: mongoose.Schema.Types.ObjectId, ref: "Comment" }],
+  // Device-based interactions for anonymous users
+  deviceLikes: { type: [String], default: [] }, // Array of device IDs
+  deviceDislikes: { type: [String], default: [] }, // Array of device IDs
+  deviceHearts: { type: [String], default: [] }, // Array of device IDs
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
 });

@@ -9,7 +9,7 @@ import { JwtPayload, verify } from "jsonwebtoken";
 import { cookies, headers } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(
+export async function POST(
   req: NextRequest & { user: { _id: string } },
   { params }: { params: { slug: string } },
 ) {
@@ -25,59 +25,65 @@ export async function GET(
     );
   }
 
-  const db = await connectToDatabase();
-  let user: IUser | null = null;
-
   try {
-    const cookiesList = cookies();
-    const token = cookiesList.get("token")?.value!;
-    const decodedToken = verify(
-      token,
-      process.env.JWT_SECRET as string,
-    ) as JwtPayload;
+    const { deviceId } = await req.json();
 
-    user = await User.findById(decodedToken._id);
-  } catch (error) {
-    console.log(error, "error");
-  }
+    const db = await connectToDatabase();
 
-  try {
     let article = await Article.findOne({ slug });
     if (!article) {
       article = await Article.create({ slug });
     }
 
-    //populate users only name and email omit everything else
+    // Populate comments
     const comments = await Comment.find({ article: article._id })
       .populate({
         path: "author",
         select: "firstName lastName email",
       })
       .exec();
-    const userId = user?._id;
 
+    // Track view with IP hash (no user authentication required)
     const existingView = await ViewLog.findOne({
       articleId: slug,
-      $or: [{ ipHash }, { userId }],
+      ipHash,
     });
 
     if (!existingView) {
-      await ViewLog.create({ articleId: slug, ipHash, userId });
+      await ViewLog.create({ articleId: slug, ipHash });
       await Article.updateOne({ slug }, { $inc: { views: 1 } });
     }
-    console.log("article", article);
+
+    // Calculate totals including both user-based and device-based interactions
+    const totalLikes =
+      article.likes.length + (article.deviceLikes?.length || 0);
+    const totalDislikes =
+      article.dislikes.length + (article.deviceDislikes?.length || 0);
+    const totalHearts =
+      article.hearts.length + (article.deviceHearts?.length || 0);
+
+    // Check device preferences
+    const isLiked = deviceId
+      ? article.deviceLikes?.includes(deviceId) || false
+      : false;
+    const isDisliked = deviceId
+      ? article.deviceDislikes?.includes(deviceId) || false
+      : false;
+    const isHearted = deviceId
+      ? article.deviceHearts?.includes(deviceId) || false
+      : false;
 
     const responseData = {
       article,
       comments,
-      like: article.likes.length,
+      like: totalLikes,
       view: article.views,
       comment: article.comments.length,
-      dislikes: article.dislikes.length,
-      hearts: article.hearts.length,
-      isLiked: user ? user.hasLikedArticle(article._id) : false,
-      isDisliked: user ? user.hasDislikedArticle(article._id) : false,
-      isHearted: user ? user.hasHeartedArticle(article._id) : false,
+      dislikes: totalDislikes,
+      hearts: totalHearts,
+      isLiked,
+      isDisliked,
+      isHearted,
     };
 
     return NextResponse.json({

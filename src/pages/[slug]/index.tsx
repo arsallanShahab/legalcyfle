@@ -11,8 +11,12 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { Button } from "@/components/ui/button";
-import { useGlobalContext } from "@/context/GlobalContext";
 import client from "@/lib/contentful";
+import {
+  checkDevicePreference,
+  getDeviceId,
+  updateDevicePreferences,
+} from "@/lib/device-id";
 import useGet from "@/lib/hooks/use-get";
 import {
   estimateReadingTime,
@@ -35,13 +39,11 @@ import { Document } from "@contentful/rich-text-types";
 import {
   Avatar,
   AvatarGroup,
-  Input,
   Modal,
   ModalBody,
   ModalContent,
   ModalFooter,
   ModalHeader,
-  Textarea,
   Tooltip,
   useDisclosure,
 } from "@nextui-org/react";
@@ -56,7 +58,6 @@ import {
   Share,
   ThumbsDown,
   ThumbsUp,
-  Trash,
 } from "lucide-react";
 import { GetStaticProps } from "next";
 import dynamic from "next/dynamic";
@@ -66,7 +67,6 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { Fragment, useEffect } from "react";
 import toast from "react-hot-toast";
-import NiceAvatar, { genConfig } from "react-nice-avatar";
 import {
   EmailIcon,
   FacebookIcon,
@@ -95,17 +95,15 @@ type Props = {
 
 const Index = (props: Props) => {
   const router = useRouter();
-  const { user } = useGlobalContext();
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
   const [article, setArticle] = React.useState<IArticle | null>(null);
+  const [deviceId, setDeviceId] = React.useState<string>("");
 
   // loading states
   const [likeLoading, setLikeLoading] = React.useState<boolean>(false);
   const [dislikeLoading, setDislikeLoading] = React.useState<boolean>(false);
   const [heartLoading, setHeartLoading] = React.useState<boolean>(false);
-  const [commentLoading, setCommentLoading] = React.useState<boolean>(false);
-  const [commentDeleting, setCommentDeleting] = React.useState<boolean>(false);
 
   // like, dislike, heart states
   const [isLiked, setIsLiked] = React.useState<boolean | undefined>(false);
@@ -119,29 +117,40 @@ const Index = (props: Props) => {
   const [dislikeCount, setDislikeCount] = React.useState<number | undefined>(0);
   const [heartCount, setHeartCount] = React.useState<number | undefined>(0);
 
-  const [comment, setComment] = React.useState<string>("");
   const [comments, setComments] = React.useState<Comment[]>([]);
 
   const { getData, loading, data, error, refresh } = useGet<
     ApiResponse<MetricsResponse>
   >({ showToast: false });
 
+  // Initialize device ID on component mount
+  useEffect(() => {
+    const id = getDeviceId();
+    setDeviceId(id);
+  }, []);
+
   const handleHeart = async () => {
-    if (!user?._id) {
-      return toast.error("Please login to heart this article");
+    if (!deviceId) {
+      return toast.error("Unable to process request");
     }
     try {
       setHeartLoading(true);
       const res = await fetch(`/api/articles/${props.data.fields.slug}/heart`, {
-        method: "GET",
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
+        body: JSON.stringify({ deviceId }),
       });
       const data = (await res.json()) as ApiResponse<HeartResponse>;
       if (data.success) {
         setIsHearted(data.data?.isHearted);
         setHeartCount(data.data?.hearts);
+        updateDevicePreferences(
+          props.data.fields.slug,
+          "heart",
+          data.data?.isHearted || false,
+        );
         toast.success(data.message);
       } else {
         toast.error(data.message);
@@ -155,21 +164,27 @@ const Index = (props: Props) => {
   };
 
   const handleLike = async () => {
-    if (!user?._id) {
-      return toast.error("Please login to like this article");
+    if (!deviceId) {
+      return toast.error("Unable to process request");
     }
     try {
       setLikeLoading(true);
       const res = await fetch(`/api/articles/${props.data.fields.slug}/like`, {
-        method: "GET",
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
+        body: JSON.stringify({ deviceId }),
       });
       const data = (await res.json()) as ApiResponse<LikeResponse>;
       if (data.success) {
         setIsLiked(data.data?.isLiked);
         setLikeCount(data.data?.likes);
+        updateDevicePreferences(
+          props.data.fields.slug,
+          "like",
+          data.data?.isLiked || false,
+        );
         toast.success(data.message);
       } else {
         toast.error(data.message);
@@ -183,24 +198,30 @@ const Index = (props: Props) => {
   };
 
   const handleDislike = async () => {
-    if (!user?._id) {
-      return toast.error("Please login to dislike this article");
+    if (!deviceId) {
+      return toast.error("Unable to process request");
     }
     try {
       setDislikeLoading(true);
       const res = await fetch(
         `/api/articles/${props.data.fields.slug}/dislike`,
         {
-          method: "GET",
+          method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
+          body: JSON.stringify({ deviceId }),
         },
       );
       const data = (await res.json()) as ApiResponse<DislikeResponse>;
       if (data.success) {
         setIsDisliked(data.data?.isDisliked);
         setDislikeCount(data.data?.dislikes);
+        updateDevicePreferences(
+          props.data.fields.slug,
+          "dislike",
+          data.data?.isDisliked || false,
+        );
         toast.success(data.message);
       } else {
         toast.error(data.message);
@@ -213,129 +234,39 @@ const Index = (props: Props) => {
     }
   };
 
-  const handleAddComment = async () => {
-    if (!user?._id) {
-      return toast.error("Please login to comment on this article");
-    }
-    if (!comment) {
-      return toast.error("Please write a comment before posting");
-    }
-    if (!article?._id) {
-      return toast.error("Please reload the page and try again");
-    }
-    try {
-      setCommentLoading(true);
-      const res = await fetch(
-        `/api/articles/${props.data.fields.slug}/comment`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            content: comment,
-            articleId: article._id,
-          }),
-        },
-      );
-      const data = (await res.json()) as ApiResponse<LikeResponse>;
-      setComment("");
-      if (data.success) {
-        refresh(props.data.fields.slug);
-        toast.success(data.message);
-      } else {
-        toast.error(data.message);
-      }
-    } catch (error) {
-      const err = error as Error & { message: string };
-      toast.error(err.message);
-    } finally {
-      setCommentLoading(false);
-    }
-  };
-
-  const handleDeleteComment = async (commentId: string) => {
-    if (!user?._id) {
-      return toast.error("Please login to delete this comment");
-    }
-    try {
-      setCommentDeleting(true);
-      const res = await fetch(
-        `/api/articles/${props.data.fields.slug}/comment`,
-        {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            commentId,
-          }),
-        },
-      );
-      const data = (await res.json()) as ApiResponse<{}>;
-      if (data.success) {
-        refresh(props.data.fields.slug);
-        toast.success(data.message);
-      } else {
-        toast.error(data.message);
-      }
-    } catch (error) {
-      const err = error as Error & { message: string };
-      toast.error(err.message);
-    } finally {
-      setCommentDeleting(false);
-    }
-  };
-
   const thumbnail =
     props.data?.fields?.image?.fields?.file?.url ||
     "https://picsum.photos/500/500";
 
   useEffect(() => {
-    getData(
-      `/api/articles/${props.data.fields.slug}/metrics`,
-      props.data.fields.slug,
-      {
-        loading: "Loading metrics...",
-        success: "Metrics loaded successfully",
-        failure: "Failed to load metrics",
-      },
-    );
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props.data]);
-
-  useEffect(() => {
-    if (data?.data) {
-      setArticle(data?.data?.article);
-      setComments(data?.data?.comments);
-      setLikeCount(data?.data?.like);
-      setDislikeCount(data?.data?.dislikes);
-      setHeartCount(data?.data?.hearts);
-      setIsLiked(data?.data?.isLiked);
-      setIsDisliked(data?.data?.isDisliked);
-      setIsHearted(data?.data?.isHearted);
+    if (deviceId) {
+      // Use POST method to send deviceId
+      fetch(`/api/articles/${props.data.fields.slug}/metrics`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ deviceId }),
+      })
+        .then((res) => res.json())
+        .then((responseData) => {
+          if (responseData.success) {
+            setArticle(responseData.data?.article);
+            setComments(responseData.data?.comments || []);
+            setLikeCount(responseData.data?.like);
+            setDislikeCount(responseData.data?.dislikes);
+            setHeartCount(responseData.data?.hearts);
+            setIsLiked(responseData.data?.isLiked);
+            setIsDisliked(responseData.data?.isDisliked);
+            setIsHearted(responseData.data?.isHearted);
+          }
+        })
+        .catch((error) => {
+          console.error("Error fetching metrics:", error);
+        });
     }
-  }, [data]);
-
-  // const structuredData = {
-  //   "@context": "https://schema.org",
-  //   "@type": "BlogPosting",
-  //   headline: props.data.fields.title,
-  //   image: formatImageLink(thumbnail),
-  //   author: props.data.fields.authors.map((author) => ({
-  //     "@type": "Person",
-  //     name: author.fields.name,
-  //     url: `/author/${author.sys.id}`,
-  //   })),
-  //   datePublished: props.data.fields.date,
-  //   dateModified: props.data.fields.date,
-  //   description: excerpt(props.data.fields.title, 160),
-  //   mainEntityOfPage: {
-  //     "@type": "WebPage",
-  //     "@id": `https://legalcyfle.in/${props.data.fields.slug}`,
-  //   },
-  // };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.data, deviceId]);
 
   console.log("Category: ", props.data.fields?.category);
 
@@ -911,80 +842,15 @@ const Index = (props: Props) => {
           gap="xl"
         >
           <h3 className="text-2xl font-medium">Comments</h3>
-          {comments.length === 0 && (
-            <p className="text-lg font-normal text-gray-500">
-              No comments yet. Be the first to comment on this article.
+          <div className="rounded-lg bg-gray-50 p-6 text-center dark:bg-gray-800">
+            <p className="text-lg font-medium text-gray-600 dark:text-gray-300">
+              💬 Comments Coming Soon!
             </p>
-          )}
-          {!user && (
-            <Link href={`/login?redirect=${router.asPath}`}>
-              <Button className="rounded-3xl px-7">Login to comment</Button>
-            </Link>
-          )}
-          {user && (
-            <FlexContainer>
-              <NiceAvatar
-                {...genConfig(user.firstName)}
-                className="h-10 w-10"
-              />
-              <FlexContainer variant="column-end" gap="md" className="w-full">
-                <Textarea
-                  value={comment}
-                  onValueChange={setComment}
-                  placeholder="Write your comment here"
-                  // disabled={
-                  //   comments.some((c) => c.author._id === user._id) ||
-                  //   !user?._id
-                  // }
-                />
-                <Button
-                  className="rounded-3xl px-7"
-                  onClick={handleAddComment}
-                  loading={commentLoading}
-                >
-                  save
-                </Button>
-              </FlexContainer>
-            </FlexContainer>
-          )}
-          {comments.map((comment) => (
-            <FlexContainer key={comment._id} className="mt-5">
-              <NiceAvatar
-                {...genConfig(comment.author.firstName)}
-                className="h-10 w-10"
-              />
-              <FlexContainer variant="column-end" className="w-full">
-                <FlexContainer
-                  gap="none"
-                  className="relative flex w-full flex-col items-start justify-start rounded-xl bg-zinc-100 p-3 dark:bg-zinc-800"
-                >
-                  <p className="text-lg font-semibold">
-                    {comment.author.firstName}
-                  </p>
-                  <p className="text-base font-normal text-gray-700 dark:text-gray-200">
-                    {comment.content}
-                  </p>
-                  {comment.author._id === user?._id && (
-                    <Button
-                      size={"icon"}
-                      variant={"destructive"}
-                      onClick={() => handleDeleteComment(comment._id!)}
-                      className="absolute -right-2 -top-2 rounded-3xl"
-                    >
-                      {commentDeleting ? (
-                        <Loader className="h-4 w-4 animate-spin text-white" />
-                      ) : (
-                        <Trash className="h-4 w-4 fill-white text-white" />
-                      )}
-                    </Button>
-                  )}
-                </FlexContainer>
-                <span className="text-sm text-gray-700">
-                  {dayjs(comment.createdAt).format("hh:mm A - MMMM DD, YYYY")}
-                </span>
-              </FlexContainer>
-            </FlexContainer>
-          ))}
+            <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
+              We&apos;re working on bringing you an enhanced commenting
+              experience. Stay tuned!
+            </p>
+          </div>
         </FlexContainer>
         <Modal
           isOpen={isOpen}

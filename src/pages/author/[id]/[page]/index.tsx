@@ -8,6 +8,7 @@ import { formatImageLink } from "@/lib/utils";
 import { Author } from "@/types/contentful/author";
 import { BlogEntries } from "@/types/contentful/blog";
 import { GetStaticProps } from "next";
+import Head from "next/head";
 import Image from "next/image";
 import safeJsonStringify from "safe-json-stringify";
 
@@ -20,7 +21,21 @@ type Props = {
 
 const Index = ({ author, articles, nextPage, page }: Props) => {
   return (
-    <Wrapper>
+    <>
+      <Head>
+        <title>{author.fields.name} - Page {page} | Author Profile | LegalCyfle</title>
+        <meta name="description" content={`Articles by ${author.fields.name} - Page ${page} on LegalCyfle. ${author.fields?.bio || ''}`} />
+        
+        {/* Prevent indexing of paginated author pages */}
+        <meta name="robots" content="noindex, nofollow, noarchive, nosnippet" />
+        <meta name="googlebot" content="noindex, nofollow, noarchive, nosnippet" />
+        <meta name="bingbot" content="noindex, nofollow, noarchive, nosnippet" />
+        
+        {/* Canonical URL */}
+        <link rel="canonical" href={`https://legalcyfle.in/author/${author.sys.id}/${page}`} />
+      </Head>
+      
+      <Wrapper>
       <AdWrapper
         data-ad-slot="4210005765"
         data-ad-format="auto"
@@ -79,6 +94,7 @@ const Index = ({ author, articles, nextPage, page }: Props) => {
         data-full-width-responsive="true"
       />
     </Wrapper>
+    </>
   );
 };
 

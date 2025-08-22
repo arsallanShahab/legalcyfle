@@ -9,19 +9,25 @@ function createSafeUrl(baseUrl: string, path: string): string {
     // Remove or escape XML-unsafe characters
     const safePath = decodedPath.replace(/[&<>"']/g, (match) => {
       switch (match) {
-        case '&': return 'and';
-        case '<': return '';
-        case '>': return '';
-        case '"': return '';
-        case "'": return '';
-        default: return match;
+        case "&":
+          return "and";
+        case "<":
+          return "";
+        case ">":
+          return "";
+        case '"':
+          return "";
+        case "'":
+          return "";
+        default:
+          return match;
       }
     });
     const encodedPath = encodeURIComponent(safePath);
     return `${baseUrl}/${encodedPath}`;
   } catch (error) {
     // Fallback: just encode the path as-is, removing unsafe chars
-    const safePath = path.replace(/[&<>"']/g, '');
+    const safePath = path.replace(/[&<>"']/g, "");
     return `${baseUrl}/${encodeURIComponent(safePath)}`;
   }
 }
@@ -32,18 +38,24 @@ function createSafeCategoryUrl(baseUrl: string, slug: string): string {
     // Remove or escape XML-unsafe characters
     const safeSlug = decodedSlug.replace(/[&<>"']/g, (match) => {
       switch (match) {
-        case '&': return 'and';
-        case '<': return '';
-        case '>': return '';
-        case '"': return '';
-        case "'": return '';
-        default: return match;
+        case "&":
+          return "and";
+        case "<":
+          return "";
+        case ">":
+          return "";
+        case '"':
+          return "";
+        case "'":
+          return "";
+        default:
+          return match;
       }
     });
     const encodedSlug = encodeURIComponent(safeSlug);
     return `${baseUrl}/category/${encodedSlug}`;
   } catch (error) {
-    const safeSlug = slug.replace(/[&<>"']/g, '');
+    const safeSlug = slug.replace(/[&<>"']/g, "");
     return `${baseUrl}/category/${encodeURIComponent(safeSlug)}`;
   }
 }
@@ -103,7 +115,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const categoryPages = categories.items
       .filter((category: any) => {
         if (!category.fields?.slug) {
-          console.warn('Category found without slug:', category.sys.id);
+          console.warn("Category found without slug:", category.sys.id);
           return false;
         }
         return true;
@@ -118,7 +130,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const articlePages = articles.items
       .filter((article: any) => {
         if (!article.fields?.slug) {
-          console.warn('Article found without slug:', article.sys.id);
+          console.warn("Article found without slug:", article.sys.id);
           return false;
         }
         return true;
@@ -130,7 +142,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         priority: 0.9,
       }));
 
-    console.log(`Generated sitemap with ${staticPages.length} static pages, ${categoryPages.length} category pages, and ${articlePages.length} article pages`);
+    console.log(
+      `Generated sitemap with ${staticPages.length} static pages, ${categoryPages.length} category pages, and ${articlePages.length} article pages`,
+    );
 
     return [...staticPages, ...categoryPages, ...articlePages];
   } catch (error) {

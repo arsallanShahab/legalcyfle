@@ -8,6 +8,7 @@ import { formatImageLink } from "@/lib/utils";
 import { Author } from "@/types/contentful/author";
 import { BlogEntries } from "@/types/contentful/blog";
 import { GetStaticProps } from "next";
+import Head from "next/head";
 import Image from "next/image";
 import React from "react";
 import safeJsonStringify from "safe-json-stringify";
@@ -22,7 +23,25 @@ type Props = {
 
 const Index = (props: Props) => {
   return (
-    <Wrapper>
+    <>
+      <Head>
+        <title>{props.data.author.fields.name} - Author Profile | LegalCyfle</title>
+        <meta name="description" content={`Read articles by ${props.data.author.fields.name} on LegalCyfle. ${props.data.author.fields?.bio || ''}`} />
+        
+        {/* Prevent indexing of author pages */}
+        <meta name="robots" content="noindex, nofollow, noarchive, nosnippet" />
+        <meta name="googlebot" content="noindex, nofollow, noarchive, nosnippet" />
+        <meta name="bingbot" content="noindex, nofollow, noarchive, nosnippet" />
+        
+        {/* Canonical URL */}
+        <link rel="canonical" href={`https://legalcyfle.in/author/${props.data.author.sys.id}`} />
+        
+        {/* Additional directives */}
+        <meta name="author" content="LegalCyfle" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      </Head>
+      
+      <Wrapper>
       <AdWrapper
         data-ad-slot="4210005765"
         data-ad-format="auto"
@@ -71,6 +90,7 @@ const Index = (props: Props) => {
         data-full-width-responsive="true"
       />
     </Wrapper>
+    </>
   );
 };
 

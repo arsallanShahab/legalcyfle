@@ -515,5 +515,6 @@ export const getStaticProps = async () => {
         employeeOfTheMonth: employeeOfTheMonth.items[0] || null,
       },
     },
+    revalidate: 3600, // Revalidate every hour (3600 seconds) or on-demand via webhook
   };
 };

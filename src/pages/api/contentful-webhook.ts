@@ -119,41 +119,10 @@ export default async function handler(
           `Processing ${sys.type === "DeletedEntry" ? "deleted" : "updated"} ${contentType}: ${sys.id}`,
         );
 
-        // Simplified logic: Always revalidate homepage and ALL category pages
-        // regardless of what content was updated
-        console.log("Revalidating homepage and all category pages...");
+        // Simple revalidation - just call the revalidate endpoint
+        console.log("Triggering revalidation...");
 
-        // Get all categories from Contentful to revalidate dynamically
-        const getAllCategories = async () => {
-          try {
-            const contentful = require("@/lib/contentful").default;
-            const categories = await contentful.getEntries({
-              content_type: "blogCategory",
-              limit: 100,
-            });
-
-            return categories.items.map(
-              (category: any) => category.fields.slug,
-            );
-          } catch (error) {
-            console.error("Failed to fetch categories:", error);
-            // Fallback to known static categories
-            return ["blogs-news", "opportunities", "resources"];
-          }
-        };
-
-        const categorySlug = await getAllCategories();
-        const pathsToRevalidate = [
-          "/", // Homepage
-          ...categorySlug.map((slug: string) => `/category/${slug}`), // All category pages
-        ];
-
-        console.log("Paths to revalidate:", pathsToRevalidate);
-
-        await revalidateWithTimeout(`${baseUrl}/api/revalidate/simple`, {
-          secret: revalidationSecret,
-          paths: pathsToRevalidate,
-        });
+        await revalidateWithTimeout(`${baseUrl}/api/revalidate`, {});
 
         console.log(
           `Webhook processing completed for ${contentType}: ${sys.id}`,

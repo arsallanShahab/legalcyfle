@@ -101,10 +101,8 @@ export default async function handler(
           console.log(`Processing deleted ${contentType}: ${sys.id}`);
           // Just revalidate homepage for deleted entries
           await revalidateWithTimeout(
-            `${baseUrl}/api/revalidate/article?secret=${revalidationSecret}`,
-            {
-              slug: getFieldValue(fields?.slug),
-            },
+            `${baseUrl}/api/revalidate?secret=${revalidationSecret}`,
+            {},
           );
           return;
         }

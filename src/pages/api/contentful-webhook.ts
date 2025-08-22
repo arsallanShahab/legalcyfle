@@ -115,55 +115,45 @@ export default async function handler(
     // Process revalidation asynchronously - don't block response
     setImmediate(async () => {
       try {
-        if (sys.type === "DeletedEntry") {
-          console.log(`Processing deleted ${contentType}: ${sys.id}`);
-          // For deleted entries, just revalidate homepage to remove from listings
-          await revalidateWithTimeout(`${baseUrl}/api/revalidate`, {
-            secret: revalidationSecret,
-            path: "/",
-          });
-          return;
-        }
+        console.log(
+          `Processing ${sys.type === "DeletedEntry" ? "deleted" : "updated"} ${contentType}: ${sys.id}`,
+        );
 
-        // Handle regular entries (published/updated)
-        switch (contentType) {
-          case "blogPage":
-            const slug = getFieldValue(fields?.slug);
-            const categories = getFieldValue(fields?.category);
-            const authors = getFieldValue(fields?.authors);
+        // Simplified logic: Always revalidate homepage and ALL category pages
+        // regardless of what content was updated
+        console.log("Revalidating homepage and all category pages...");
 
-            console.log(`Revalidating blog page: ${slug}`);
-            console.log(`Categories:`, categories);
-            console.log(`Authors:`, authors);
-
-            await revalidateWithTimeout(`${baseUrl}/api/revalidate/article`, {
-              secret: revalidationSecret,
-              slug: slug,
-              categorySlug: categories?.[0]?.sys?.id,
-              authorId: authors?.[0]?.sys?.id,
+        // Get all categories from Contentful to revalidate dynamically
+        const getAllCategories = async () => {
+          try {
+            const contentful = require("@/lib/contentful").default;
+            const categories = await contentful.getEntries({
+              content_type: "blogCategory",
+              limit: 100,
             });
-            break;
 
-          case "author":
-            console.log(`Revalidating author: ${sys.id}`);
-            await revalidateWithTimeout(`${baseUrl}/api/revalidate/author`, {
-              secret: revalidationSecret,
-              authorId: sys.id,
-            });
-            break;
+            return categories.items.map(
+              (category: any) => category.fields.slug,
+            );
+          } catch (error) {
+            console.error("Failed to fetch categories:", error);
+            // Fallback to known static categories
+            return ["blogs-news", "opportunities", "resources"];
+          }
+        };
 
-          case "blogCategory":
-            const categorySlug = getFieldValue(fields?.slug);
-            console.log(`Revalidating category: ${categorySlug}`);
-            await revalidateWithTimeout(`${baseUrl}/api/revalidate/category`, {
-              secret: revalidationSecret,
-              slug: categorySlug,
-            });
-            break;
+        const categorySlug = await getAllCategories();
+        const pathsToRevalidate = [
+          "/", // Homepage
+          ...categorySlug.map((slug: string) => `/category/${slug}`), // All category pages
+        ];
 
-          default:
-            console.log(`Unhandled content type: ${contentType}`);
-        }
+        console.log("Paths to revalidate:", pathsToRevalidate);
+
+        await revalidateWithTimeout(`${baseUrl}/api/revalidate/simple`, {
+          secret: revalidationSecret,
+          paths: pathsToRevalidate,
+        });
 
         console.log(
           `Webhook processing completed for ${contentType}: ${sys.id}`,

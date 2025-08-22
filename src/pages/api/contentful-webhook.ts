@@ -10,7 +10,7 @@ export default async function handler(
 
   try {
     console.log("=== CONTENTFUL WEBHOOK ===");
-    
+
     // Verify it's a Contentful webhook
     const contentfulTopic = req.headers["x-contentful-topic"];
     if (!contentfulTopic) {
@@ -23,7 +23,9 @@ export default async function handler(
       try {
         parsedBody = JSON.parse(req.body);
       } catch (parseError) {
-        return res.status(400).json({ message: "Invalid JSON in webhook payload" });
+        return res
+          .status(400)
+          .json({ message: "Invalid JSON in webhook payload" });
       }
     } else {
       parsedBody = req.body;
@@ -59,13 +61,12 @@ export default async function handler(
     const revalidateWithTimeout = async (
       url: string,
       body: any,
-      timeoutMs = 10000,
+      timeoutMs = 9000,
     ) => {
       try {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
 
-        console.log(`Attempting revalidation: ${url}`);
         const response = await fetch(url, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -74,15 +75,12 @@ export default async function handler(
         });
 
         clearTimeout(timeoutId);
-        
-        if (response.ok) {
-          console.log(`Revalidation success: ${url} - Status: ${response.status}`);
-        } else {
-          console.log(`Revalidation failed: ${url} - Status: ${response.status}`);
-        }
+        console.log(`Revalidation success: ${url}`);
         return response;
       } catch (error) {
-        console.error(`Revalidation failed: ${url} - ${error instanceof Error ? error.message : error}`);
+        console.error(
+          `Revalidation failed: ${url} - ${error instanceof Error ? error.message : error}`,
+        );
         return null;
       }
     };
@@ -103,11 +101,10 @@ export default async function handler(
           console.log(`Processing deleted ${contentType}: ${sys.id}`);
           // Just revalidate homepage for deleted entries
           await revalidateWithTimeout(
-            `${baseUrl}/api/revalidate`,
-            { 
-              secret: revalidationSecret,
-              path: "/" 
-            }
+            `${baseUrl}/api/revalidate/article?secret=${revalidationSecret}`,
+            {
+              slug: getFieldValue(fields?.slug),
+            },
           );
           return;
         }
@@ -118,24 +115,20 @@ export default async function handler(
             const slug = getFieldValue(fields?.slug);
             console.log(`Revalidating blog page: ${slug}`);
             await revalidateWithTimeout(
-              `${baseUrl}/api/revalidate/article`,
+              `${baseUrl}/api/revalidate/article?secret=${revalidationSecret}`,
               {
-                secret: revalidationSecret,
                 slug: slug,
                 categorySlug: getFieldValue(fields?.category)?.[0]?.sys?.id,
                 authorId: getFieldValue(fields?.authors)?.[0]?.sys?.id,
-              }
+              },
             );
             break;
 
           case "author":
             console.log(`Revalidating author: ${sys.id}`);
             await revalidateWithTimeout(
-              `${baseUrl}/api/revalidate/author`,
-              { 
-                secret: revalidationSecret,
-                authorId: sys.id 
-              }
+              `${baseUrl}/api/revalidate/author?secret=${revalidationSecret}`,
+              { authorId: sys.id },
             );
             break;
 
@@ -143,11 +136,8 @@ export default async function handler(
             const categorySlug = getFieldValue(fields?.slug);
             console.log(`Revalidating category: ${categorySlug}`);
             await revalidateWithTimeout(
-              `${baseUrl}/api/revalidate/category`,
-              { 
-                secret: revalidationSecret,
-                slug: categorySlug 
-              }
+              `${baseUrl}/api/revalidate/category?secret=${revalidationSecret}`,
+              { slug: categorySlug },
             );
             break;
 
@@ -158,7 +148,6 @@ export default async function handler(
         console.error("Async revalidation error:", error);
       }
     });
-
   } catch (error) {
     console.error("Webhook error:", error);
     return res.status(500).json({

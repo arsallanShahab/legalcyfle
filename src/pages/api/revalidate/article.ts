@@ -4,12 +4,16 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
-  if (req.query.secret !== process.env.REVALIDATION_SECRET) {
-    return res.status(401).json({ message: "Invalid token" });
+  if (req.method !== "POST") {
+    return res.status(405).json({ message: "Method not allowed" });
   }
 
   try {
-    const { slug, categorySlug, authorId } = req.body;
+    const { secret, slug, categorySlug, authorId } = req.body;
+
+    if (secret !== process.env.REVALIDATION_SECRET) {
+      return res.status(401).json({ message: "Invalid revalidation secret" });
+    }
 
     if (!slug) {
       return res.status(400).json({ message: "Article slug is required" });

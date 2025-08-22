@@ -51,6 +51,7 @@ export default async function handler(
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
 
     console.log(`Webhook: ${contentType} - ${sys.id} - ${contentfulTopic}`);
+    console.log(`Entry type: ${sys.type}`);
 
     // Helper function to extract field values
     const getFieldValue = (field: any, locale = "en-US") => {
@@ -61,11 +62,14 @@ export default async function handler(
     const revalidateWithTimeout = async (
       url: string,
       body: any,
-      timeoutMs = 9000,
+      timeoutMs = 15000,
     ) => {
       try {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+
+        console.log(`Attempting revalidation: ${url}`);
+        console.log(`Request body:`, JSON.stringify(body, null, 2));
 
         const response = await fetch(url, {
           method: "POST",
@@ -75,7 +79,20 @@ export default async function handler(
         });
 
         clearTimeout(timeoutId);
-        console.log(`Revalidation success: ${url}`);
+
+        if (response.ok) {
+          const responseData = await response.text();
+          console.log(
+            `Revalidation success: ${url} - Status: ${response.status}`,
+          );
+          console.log(`Response:`, responseData);
+        } else {
+          const errorText = await response.text();
+          console.log(
+            `Revalidation failed: ${url} - Status: ${response.status}`,
+          );
+          console.log(`Error response:`, errorText);
+        }
         return response;
       } catch (error) {
         console.error(
@@ -91,6 +108,7 @@ export default async function handler(
       contentType,
       entryId: sys.id,
       topic: contentfulTopic,
+      entryType: sys.type,
       timestamp: new Date().toISOString(),
     });
 
@@ -99,49 +117,57 @@ export default async function handler(
       try {
         if (sys.type === "DeletedEntry") {
           console.log(`Processing deleted ${contentType}: ${sys.id}`);
-          // Just revalidate homepage for deleted entries
-          await revalidateWithTimeout(
-            `${baseUrl}/api/revalidate?secret=${revalidationSecret}`,
-            {},
-          );
+          // For deleted entries, just revalidate homepage to remove from listings
+          await revalidateWithTimeout(`${baseUrl}/api/revalidate`, {
+            secret: revalidationSecret,
+            path: "/",
+          });
           return;
         }
 
-        // Handle regular entries
+        // Handle regular entries (published/updated)
         switch (contentType) {
           case "blogPage":
             const slug = getFieldValue(fields?.slug);
+            const categories = getFieldValue(fields?.category);
+            const authors = getFieldValue(fields?.authors);
+
             console.log(`Revalidating blog page: ${slug}`);
-            await revalidateWithTimeout(
-              `${baseUrl}/api/revalidate/article?secret=${revalidationSecret}`,
-              {
-                slug: slug,
-                categorySlug: getFieldValue(fields?.category)?.[0]?.sys?.id,
-                authorId: getFieldValue(fields?.authors)?.[0]?.sys?.id,
-              },
-            );
+            console.log(`Categories:`, categories);
+            console.log(`Authors:`, authors);
+
+            await revalidateWithTimeout(`${baseUrl}/api/revalidate/article`, {
+              secret: revalidationSecret,
+              slug: slug,
+              categorySlug: categories?.[0]?.sys?.id,
+              authorId: authors?.[0]?.sys?.id,
+            });
             break;
 
           case "author":
             console.log(`Revalidating author: ${sys.id}`);
-            await revalidateWithTimeout(
-              `${baseUrl}/api/revalidate/author?secret=${revalidationSecret}`,
-              { authorId: sys.id },
-            );
+            await revalidateWithTimeout(`${baseUrl}/api/revalidate/author`, {
+              secret: revalidationSecret,
+              authorId: sys.id,
+            });
             break;
 
           case "blogCategory":
             const categorySlug = getFieldValue(fields?.slug);
             console.log(`Revalidating category: ${categorySlug}`);
-            await revalidateWithTimeout(
-              `${baseUrl}/api/revalidate/category?secret=${revalidationSecret}`,
-              { slug: categorySlug },
-            );
+            await revalidateWithTimeout(`${baseUrl}/api/revalidate/category`, {
+              secret: revalidationSecret,
+              slug: categorySlug,
+            });
             break;
 
           default:
             console.log(`Unhandled content type: ${contentType}`);
         }
+
+        console.log(
+          `Webhook processing completed for ${contentType}: ${sys.id}`,
+        );
       } catch (error) {
         console.error("Async revalidation error:", error);
       }

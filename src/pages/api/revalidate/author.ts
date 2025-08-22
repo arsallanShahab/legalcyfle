@@ -4,13 +4,17 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
-  // Check for secret to confirm this is a valid request
-  if (req.query.secret !== process.env.REVALIDATION_SECRET) {
-    return res.status(401).json({ message: "Invalid token" });
+  if (req.method !== "POST") {
+    return res.status(405).json({ message: "Method not allowed" });
   }
 
   try {
-    const { authorId } = req.body;
+    const { secret, authorId } = req.body;
+
+    // Check for secret to confirm this is a valid request
+    if (secret !== process.env.REVALIDATION_SECRET) {
+      return res.status(401).json({ message: "Invalid revalidation secret" });
+    }
 
     if (!authorId) {
       return res.status(400).json({ message: "Author ID is required" });

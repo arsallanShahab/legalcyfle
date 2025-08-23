@@ -25,71 +25,85 @@ const Index = (props: Props) => {
   return (
     <>
       <Head>
-        <title>{props.data.author.fields.name} - Author Profile | LegalCyfle</title>
-        <meta name="description" content={`Read articles by ${props.data.author.fields.name} on LegalCyfle. ${props.data.author.fields?.bio || ''}`} />
-        
+        <title>
+          {props.data.author.fields.name} - Author Profile | LegalCyfle
+        </title>
+        <meta
+          name="description"
+          content={`Read articles by ${props.data.author.fields.name} on LegalCyfle. ${props.data.author.fields?.bio || ""}`}
+        />
+
         {/* Prevent indexing of author pages */}
         <meta name="robots" content="noindex, nofollow, noarchive, nosnippet" />
-        <meta name="googlebot" content="noindex, nofollow, noarchive, nosnippet" />
-        <meta name="bingbot" content="noindex, nofollow, noarchive, nosnippet" />
-        
+        <meta
+          name="googlebot"
+          content="noindex, nofollow, noarchive, nosnippet"
+        />
+        <meta
+          name="bingbot"
+          content="noindex, nofollow, noarchive, nosnippet"
+        />
+
         {/* Canonical URL */}
-        <link rel="canonical" href={`https://legalcyfle.in/author/${props.data.author.sys.id}`} />
-        
+        <link
+          rel="canonical"
+          href={`https://legalcyfle.in/author/${props.data.author.sys.id}`}
+        />
+
         {/* Additional directives */}
         <meta name="author" content="LegalCyfle" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       </Head>
-      
-      <Wrapper>
-      <AdWrapper
-        data-ad-slot="4210005765"
-        data-ad-format="auto"
-        data-full-width-responsive="true"
-      />
-      <FlexContainer variant="column-start" gap="md">
-        <div>
-          <Image
-            src={formatImageLink(
-              props.data.author.fields?.avatar?.fields.file.url ||
-                "https://picsum.photos/200/200",
-            )}
-            alt={props.data.author.fields.name}
-            width={200}
-            height={200}
-            className="h-20 w-20 rounded-full border"
-          />
-        </div>
-        <h3 className="text-4xl font-semibold text-green-500">
-          {props.data.author.fields.name}
-        </h3>
-        <p className="max-w-xl text-base text-gray-600 dark:text-gray-100">
-          {props.data.author.fields?.bio}
-        </p>
-      </FlexContainer>
-      {props.data.articles.map((article) => (
-        <ArticleCard article={article} key={article?.sys?.id} />
-      ))}
-      <FlexContainer variant="row-end" alignItems="center">
-        {props.data.nextPage ? (
-          <a
-            href={`/author/${props.data.author.sys.id}/${props.data.nextPage}`}
-          >
-            <Button variant={"secondary"}>Next Page</Button>
-          </a>
-        ) : (
-          <Button variant={"secondary"} disabled>
-            Next Page
-          </Button>
-        )}
-      </FlexContainer>
 
-      <AdWrapper
-        data-ad-slot="4210005765"
-        data-ad-format="auto"
-        data-full-width-responsive="true"
-      />
-    </Wrapper>
+      <Wrapper>
+        <AdWrapper
+          data-ad-slot="4210005765"
+          data-ad-format="auto"
+          data-full-width-responsive="true"
+        />
+        <FlexContainer variant="column-start" gap="md">
+          <div>
+            <Image
+              src={formatImageLink(
+                props.data.author.fields?.avatar?.fields.file.url ||
+                  "https://picsum.photos/200/200",
+              )}
+              alt={props.data.author.fields.name}
+              width={200}
+              height={200}
+              className="h-20 w-20 rounded-full border"
+            />
+          </div>
+          <h3 className="text-4xl font-semibold text-green-500">
+            {props.data.author.fields.name}
+          </h3>
+          <p className="max-w-xl text-base text-gray-600 dark:text-gray-100">
+            {props.data.author.fields?.bio}
+          </p>
+        </FlexContainer>
+        {props.data.articles.map((article) => (
+          <ArticleCard article={article} key={article?.sys?.id} />
+        ))}
+        <FlexContainer variant="row-end" alignItems="center">
+          {props.data.nextPage ? (
+            <a
+              href={`/author/${props.data.author.sys.id}/${props.data.nextPage}`}
+            >
+              <Button variant={"secondary"}>Next Page</Button>
+            </a>
+          ) : (
+            <Button variant={"secondary"} disabled>
+              Next Page
+            </Button>
+          )}
+        </FlexContainer>
+
+        <AdWrapper
+          data-ad-slot="4210005765"
+          data-ad-format="auto"
+          data-full-width-responsive="true"
+        />
+      </Wrapper>
     </>
   );
 };

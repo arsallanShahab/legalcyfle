@@ -23,77 +23,93 @@ const Index = ({ author, articles, nextPage, page }: Props) => {
   return (
     <>
       <Head>
-        <title>{author.fields.name} - Page {page} | Author Profile | LegalCyfle</title>
-        <meta name="description" content={`Articles by ${author.fields.name} - Page ${page} on LegalCyfle. ${author.fields?.bio || ''}`} />
-        
+        <title>
+          {author.fields.name} - Page {page} | Author Profile | LegalCyfle
+        </title>
+        <meta
+          name="description"
+          content={`Articles by ${author.fields.name} - Page ${page} on LegalCyfle. ${author.fields?.bio || ""}`}
+        />
+
         {/* Prevent indexing of paginated author pages */}
         <meta name="robots" content="noindex, nofollow, noarchive, nosnippet" />
-        <meta name="googlebot" content="noindex, nofollow, noarchive, nosnippet" />
-        <meta name="bingbot" content="noindex, nofollow, noarchive, nosnippet" />
-        
-        {/* Canonical URL */}
-        <link rel="canonical" href={`https://legalcyfle.in/author/${author.sys.id}/${page}`} />
-      </Head>
-      
-      <Wrapper>
-      <AdWrapper
-        data-ad-slot="4210005765"
-        data-ad-format="auto"
-        data-full-width-responsive="true"
-      />
-      <FlexContainer variant="column-start" gap="md">
-        <div>
-          <Image
-            src={formatImageLink(
-              author.fields?.avatar?.fields.file.url ||
-                "https://picsum.photos/200/200",
-            )}
-            alt={author.fields.name}
-            width={200}
-            height={200}
-            className="h-20 w-20 rounded-full border"
-          />
-        </div>
-        <h3 className="text-4xl font-semibold text-green-500">
-          {author.fields.name}
-        </h3>
-        <p className="max-w-xl text-base text-gray-600">{author.fields?.bio}</p>
-      </FlexContainer>
-      {articles.map((article) => (
-        <ArticleCard article={article} key={article?.sys?.id} />
-      ))}
+        <meta
+          name="googlebot"
+          content="noindex, nofollow, noarchive, nosnippet"
+        />
+        <meta
+          name="bingbot"
+          content="noindex, nofollow, noarchive, nosnippet"
+        />
 
-      <FlexContainer variant="row-end" alignItems="center">
-        {page > 1 ? (
-          <a href={`/author/${author.sys.id}/${page - 1}`}>
-            <Button variant={"secondary"}>Previous Page</Button>
-          </a>
-        ) : (
-          <Button variant={"secondary"} disabled>
-            Previous Page
-          </Button>
-        )}
-        {nextPage ? (
-          <span className="font-giest-mono text-sm font-semibold">
-            Page {page}
-          </span>
-        ) : null}
-        {nextPage ? (
-          <a href={`/author/${author.sys.id}/${nextPage}`}>
-            <Button variant={"secondary"}>Next Page</Button>
-          </a>
-        ) : (
-          <Button variant={"secondary"} disabled>
-            Next Page
-          </Button>
-        )}
-      </FlexContainer>
-      <AdWrapper
-        data-ad-slot="4210005765"
-        data-ad-format="auto"
-        data-full-width-responsive="true"
-      />
-    </Wrapper>
+        {/* Canonical URL */}
+        <link
+          rel="canonical"
+          href={`https://legalcyfle.in/author/${author.sys.id}/${page}`}
+        />
+      </Head>
+
+      <Wrapper>
+        <AdWrapper
+          data-ad-slot="4210005765"
+          data-ad-format="auto"
+          data-full-width-responsive="true"
+        />
+        <FlexContainer variant="column-start" gap="md">
+          <div>
+            <Image
+              src={formatImageLink(
+                author.fields?.avatar?.fields.file.url ||
+                  "https://picsum.photos/200/200",
+              )}
+              alt={author.fields.name}
+              width={200}
+              height={200}
+              className="h-20 w-20 rounded-full border"
+            />
+          </div>
+          <h3 className="text-4xl font-semibold text-green-500">
+            {author.fields.name}
+          </h3>
+          <p className="max-w-xl text-base text-gray-600">
+            {author.fields?.bio}
+          </p>
+        </FlexContainer>
+        {articles.map((article) => (
+          <ArticleCard article={article} key={article?.sys?.id} />
+        ))}
+
+        <FlexContainer variant="row-end" alignItems="center">
+          {page > 1 ? (
+            <a href={`/author/${author.sys.id}/${page - 1}`}>
+              <Button variant={"secondary"}>Previous Page</Button>
+            </a>
+          ) : (
+            <Button variant={"secondary"} disabled>
+              Previous Page
+            </Button>
+          )}
+          {nextPage ? (
+            <span className="font-giest-mono text-sm font-semibold">
+              Page {page}
+            </span>
+          ) : null}
+          {nextPage ? (
+            <a href={`/author/${author.sys.id}/${nextPage}`}>
+              <Button variant={"secondary"}>Next Page</Button>
+            </a>
+          ) : (
+            <Button variant={"secondary"} disabled>
+              Next Page
+            </Button>
+          )}
+        </FlexContainer>
+        <AdWrapper
+          data-ad-slot="4210005765"
+          data-ad-format="auto"
+          data-full-width-responsive="true"
+        />
+      </Wrapper>
     </>
   );
 };

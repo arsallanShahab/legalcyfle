@@ -17,14 +17,32 @@ async function updateJobStatus(
       const protocol = req.headers["x-forwarded-proto"] || "http";
       const statusUrl = `${protocol}://${req.headers.host}/api/revalidate-status`;
 
-      await fetch(statusUrl, {
+      console.log(`📡 Updating job ${jobId} status at: ${statusUrl}`);
+      console.log(`📊 Status data:`, { id: jobId, ...status });
+
+      const response = await fetch(statusUrl, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id: jobId, ...status }),
       });
+
+      if (!response.ok) {
+        console.error(
+          `❌ Status update failed: ${response.status} ${response.statusText}`,
+        );
+        const errorText = await response.text();
+        console.error(`❌ Error response:`, errorText);
+      } else {
+        const result = await response.json();
+        console.log(`✅ Status update successful:`, result);
+      }
+    } else {
+      console.warn(
+        `⚠️ No host header found, cannot update job status for ${jobId}`,
+      );
     }
   } catch (error) {
-    console.error("Failed to update job status:", error);
+    console.error(`💥 Failed to update job status for ${jobId}:`, error);
   }
 }
 

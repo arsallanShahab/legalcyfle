@@ -3,32 +3,33 @@ import { NextApiRequest, NextApiResponse } from "next";
 import path from "path";
 
 // File-based storage for revalidation status - MUST MATCH revalidate-optimized.ts
-const JOBS_DIR = path.join(process.cwd(), "data", "revalidation-jobs");
-const FALLBACK_JOBS_DIR = path.join(process.cwd(), "jobs");
-
-// Use persistent directory within project - SAME LOGIC AS revalidate-optimized.ts
+// Use multiple directory options for different environments
 const getJobsDir = () => {
-  try {
-    if (!fs.existsSync(JOBS_DIR)) {
-      fs.mkdirSync(JOBS_DIR, { recursive: true });
+  const dirOptions = [
+    path.join(process.cwd(), "data", "revalidation-jobs"), // Local development
+    path.join("/tmp", "revalidation-jobs"), // Vercel serverless
+    path.join(process.cwd(), ".next", "revalidation-jobs"), // Next.js build directory
+  ];
+
+  for (const jobsDir of dirOptions) {
+    try {
+      if (!fs.existsSync(jobsDir)) {
+        fs.mkdirSync(jobsDir, { recursive: true });
+      }
+      // Test write access
+      const testFile = path.join(jobsDir, "test-write.txt");
+      fs.writeFileSync(testFile, "test");
+      fs.unlinkSync(testFile);
+      console.log(`📁 Successfully using jobs directory: ${jobsDir}`);
+      return jobsDir;
+    } catch (error) {
+      console.warn(`Failed to use directory ${jobsDir}:`, error instanceof Error ? error.message : String(error));
+      continue;
     }
-    // Test write access
-    const testFile = path.join(JOBS_DIR, "test-write.txt");
-    fs.writeFileSync(testFile, "test");
-    fs.unlinkSync(testFile);
-    console.log(`📁 Using jobs directory: ${JOBS_DIR}`);
-    return JOBS_DIR;
-  } catch (error) {
-    console.warn(
-      "Failed to create/use main jobs directory, using fallback:",
-      error,
-    );
-    if (!fs.existsSync(FALLBACK_JOBS_DIR)) {
-      fs.mkdirSync(FALLBACK_JOBS_DIR, { recursive: true });
-    }
-    console.log(`📁 Using fallback directory: ${FALLBACK_JOBS_DIR}`);
-    return FALLBACK_JOBS_DIR;
   }
+  
+  // If all fail, throw an error with debugging info
+  throw new Error(`Failed to create writable directory. Tried: ${dirOptions.join(', ')}. Current working directory: ${process.cwd()}`);
 };
 
 interface JobStatus {

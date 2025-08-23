@@ -5,29 +5,31 @@ import path from "path";
 
 // File-based job storage - MUST MATCH revalidate-status.ts
 const getJobsDir = () => {
-  const jobsDir = path.join(process.cwd(), "data", "revalidation-jobs");
-  try {
-    if (!fs.existsSync(jobsDir)) {
-      fs.mkdirSync(jobsDir, { recursive: true });
+  const dirOptions = [
+    path.join(process.cwd(), "data", "revalidation-jobs"), // Local development
+    path.join("/tmp", "revalidation-jobs"), // Vercel serverless
+    path.join(process.cwd(), ".next", "revalidation-jobs"), // Next.js build directory
+  ];
+
+  for (const jobsDir of dirOptions) {
+    try {
+      if (!fs.existsSync(jobsDir)) {
+        fs.mkdirSync(jobsDir, { recursive: true });
+      }
+      // Test write access
+      const testFile = path.join(jobsDir, "test-write.txt");
+      fs.writeFileSync(testFile, "test");
+      fs.unlinkSync(testFile);
+      console.log(`📁 Successfully using jobs directory: ${jobsDir}`);
+      return jobsDir;
+    } catch (error) {
+      console.warn(`Failed to use directory ${jobsDir}:`, error instanceof Error ? error.message : String(error));
+      continue;
     }
-    // Test write access
-    const testFile = path.join(jobsDir, "test-write.txt");
-    fs.writeFileSync(testFile, "test");
-    fs.unlinkSync(testFile);
-    console.log(`📁 Using jobs directory: ${jobsDir}`);
-    return jobsDir;
-  } catch (error) {
-    console.warn(
-      "Failed to create/use main jobs directory, using fallback:",
-      error,
-    );
-    const fallbackDir = path.join(process.cwd(), "jobs");
-    if (!fs.existsSync(fallbackDir)) {
-      fs.mkdirSync(fallbackDir, { recursive: true });
-    }
-    console.log(`📁 Using fallback directory: ${fallbackDir}`);
-    return fallbackDir;
   }
+  
+  // If all fail, throw an error with debugging info
+  throw new Error(`Failed to create writable directory. Tried: ${dirOptions.join(', ')}. Current working directory: ${process.cwd()}`);
 };
 
 const saveJobStatus = (jobId: string, status: any) => {

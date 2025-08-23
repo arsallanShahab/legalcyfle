@@ -2,31 +2,32 @@ import fs from "fs";
 import { NextApiRequest, NextApiResponse } from "next";
 import path from "path";
 
-// File-based storage for revalidation status
-const JOBS_DIR = path.join(
-  process.cwd(),
-  ".vercel",
-  "output",
-  "revalidation-jobs",
-);
-const TEMP_JOBS_DIR = path.join("/tmp", "revalidation-jobs");
+// File-based storage for revalidation status - MUST MATCH revalidate-optimized.ts
+const JOBS_DIR = path.join(process.cwd(), "data", "revalidation-jobs");
+const FALLBACK_JOBS_DIR = path.join(process.cwd(), "jobs");
 
-// Use tmp directory for Vercel serverless functions
+// Use persistent directory within project - SAME LOGIC AS revalidate-optimized.ts
 const getJobsDir = () => {
-  // Try to use Vercel's tmp directory first, fallback to project directory
   try {
-    if (!fs.existsSync(TEMP_JOBS_DIR)) {
-      fs.mkdirSync(TEMP_JOBS_DIR, { recursive: true });
-    }
-    return TEMP_JOBS_DIR;
-  } catch (error) {
-    console.warn(
-      "Failed to create tmp jobs directory, using project directory",
-    );
     if (!fs.existsSync(JOBS_DIR)) {
       fs.mkdirSync(JOBS_DIR, { recursive: true });
     }
+    // Test write access
+    const testFile = path.join(JOBS_DIR, "test-write.txt");
+    fs.writeFileSync(testFile, "test");
+    fs.unlinkSync(testFile);
+    console.log(`📁 Using jobs directory: ${JOBS_DIR}`);
     return JOBS_DIR;
+  } catch (error) {
+    console.warn(
+      "Failed to create/use main jobs directory, using fallback:",
+      error,
+    );
+    if (!fs.existsSync(FALLBACK_JOBS_DIR)) {
+      fs.mkdirSync(FALLBACK_JOBS_DIR, { recursive: true });
+    }
+    console.log(`📁 Using fallback directory: ${FALLBACK_JOBS_DIR}`);
+    return FALLBACK_JOBS_DIR;
   }
 };
 
@@ -45,11 +46,15 @@ const readJobStatus = (jobId: string): JobStatus | null => {
     const jobsDir = getJobsDir();
     const filePath = path.join(jobsDir, `${jobId}.json`);
 
+    console.log(`🔍 Looking for job file: ${filePath}`);
+
     if (!fs.existsSync(filePath)) {
+      console.log(`❌ Job file not found: ${filePath}`);
       return null;
     }
 
     const data = fs.readFileSync(filePath, "utf8");
+    console.log(`✅ Found job file: ${filePath}`);
     return JSON.parse(data);
   } catch (error) {
     console.error(`Failed to read job ${jobId}:`, error);
@@ -76,16 +81,23 @@ const writeJobStatus = (jobId: string, status: JobStatus): boolean => {
 const getAllJobIds = (): string[] => {
   try {
     const jobsDir = getJobsDir();
+    console.log(`📂 Scanning directory for jobs: ${jobsDir}`);
 
     if (!fs.existsSync(jobsDir)) {
+      console.log(`❌ Jobs directory does not exist: ${jobsDir}`);
       return [];
     }
 
-    return fs
-      .readdirSync(jobsDir)
+    const files = fs.readdirSync(jobsDir);
+    console.log(`📋 Found ${files.length} files in jobs directory:`, files);
+
+    const jobIds = files
       .filter((file) => file.endsWith(".json"))
       .map((file) => file.replace(".json", ""))
       .sort((a, b) => b.localeCompare(a)); // Sort by newest first
+
+    console.log(`🎯 Filtered to ${jobIds.length} job files:`, jobIds);
+    return jobIds;
   } catch (error) {
     console.error("Failed to read job directory:", error);
     return [];
@@ -131,6 +143,7 @@ export default async function handler(
     const { id } = req.query;
 
     console.log(`📊 Checking status for job: ${id}`);
+    console.log(`📁 Jobs directory being used: ${getJobsDir()}`);
 
     if (id) {
       const status = readJobStatus(id as string);
@@ -138,7 +151,7 @@ export default async function handler(
       if (!status) {
         const allJobIds = getAllJobIds();
         console.log(`❌ Job ${id} not found in file system`);
-        console.log(`💡 Available jobs:`, allJobIds);
+        console.log(`💡 Available jobs (${allJobIds.length}):`, allJobIds);
 
         // Return a helpful response instead of just "not found"
         return res.status(404).json({
@@ -146,6 +159,7 @@ export default async function handler(
           jobId: id,
           availableJobs: allJobIds.slice(0, 10), // Show only recent 10 jobs
           note: "Job may have completed or been cleaned up. Files are stored temporarily.",
+          directory: getJobsDir(),
           timestamp: new Date().toISOString(),
         });
       }

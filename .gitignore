@@ -41,3 +41,7 @@ ignore
 .env
 *.env
 *.ignore
+
+# Revalidation job storage
+/data/revalidation-jobs/
+/jobs/

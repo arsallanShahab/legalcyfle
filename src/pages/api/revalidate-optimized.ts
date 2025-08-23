@@ -3,20 +3,29 @@ import fs from "fs";
 import { NextApiRequest, NextApiResponse } from "next";
 import path from "path";
 
-// File-based job storage
+// File-based job storage - MUST MATCH revalidate-status.ts
 const getJobsDir = () => {
-  const tempDir = path.join("/tmp", "revalidation-jobs");
+  const jobsDir = path.join(process.cwd(), "data", "revalidation-jobs");
   try {
-    if (!fs.existsSync(tempDir)) {
-      fs.mkdirSync(tempDir, { recursive: true });
+    if (!fs.existsSync(jobsDir)) {
+      fs.mkdirSync(jobsDir, { recursive: true });
     }
-    return tempDir;
+    // Test write access
+    const testFile = path.join(jobsDir, "test-write.txt");
+    fs.writeFileSync(testFile, "test");
+    fs.unlinkSync(testFile);
+    console.log(`📁 Using jobs directory: ${jobsDir}`);
+    return jobsDir;
   } catch (error) {
-    console.warn("Failed to create tmp directory, using current directory");
-    const fallbackDir = path.join(process.cwd(), ".revalidation-jobs");
+    console.warn(
+      "Failed to create/use main jobs directory, using fallback:",
+      error,
+    );
+    const fallbackDir = path.join(process.cwd(), "jobs");
     if (!fs.existsSync(fallbackDir)) {
       fs.mkdirSync(fallbackDir, { recursive: true });
     }
+    console.log(`📁 Using fallback directory: ${fallbackDir}`);
     return fallbackDir;
   }
 };
@@ -26,7 +35,7 @@ const saveJobStatus = (jobId: string, status: any) => {
     const jobsDir = getJobsDir();
     const filePath = path.join(jobsDir, `${jobId}.json`);
     fs.writeFileSync(filePath, JSON.stringify(status, null, 2));
-    console.log(`💾 Saved job ${jobId} status to file`);
+    console.log(`💾 Saved job ${jobId} status to: ${filePath}`);
     return true;
   } catch (error) {
     console.error(`Failed to save job ${jobId}:`, error);

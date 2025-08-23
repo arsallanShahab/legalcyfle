@@ -5,18 +5,27 @@ import path from "path";
 
 // File-based job storage
 const getJobsDir = () => {
-  const tempDir = path.join("/tmp", "revalidation-jobs");
+  const jobsDir = path.join(process.cwd(), "data", "revalidation-jobs");
   try {
-    if (!fs.existsSync(tempDir)) {
-      fs.mkdirSync(tempDir, { recursive: true });
+    if (!fs.existsSync(jobsDir)) {
+      fs.mkdirSync(jobsDir, { recursive: true });
     }
-    return tempDir;
+    // Test write access
+    const testFile = path.join(jobsDir, "test-write.txt");
+    fs.writeFileSync(testFile, "test");
+    fs.unlinkSync(testFile);
+    console.log(`📁 Using jobs directory: ${jobsDir}`);
+    return jobsDir;
   } catch (error) {
-    console.warn("Failed to create tmp directory, using current directory");
-    const fallbackDir = path.join(process.cwd(), ".revalidation-jobs");
+    console.warn(
+      "Failed to create/use main jobs directory, using fallback:",
+      error,
+    );
+    const fallbackDir = path.join(process.cwd(), "jobs");
     if (!fs.existsSync(fallbackDir)) {
       fs.mkdirSync(fallbackDir, { recursive: true });
     }
+    console.log(`📁 Using fallback directory: ${fallbackDir}`);
     return fallbackDir;
   }
 };

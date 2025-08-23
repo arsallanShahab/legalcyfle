@@ -45,3 +45,4 @@ ignore
 # Revalidation job storage
 /data/revalidation-jobs/
 /jobs/
+/data

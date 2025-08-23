@@ -1,62 +1,72 @@
 import client from "@/lib/contentful";
 import { MetadataRoute } from "next";
 
-// Helper function to safely create URLs
+// Regex for validating URL-safe slugs
+const SLUG_VALIDATION_REGEX = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+
+// Helper function to safely create URLs for XML sitemap
 function createSafeUrl(baseUrl: string, path: string): string {
   try {
-    // Remove any existing URL encoding and re-encode properly
-    const decodedPath = decodeURIComponent(path);
-    // Remove or escape XML-unsafe characters
-    const safePath = decodedPath.replace(/[&<>"']/g, (match) => {
-      switch (match) {
-        case "&":
-          return "and";
-        case "<":
-          return "";
-        case ">":
-          return "";
-        case '"':
-          return "";
-        case "'":
-          return "";
-        default:
-          return match;
-      }
-    });
-    const encodedPath = encodeURIComponent(safePath);
-    return `${baseUrl}/${encodedPath}`;
+    // Validate slug format first
+    if (!SLUG_VALIDATION_REGEX.test(path)) {
+      console.warn(`Invalid slug format: ${path}`);
+    }
+
+    // Don't use encodeURIComponent for sitemap URLs - just clean up the path
+    // Remove any dangerous characters that could break XML
+    const safePath = path
+      .replace(/[&<>"']/g, (match) => {
+        switch (match) {
+          case "&":
+            return "&amp;";
+          case "<":
+            return "&lt;";
+          case ">":
+            return "&gt;";
+          case '"':
+            return "&quot;";
+          case "'":
+            return "&apos;";
+          default:
+            return match;
+        }
+      })
+      .trim();
+
+    return `${baseUrl}/${safePath}`;
   } catch (error) {
-    // Fallback: just encode the path as-is, removing unsafe chars
+    // Fallback: just remove unsafe chars
     const safePath = path.replace(/[&<>"']/g, "");
-    return `${baseUrl}/${encodeURIComponent(safePath)}`;
+    return `${baseUrl}/${safePath}`;
   }
 }
 
 function createSafeCategoryUrl(baseUrl: string, slug: string): string {
   try {
-    const decodedSlug = decodeURIComponent(slug);
-    // Remove or escape XML-unsafe characters
-    const safeSlug = decodedSlug.replace(/[&<>"']/g, (match) => {
-      switch (match) {
-        case "&":
-          return "and";
-        case "<":
-          return "";
-        case ">":
-          return "";
-        case '"':
-          return "";
-        case "'":
-          return "";
-        default:
-          return match;
-      }
-    });
-    const encodedSlug = encodeURIComponent(safeSlug);
-    return `${baseUrl}/category/${encodedSlug}`;
+    // Same logic as createSafeUrl but for category URLs
+    const safeSlug = slug
+      .replace(/[&<>"']/g, (match) => {
+        switch (match) {
+          case "&":
+            return "&amp;";
+          case "<":
+            return "&lt;";
+          case ">":
+            return "&gt;";
+          case '"':
+            return "&quot;";
+          case "'":
+            return "&apos;";
+          default:
+            return match;
+        }
+      })
+      .trim();
+
+    return `${baseUrl}/category/${safeSlug}`;
   } catch (error) {
     const safeSlug = slug.replace(/[&<>"']/g, "");
-    return `${baseUrl}/category/${encodeURIComponent(safeSlug)}`;
+    return `${baseUrl}/category/${safeSlug}`;
   }
 }
 

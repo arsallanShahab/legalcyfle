@@ -56,6 +56,7 @@ interface HomeProps {
       };
       sys: { id: string; type: "Entry" };
     } | null;
+    trendingArticles: BlogEntry[];
   };
 }
 
@@ -373,6 +374,25 @@ export default function Home({ data }: HomeProps) {
         data-ad-layout-key="-et-7n+gx+cc-19b"
         data-ad-slot="1973122915"
       />
+      <FlexContainer variant="column-start" className="px-3 md:px-5 lg:px-10">
+        <h3 className="px-2 text-4xl font-semibold md:mb-5 md:mt-10">
+          Trending Articles
+        </h3>
+        <div className="flex flex-col gap-5 md:flex-row">
+          <div className="flex flex-1 flex-col gap-5">
+            {data?.trendingArticles?.map((article: BlogEntry) => {
+              return <ArticleCard article={article} key={article.sys.id} />;
+            })}
+          </div>
+          <div className="w-[300px]">
+            <AdWrapper
+              data-ad-layout="in-article"
+              data-ad-format="fluid"
+              data-ad-slot="5536160107"
+            />
+          </div>
+        </div>
+      </FlexContainer>
       {/* <FlexContainer variant="row-center">
         <DynamicAdWrapper
           slot="1973122915"
@@ -464,12 +484,24 @@ export const getStaticProps = async () => {
       "2pZtFZgrtxrmJJaH1cBoIm",
       "2RKXDO21lw1yAlZb8gxjZH",
       "6sRbgihUKlv69O5GPGQWyf",
+      "4Lp1Jl3boXVkDlBV8KzUMj",
     ],
     include: 1,
     limit: 4,
     select: ["fields", "sys.id"],
   });
   const safeJsonArticles = JSON.parse(safeJsonStringify(articles.items));
+  const trendingArticles = await client.getEntries({
+    content_type: "blogPage",
+    "fields.category.sys.id[in]": ["76yd6AyaglQNpBUznpzxIP"],
+    include: 1,
+    limit: 4,
+    order: ["-sys.createdAt"],
+    select: ["fields", "sys.id"],
+  });
+  const safeJsonTrendingArticles = JSON.parse(
+    safeJsonStringify(trendingArticles.items),
+  );
   const caseAnalysis = await client.getEntries({
     content_type: "blogPage",
     "fields.category.sys.id[in]": ["7aq38iMXGWwYnP61tHxRfb"],
@@ -513,6 +545,7 @@ export const getStaticProps = async () => {
         caseAnalysis: safeJsonCaseAnalysis,
         news: safeJsonNews,
         employeeOfTheMonth: employeeOfTheMonth.items[0] || null,
+        trendingArticles: safeJsonTrendingArticles,
       },
     },
     revalidate: 3600, // Revalidate every hour (3600 seconds) or on-demand via webhook

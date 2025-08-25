@@ -51,15 +51,18 @@ body {
 }
 
 .blog_container {
-  @apply flex flex-col items-start justify-center gap-4 px-2.5 md:p-0;
+  @apply flex flex-col items-start justify-center gap-3 px-2.5 md:gap-4 md:p-0;
+  /* Simple overflow protection for the main container */
+  overflow-x: hidden;
+  max-width: 100%;
 }
 
 .blog_container ol {
-  @apply ml-0 list-outside list-decimal space-y-2 pl-5;
+  @apply ml-0 list-outside list-decimal space-y-1.5 pl-5 md:space-y-2;
 }
 
 .blog_container ul {
-  @apply ml-0 list-outside list-disc space-y-2 pl-5;
+  @apply ml-0 list-outside list-disc space-y-1.5 pl-5 md:space-y-2;
 }
 
 .blog_container li {
@@ -95,7 +98,7 @@ body {
 }
 
 .blog_paragraph {
-  @apply text-wrap break-words font-giest-sans text-base leading-7 text-gray-700 dark:text-gray-300;
+  @apply text-wrap break-words font-giest-sans text-base leading-6 text-gray-700 dark:text-gray-300 md:leading-7;
 }
 
 .blog-small .blog_paragraph {
@@ -103,7 +106,7 @@ body {
 }
 
 .blog_image {
-  @apply h-auto w-full rounded-lg object-cover;
+  @apply h-auto max-h-[500px] w-full rounded-lg object-cover md:max-h-[600px];
 }
 
 /* .blog_paragraph a {
@@ -119,27 +122,27 @@ body {
 }
 
 .blog_heading_h1 {
-  @apply mb-4 mt-6 font-giest-sans text-3xl font-semibold leading-tight text-gray-900 dark:text-white;
+  @apply mb-3 mt-4 font-giest-sans text-3xl font-semibold leading-tight text-gray-900 dark:text-white md:mb-4 md:mt-6;
 }
 
 .blog_heading_h2 {
-  @apply mb-3 mt-5 font-giest-sans text-2xl font-medium leading-tight text-gray-800 dark:text-gray-100;
+  @apply mb-2.5 mt-4 font-giest-sans text-2xl font-medium leading-tight text-gray-800 dark:text-gray-100 md:mb-3 md:mt-5;
 }
 
 .blog_heading_h3 {
-  @apply mb-3 mt-4 font-giest-sans text-xl font-medium leading-tight text-gray-800 dark:text-gray-100;
+  @apply mb-2 mt-3 font-giest-sans text-xl font-medium leading-tight text-gray-800 dark:text-gray-100 md:mb-3 md:mt-4;
 }
 
 .blog_heading_h4 {
-  @apply mb-2 mt-4 font-giest-sans text-lg font-medium leading-tight text-gray-700 dark:text-gray-200;
+  @apply mb-2 mt-3 font-giest-sans text-lg font-medium leading-tight text-gray-700 dark:text-gray-200 md:mt-4;
 }
 
 .blog_heading_h5 {
-  @apply mb-2 mt-3 font-giest-sans text-base font-medium leading-tight text-gray-700 dark:text-gray-200;
+  @apply mb-2 mt-2.5 font-giest-sans text-base font-medium leading-tight text-gray-700 dark:text-gray-200 md:mt-3;
 }
 
 .blog_heading_h6 {
-  @apply mb-2 mt-3 font-giest-sans text-sm font-medium leading-tight text-gray-600 dark:text-gray-300;
+  @apply mb-2 mt-2.5 font-giest-sans text-sm font-medium leading-tight text-gray-600 dark:text-gray-300 md:mt-3;
 }
 .blog_paragraph a:hover {
   @apply underline;
@@ -210,7 +213,33 @@ body {
 
   .blog_table_header,
   .blog_table_cell {
-    @apply whitespace-nowrap px-3 py-2 text-xs;
+    @apply whitespace-nowrap px-2 py-1.5 text-xs;
+  }
+
+  /* Alternative: Card-based table layout for mobile */
+  .blog_table_wrapper.card-layout {
+    @apply overflow-x-visible;
+  }
+
+  .blog_table_wrapper.card-layout .blog_table {
+    @apply block min-w-full;
+  }
+
+  .blog_table_wrapper.card-layout .blog_table_row {
+    @apply mb-4 block rounded-lg border border-gray-200 p-3 dark:border-gray-700;
+  }
+
+  .blog_table_wrapper.card-layout .blog_table_header {
+    @apply hidden;
+  }
+
+  .blog_table_wrapper.card-layout .blog_table_cell {
+    @apply block border-none px-0 py-1 text-sm;
+  }
+
+  .blog_table_wrapper.card-layout .blog_table_cell:before {
+    content: attr(data-label) ": ";
+    @apply font-semibold text-gray-600 dark:text-gray-400;
   }
 }
 
@@ -224,29 +253,68 @@ body {
 
 @media (max-width: 420px) {
   .blog_paragraph {
-    @apply text-base leading-7;
+    @apply text-base leading-6;
   }
 
   .blog_container {
-    @apply px-0;
+    @apply gap-2.5 px-0;
   }
 
   .blog_heading_h1 {
-    @apply text-3xl;
+    @apply mb-2.5 mt-3 text-2xl;
   }
 
   .blog_heading_h2 {
-    @apply text-2xl;
+    @apply mb-2 mt-3 text-xl;
   }
 
   .blog_heading_h3 {
-    @apply text-xl;
+    @apply mb-2 mt-2.5 text-lg;
+  }
+
+  .blog_heading_h4 {
+    @apply mb-1.5 mt-2.5 text-base;
+  }
+
+  .blog_heading_h5 {
+    @apply mb-1.5 mt-2 text-sm;
+  }
+
+  .blog_heading_h6 {
+    @apply mb-1.5 mt-2 text-xs;
+  }
+
+  .blog_container p + p {
+    @apply mt-2.5;
+  }
+
+  .blog_container p + .blog_heading_h1,
+  .blog_container p + .blog_heading_h2,
+  .blog_container p + .blog_heading_h3,
+  .blog_container p + .blog_heading_h4,
+  .blog_container p + .blog_heading_h5,
+  .blog_container p + .blog_heading_h6 {
+    @apply mt-4;
+  }
+
+  .blog_container img + p,
+  .blog_container .blog_table_wrapper + p {
+    @apply mt-3;
+  }
+
+  .social_embed {
+    @apply my-3;
+  }
+
+  .blog_container ol,
+  .blog_container ul {
+    @apply space-y-1;
   }
 }
 
 /* Additional content styling for better visual hierarchy */
 .blog_container p + p {
-  @apply mt-4;
+  @apply mt-3 md:mt-4;
 }
 
 .blog_container p + .blog_heading_h1,
@@ -255,16 +323,74 @@ body {
 .blog_container p + .blog_heading_h4,
 .blog_container p + .blog_heading_h5,
 .blog_container p + .blog_heading_h6 {
-  @apply mt-8;
+  @apply mt-6 md:mt-8;
 }
 
 .blog_container img + p,
 .blog_container .blog_table_wrapper + p {
-  @apply mt-6;
+  @apply mt-4 md:mt-6;
 }
 
 .blog_container .blog_link {
   @apply mx-1;
+}
+
+/* Social Media Embeds */
+.social_embed {
+  @apply my-4 flex w-full max-w-full items-center justify-center overflow-hidden rounded-lg md:my-6;
+  /* Simple overflow protection without breaking functionality */
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+.instagram_embed {
+  @apply mx-auto max-w-lg;
+  /* Allow Instagram to maintain its natural size and aspect ratio */
+  max-width: min(540px, 100%);
+  overflow: hidden;
+}
+
+.instagram_embed .instagram-media {
+  @apply !m-0 border-0 bg-white dark:bg-gray-800;
+  /* Minimal constraints - let Instagram handle its own sizing */
+  max-width: 100% !important;
+  min-width: 320px !important;
+  /* Only prevent overflow, don't force dimensions */
+  overflow: hidden !important;
+}
+
+.twitter_embed {
+  @apply mx-auto max-w-lg;
+  max-width: min(500px, 100%);
+  overflow: hidden;
+}
+
+.twitter_embed .twitter-tweet {
+  @apply !m-0;
+  max-width: 100% !important;
+  overflow: hidden !important;
+}
+
+.youtube_embed {
+  @apply w-full;
+}
+
+.youtube_container {
+  @apply relative w-full overflow-hidden rounded-lg bg-black;
+  padding-bottom: 56.25%; /* 16:9 aspect ratio */
+  height: 0;
+}
+
+.youtube_container iframe {
+  @apply absolute left-0 top-0 h-full w-full;
+}
+
+/* Dark mode for social embeds */
+@media (prefers-color-scheme: dark) {
+  .twitter_embed .twitter-tweet {
+    background-color: #1a1a1a !important;
+    border-color: #333 !important;
+  }
 }
 
 @layer base {

@@ -106,6 +106,8 @@ const Index = (props: Props) => {
   const [likeLoading, setLikeLoading] = React.useState<boolean>(false);
   const [dislikeLoading, setDislikeLoading] = React.useState<boolean>(false);
   const [heartLoading, setHeartLoading] = React.useState<boolean>(false);
+  const [isLoadingMetrics, setIsLoadingMetrics] =
+    React.useState<boolean>(false);
 
   // like, dislike, heart states
   const [isLiked, setIsLiked] = React.useState<boolean | undefined>(false);
@@ -243,6 +245,7 @@ const Index = (props: Props) => {
   useEffect(() => {
     if (deviceId) {
       // Use POST method to send deviceId
+      setIsLoadingMetrics(true);
       fetch(`/api/articles/${props.data.fields.slug}/metrics`, {
         method: "POST",
         headers: {
@@ -265,6 +268,9 @@ const Index = (props: Props) => {
         })
         .catch((error) => {
           console.error("Error fetching metrics:", error);
+        })
+        .finally(() => {
+          setIsLoadingMetrics(false);
         });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -537,19 +543,6 @@ const Index = (props: Props) => {
 
   return (
     <main className="relative">
-      {/* SEO Analytics Tracking */}
-      <SEOAnalytics
-        articleData={{
-          title: props.data.fields.title,
-          slug: props.data.fields.slug,
-          category: props.data.fields.category.map((cat) => cat.fields.name),
-          publishDate: publishDate,
-          modifiedDate: modifiedDate,
-          wordCount: wordCount,
-          readingTime: readingTime,
-        }}
-      />
-
       <Head>
         {/* Primary Meta Tags */}
         <title>{`${props.data.fields.title} - LegalCyfle`}</title>
@@ -763,184 +756,104 @@ const Index = (props: Props) => {
             content={`https://legalcyfle.in/${props.data.fields.slug}`}
           />
 
-          <FlexContainer variant="row-start" alignItems="center">
-            {props.data.fields?.authors?.length > 1 && (
-              <AvatarGroup isBordered>
-                {props.data.fields?.authors.map((author) => (
-                  <Tooltip
-                    showArrow
-                    placement="right"
-                    classNames={{
-                      base: [
-                        // arrow color
-                        "before:bg-neutral-400 dark:before:bg-white",
-                      ],
-                      content: [
-                        "py-2 px-4 shadow-xl text-nowrap break-keep text-center w-auto",
-                        "text-black bg-gradient-to-br from-white to-neutral-400",
-                      ],
-                    }}
-                    key={author.sys.id}
-                    content={author.fields.name}
-                  >
-                    <Avatar
-                      src={formatImageLink(
-                        author?.fields?.avatar?.fields?.file?.url ??
-                          "https://via.placeholder.com/100x100",
-                      )}
-                      // size="md"
-                      className="h-12 w-12 rounded-[80px] object-cover object-center"
-                      alt={author.fields.name}
-                    />
-                  </Tooltip>
-                ))}
-              </AvatarGroup>
-            )}
-
-            {props.data.fields?.authors?.length === 1 && (
-              <Image
-                src={formatImageLink(
-                  props?.data?.fields?.authors[0]?.fields?.avatar?.fields?.file
-                    ?.url ?? "https://via.placeholder.com/100x100",
-                )}
-                width={100}
-                height={100}
-                className="h-12 w-12 rounded-[80px] object-cover object-center"
-                alt="Profile"
-              />
-            )}
-            <FlexContainer
-              variant="column-start"
-              alignItems="center"
-              gap="none"
-            >
-              <p className="flex gap-2.5 text-sm font-semibold">
-                {props.data.fields.authors.map((author, index) => (
-                  <Link
-                    key={author.sys.id}
-                    href={`/author/${author.sys.id}`}
-                    className="hover:underline"
-                  >
-                    {author.fields.name}{" "}
-                    {index < props.data.fields.authors.length - 1 && ","}
-                  </Link>
-                ))}
-              </p>
-              {/* <Link
-            href={`/author/${props.data.fields?.author?.sys?.id}`}
-            className="text-base font-semibold hover:underline"
+          <FlexContainer
+            variant="row-between"
+            alignItems="center"
+            className="mb-6"
           >
-            {props.data.fields.author.fields.name}
-          </Link> */}
-              <p className="text-sm font-medium text-gray-500">
-                <time itemProp="datePublished" dateTime={publishDate}>
-                  {estimateReadingTime(
-                    documentToHtmlString(props.data.fields.body as Document),
-                  )}{" "}
-                  min read •{" "}
-                  {props?.data?.fields?.date
-                    ? dayjs(props?.data?.fields?.date)
-                        .tz("Asia/Kolkata")
-                        .format("MMMM DD, YYYY")
-                    : "Date not available"}
-                </time>
-              </p>
+            <FlexContainer variant="row-start" alignItems="center" gap="md">
+              {props.data.fields?.authors?.length > 1 && (
+                <AvatarGroup isBordered>
+                  {props.data.fields?.authors.map((author) => (
+                    <Tooltip
+                      showArrow
+                      placement="right"
+                      classNames={{
+                        base: [
+                          // arrow color
+                          "before:bg-neutral-400 dark:before:bg-white",
+                        ],
+                        content: [
+                          "py-2 px-4 shadow-xl text-nowrap break-keep text-center w-auto",
+                          "text-black bg-gradient-to-br from-white to-neutral-400",
+                        ],
+                      }}
+                      key={author.sys.id}
+                      content={author.fields.name}
+                    >
+                      <Avatar
+                        src={formatImageLink(
+                          author?.fields?.avatar?.fields?.file?.url ??
+                            "https://via.placeholder.com/100x100",
+                        )}
+                        className="h-10 w-10 rounded-full object-cover object-center"
+                        alt={author.fields.name}
+                      />
+                    </Tooltip>
+                  ))}
+                </AvatarGroup>
+              )}
+
+              {props.data.fields?.authors?.length === 1 && (
+                <Image
+                  src={formatImageLink(
+                    props?.data?.fields?.authors[0]?.fields?.avatar?.fields
+                      ?.file?.url ?? "https://via.placeholder.com/100x100",
+                  )}
+                  width={40}
+                  height={40}
+                  className="h-10 w-10 rounded-full object-cover object-center"
+                  alt="Profile"
+                />
+              )}
+
+              <FlexContainer variant="column-start" gap="xs">
+                <p className="flex gap-1.5 text-sm font-medium text-gray-900 dark:text-gray-100">
+                  By{" "}
+                  {props.data.fields.authors.map((author, index) => (
+                    <Link
+                      key={author.sys.id}
+                      href={`/author/${author.sys.id}`}
+                      className="text-amber-600 hover:text-amber-700 hover:underline"
+                    >
+                      {author.fields.name}
+                      {index < props.data.fields.authors.length - 1 && ","}
+                    </Link>
+                  ))}
+                </p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">
+                  <time itemProp="datePublished" dateTime={publishDate}>
+                    {props?.data?.fields?.date
+                      ? dayjs(props?.data?.fields?.date)
+                          .tz("Asia/Kolkata")
+                          .format("MMMM DD, YYYY")
+                      : "Date not available"}
+                    {" • "}
+                    {estimateReadingTime(
+                      documentToHtmlString(props.data.fields.body as Document),
+                    )}{" "}
+                    min read
+                  </time>
+                </p>
+              </FlexContainer>
             </FlexContainer>
+
+            {/* Minimal share button */}
+            <Button
+              variant="outline"
+              size="sm"
+              className="gap-2 rounded-full border-gray-200 bg-transparent hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800"
+              onClick={onOpen}
+            >
+              <Share className="h-4 w-4" />
+              <span className="hidden text-sm sm:inline">Share</span>
+            </Button>
           </FlexContainer>
         </section>
 
-        {/* Article Interaction and Content Section */}
-        <FlexContainer
-          variant="row-between"
-          // className="border-y border-zinc-100 py-5"
-        >
-          <FlexContainer gap="sm">
-            {/* loading skeleton */}
-            {loading ? (
-              <Button
-                disabled
-                className="rounded-3xl bg-pink-600 dark:bg-pink-600"
-              >
-                <Loader className="h-4 w-4 animate-spin" />
-              </Button>
-            ) : (
-              <Button
-                onClick={handleHeart}
-                disabled={loading || heartLoading || isLiked || isDisliked}
-                loading={heartLoading}
-                className="gap-2 rounded-3xl bg-pink-600 hover:bg-pink-500 dark:bg-pink-600 dark:text-white dark:hover:bg-pink-500"
-              >
-                {error ? (
-                  <Ban className="h-4 w-4 text-white" />
-                ) : (
-                  <span className="flex items-center justify-center gap-2">
-                    <Heart className="h-4 w-4 text-white" /> {heartCount}
-                  </span>
-                )}
-              </Button>
-            )}
-            {loading ? (
-              <Button
-                disabled
-                className="rounded-3xl bg-blue-600 dark:bg-blue-600"
-              >
-                <Loader className="h-4 w-4 animate-spin" />
-              </Button>
-            ) : (
-              <Button
-                onClick={handleLike}
-                disabled={loading || likeLoading || isHearted || isDisliked}
-                loading={likeLoading}
-                className="gap-2 rounded-3xl bg-blue-600 hover:bg-blue-500 dark:bg-blue-600 dark:text-white dark:hover:bg-blue-500"
-              >
-                {error ? (
-                  <Ban className="h-4 w-4 text-white" />
-                ) : (
-                  <span className="flex items-center justify-center gap-2">
-                    <ThumbsUp className="h-4 w-4 text-white" /> {likeCount}
-                  </span>
-                )}
-              </Button>
-            )}
-            {loading ? (
-              <Button
-                disabled
-                className="rounded-3xl bg-red-600 dark:bg-red-600"
-              >
-                <Loader className="h-4 w-4 animate-spin" />
-              </Button>
-            ) : (
-              <Button
-                onClick={handleDislike}
-                disabled={loading || dislikeLoading || isHearted || isLiked}
-                loading={dislikeLoading}
-                className="gap-2 rounded-3xl bg-red-600 hover:bg-red-500 dark:bg-red-600 dark:text-white dark:hover:bg-red-500"
-              >
-                <span className="flex items-center justify-center gap-2">
-                  <ThumbsDown className="h-4 w-4 text-white" /> {dislikeCount}
-                </span>
-              </Button>
-            )}
-
-            {loading ? (
-              <Button className="rounded-3xl" disabled>
-                {" "}
-                <Loader className="h-4 w-4 animate-spin" />
-              </Button>
-            ) : (
-              <Button disabled={loading} className="gap-2 rounded-3xl">
-                {article?.views}
-                <Eye className="h-4 w-4 text-white dark:text-black" />
-              </Button>
-            )}
-          </FlexContainer>
-          <Button className="rounded-3xl" onClick={onOpen}>
-            <Share className="h-3.5 w-3.5 stroke-2 text-white dark:text-black" />
-          </Button>
-        </FlexContainer>
-
-        {/* Main Article Content */}
+        {/* Main Article Content - Hero Image and Content */}
         <article className="article-content" itemProp="articleBody">
+          {/* Hero Image */}
           <Image
             src={formatImageLink(thumbnail)}
             width={1280}
@@ -948,47 +861,173 @@ const Index = (props: Props) => {
             onClick={() => {
               window.open(formatImageLink(thumbnail), "_blank");
             }}
-            className="h-[400px] w-full rounded-xl border object-cover object-top"
+            className="h-[400px] w-full cursor-pointer rounded-xl border object-cover object-center transition-transform hover:scale-[1.02]"
             alt={props.data.fields.title}
             itemProp="image"
             priority
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           />
-          <BlogContent data={props.data} />
+
+          {/* Article Content */}
+          <div className="mt-8">
+            <BlogContent data={props.data} />
+          </div>
         </article>
 
+        {/* Article Engagement Section - After Content */}
+        <section className="article-engagement border-t border-gray-100 pt-6 dark:border-gray-800">
+          <FlexContainer variant="column-start" gap="md">
+            {/* Article Stats */}
+            <FlexContainer
+              variant="row-start"
+              gap="sm"
+              alignItems="center"
+              className="mb-4"
+            >
+              {isLoadingMetrics ? (
+                <div className="flex items-center gap-2 rounded-full bg-gray-100 px-3 py-1.5 dark:bg-gray-800">
+                  <Loader className="h-3 w-3 animate-spin" />
+                  <span className="text-xs">Loading...</span>
+                </div>
+              ) : (
+                <div className="flex items-center gap-2 rounded-full bg-gray-100 px-3 py-1.5 dark:bg-gray-800">
+                  <Eye className="h-3 w-3 text-gray-600 dark:text-gray-400" />
+                  <span className="text-xs font-medium text-gray-700 dark:text-gray-300">
+                    {article?.views?.toLocaleString()} views
+                  </span>
+                </div>
+              )}
+            </FlexContainer>
+
+            {/* Engagement Buttons */}
+            <FlexContainer variant="row-start" gap="sm" wrap="wrap">
+              {/* Heart button */}
+              {isLoadingMetrics ? (
+                <Button
+                  disabled
+                  size="sm"
+                  className="rounded-full bg-pink-100 text-pink-600 hover:bg-pink-200 dark:bg-pink-900/20 dark:text-pink-400"
+                >
+                  <Loader className="h-4 w-4 animate-spin" />
+                </Button>
+              ) : (
+                <Button
+                  onClick={handleHeart}
+                  disabled={
+                    isLoadingMetrics || heartLoading || isLiked || isDisliked
+                  }
+                  loading={heartLoading}
+                  size="sm"
+                  variant="outline"
+                  className="gap-2 rounded-full border-pink-200 bg-pink-50 text-pink-600 hover:bg-pink-100 dark:border-pink-800 dark:bg-pink-900/20 dark:text-pink-400 dark:hover:bg-pink-900/30"
+                >
+                  {error ? (
+                    <Ban className="h-4 w-4" />
+                  ) : (
+                    <>
+                      <Heart className="h-4 w-4" />
+                      <span className="text-sm">{heartCount}</span>
+                    </>
+                  )}
+                </Button>
+              )}
+
+              {/* Like button */}
+              {isLoadingMetrics ? (
+                <Button
+                  disabled
+                  size="sm"
+                  className="rounded-full bg-blue-100 text-blue-600 hover:bg-blue-200 dark:bg-blue-900/20 dark:text-blue-400"
+                >
+                  <Loader className="h-4 w-4 animate-spin" />
+                </Button>
+              ) : (
+                <Button
+                  onClick={handleLike}
+                  disabled={
+                    isLoadingMetrics || likeLoading || isHearted || isDisliked
+                  }
+                  loading={likeLoading}
+                  size="sm"
+                  variant="outline"
+                  className="gap-2 rounded-full border-blue-200 bg-blue-50 text-blue-600 hover:bg-blue-100 dark:border-blue-800 dark:bg-blue-900/20 dark:text-blue-400 dark:hover:bg-blue-900/30"
+                >
+                  {error ? (
+                    <Ban className="h-4 w-4" />
+                  ) : (
+                    <>
+                      <ThumbsUp className="h-4 w-4" />
+                      <span className="text-sm">{likeCount}</span>
+                    </>
+                  )}
+                </Button>
+              )}
+
+              {/* Dislike button */}
+              {isLoadingMetrics ? (
+                <Button
+                  disabled
+                  size="sm"
+                  className="rounded-full bg-red-100 text-red-600 hover:bg-red-200 dark:bg-red-900/20 dark:text-red-400"
+                >
+                  <Loader className="h-4 w-4 animate-spin" />
+                </Button>
+              ) : (
+                <Button
+                  onClick={handleDislike}
+                  disabled={
+                    isLoadingMetrics || dislikeLoading || isHearted || isLiked
+                  }
+                  loading={dislikeLoading}
+                  size="sm"
+                  variant="outline"
+                  className="gap-2 rounded-full border-red-200 bg-red-50 text-red-600 hover:bg-red-100 dark:border-red-800 dark:bg-red-900/20 dark:text-red-400 dark:hover:bg-red-900/30"
+                >
+                  <ThumbsDown className="h-4 w-4" />
+                  <span className="text-sm">{dislikeCount}</span>
+                </Button>
+              )}
+            </FlexContainer>
+          </FlexContainer>
+        </section>
+
         {/* Article Tags and Categories */}
-        <aside className="article-aside">
-          <span className="block pl-2 pt-2 text-sm font-medium">TAGS:</span>
-          <FlexContainer
-            variant="column-start"
-            gap="sm"
-            className="mb-2.5 rounded-3xl bg-zinc-50 p-2 dark:bg-zinc-700"
-          >
-            <FlexContainer variant="row-between">
-              <FlexContainer variant="row-start" gap="sm" alignItems="center">
-                {props.data.fields.category.map((category) => (
-                  <Link
-                    key={category.sys.id}
-                    href={`/category/${category.fields.slug}`}
-                  >
-                    <Badge
-                      key={category.sys.id}
-                      variant={"secondary"}
-                      className="borderpx-4 rounded-3xl py-1.5 text-sm"
-                    >
-                      {category.fields.name}
-                    </Badge>
-                  </Link>
-                ))}
-              </FlexContainer>
+        <aside className="article-aside border-t border-gray-100 pt-6 dark:border-gray-800">
+          <FlexContainer variant="column-start" gap="md">
+            <FlexContainer
+              variant="row-between"
+              alignItems="center"
+              className="mb-3"
+            >
+              <h4 className="text-sm font-semibold uppercase tracking-wide text-gray-700 dark:text-gray-300">
+                Categories
+              </h4>
               <Button
-                variant={"secondary"}
-                className="rounded-3xl"
+                variant="outline"
+                size="sm"
+                className="gap-2 rounded-full border-gray-200 bg-transparent hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800"
                 onClick={onOpen}
               >
-                <Share className="h-3.5 w-3.5 stroke-2 text-black dark:text-white" />
+                <Share className="h-4 w-4" />
+                <span className="hidden text-sm sm:inline">Share</span>
               </Button>
+            </FlexContainer>
+
+            <FlexContainer variant="row-start" gap="sm" wrap="wrap">
+              {props.data.fields.category.map((category) => (
+                <Link
+                  key={category.sys.id}
+                  href={`/category/${category.fields.slug}`}
+                  className="transition-colors hover:opacity-80"
+                >
+                  <Badge
+                    variant="outline"
+                    className="rounded-full border-amber-200 bg-amber-50 px-3 py-1.5 text-sm font-medium text-amber-700 hover:bg-amber-100 dark:border-amber-800 dark:bg-amber-900/20 dark:text-amber-400 dark:hover:bg-amber-900/30"
+                  >
+                    {category.fields.name}
+                  </Badge>
+                </Link>
+              ))}
             </FlexContainer>
           </FlexContainer>
         </aside>
@@ -1289,12 +1328,10 @@ export const getStaticProps = async (
         return { items: [] };
       });
 
-    // Safely stringify with error handling
     let safeRecommendedArticles = [];
     let safeJsonArticle = null;
 
     try {
-      // Handle recommended articles - process one by one to avoid size issues
       if (
         recommendedArticles.items &&
         Array.isArray(recommendedArticles.items)

@@ -13,47 +13,24 @@ export class GoogleIndexingAPI {
         "GOOGLE_SERVICE_ACCOUNT_KEY environment variable is not set",
       );
     }
+    const serviceAccount = JSON.parse(
+      Buffer.from(process.env.GOOGLE_SERVICE_ACCOUNT_KEY!, "base64").toString(
+        "utf-8",
+      ),
+    );
 
-    let credentials;
-    try {
-      // Check if the service account key is already parsed JSON or needs to be parsed
-      let cleanedKey: string;
-
-      if (typeof serviceAccountKey === "string") {
-        cleanedKey = serviceAccountKey.trim();
-        // Try to parse as JSON if it's a string
-        credentials = JSON.parse(cleanedKey);
-      } else if (
-        typeof serviceAccountKey === "object" &&
-        serviceAccountKey !== null
-      ) {
-        // Already a parsed object
-        credentials = serviceAccountKey;
-      } else {
-        throw new Error("Service account key must be a JSON string or object");
-      }
-    } catch (error) {
-      console.error("Failed to parse GOOGLE_SERVICE_ACCOUNT_KEY:", error);
-      console.error(
-        "First 100 characters of key:",
-        serviceAccountKey.substring(0, 100),
-      );
-      throw new Error(
-        `Invalid JSON in GOOGLE_SERVICE_ACCOUNT_KEY: ${error instanceof Error ? error.message : "Unknown error"}`,
-      );
-    }
-
-    if (credentials.private_key) {
-      credentials.private_key = credentials.private_key.replace(
-        /\\\\n/g,
-        "\\n",
+    // Fix newlines in private key (not usually needed here, but safe)
+    if (serviceAccount.private_key) {
+      serviceAccount.private_key = serviceAccount.private_key.replace(
+        /\\n/g,
+        "\n",
       );
     }
 
     this.indexing = google.indexing({
       version: "v3",
       auth: new google.auth.GoogleAuth({
-        credentials: credentials,
+        credentials: serviceAccount,
         scopes: ["https://www.googleapis.com/auth/indexing"],
       }),
     });

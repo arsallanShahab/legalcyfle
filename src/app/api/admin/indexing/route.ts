@@ -121,22 +121,16 @@ export async function POST(request: NextRequest) {
           );
         }
 
-        const [googleResult, searchEngineResults, searchConsoleResult] =
-          await Promise.allSettled([
-            submitToGoogleIndexing(url),
-            pingSearchEngines(url),
-            submitToSearchConsole(url),
-          ]);
+        const [googleResult, searchConsoleResult] = await Promise.allSettled([
+          submitToGoogleIndexing(url),
+          submitToSearchConsole(url),
+        ]);
 
         results.url = url;
         results.google =
           googleResult.status === "fulfilled"
             ? googleResult.value
             : { success: false, error: "Failed to submit" };
-        results.searchEngines =
-          searchEngineResults.status === "fulfilled"
-            ? searchEngineResults.value
-            : { success: false, error: "Failed to ping" };
         results.searchConsole =
           searchConsoleResult.status === "fulfilled"
             ? searchConsoleResult.value
@@ -172,21 +166,12 @@ export async function POST(request: NextRequest) {
           }),
         );
 
-        // Also ping search engines once for sitemap
-        const bulkSearchEngineResults = await pingSearchEngines(urls[0]);
-
         results.urls = urls;
         results.results = bulkResults.map((result) =>
           result.status === "fulfilled"
             ? result.value
             : { error: "Failed to process" },
         );
-        results.searchEngines = bulkSearchEngineResults;
-        break;
-
-      case "sitemap-ping":
-        const sitemapResults = await pingSearchEngines("");
-        results.searchEngines = sitemapResults;
         break;
 
       default:

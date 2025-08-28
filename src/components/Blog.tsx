@@ -64,6 +64,7 @@ const createSocialEmbed = (url: string, linkText: string) => {
               </a>
             </div>
           </blockquote>
+          <script async src="//www.instagram.com/embed.js"></script>
         </div>
       `;
 
@@ -74,6 +75,8 @@ const createSocialEmbed = (url: string, linkText: string) => {
             <p>Loading tweet...</p>
             <a href="${url}" target="_blank" rel="noopener noreferrer">${linkText}</a>
           </blockquote>
+          <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+
         </div>
       `;
 

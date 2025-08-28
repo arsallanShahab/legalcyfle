@@ -43,6 +43,13 @@ export class GoogleIndexingAPI {
       );
     }
 
+    if (credentials.private_key) {
+      credentials.private_key = credentials.private_key.replace(
+        /\\\\n/g,
+        "\\n",
+      );
+    }
+
     this.indexing = google.indexing({
       version: "v3",
       auth: new google.auth.GoogleAuth({

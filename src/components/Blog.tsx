@@ -5,7 +5,6 @@ import {
 } from "@contentful/rich-text-html-renderer";
 import { BLOCKS, Document, INLINES } from "@contentful/rich-text-types";
 import { useEffect } from "react";
-import SEOStructuredData from "./SEOStructuredData";
 
 // Utility functions for social media embeds
 const detectSocialMediaUrl = (url: string) => {
@@ -30,8 +29,13 @@ const detectSocialMediaUrl = (url: string) => {
 const createSocialEmbed = (url: string, linkText: string) => {
   const detection = detectSocialMediaUrl(url);
 
+  // External link icon SVG
+  const externalLinkIcon = `<svg class="external_link_icon" width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M3.5 3C3.22386 3 3 3.22386 3 3.5C3 3.77614 3.22386 4 3.5 4H7.29289L3.14645 8.14645C2.95118 8.34171 2.95118 8.65829 3.14645 8.85355C3.34171 9.04882 3.65829 9.04882 3.85355 8.85355L8 4.70711V8.5C8 8.77614 8.22386 9 8.5 9C8.77614 9 9 8.77614 9 8.5V3.5C9 3.22386 8.77614 3 8.5 3H3.5Z" fill="currentColor"/>
+  </svg>`;
+
   if (!detection) {
-    return `<a class="blog_link" href="${url}" rel="noopener noreferrer" target="_blank">${linkText}</a>`;
+    return `<a class="blog_link" href="${url}" rel="noopener noreferrer" target="_blank">${linkText}${externalLinkIcon}</a>`;
   }
 
   const { platform, id } = detection;
@@ -60,7 +64,6 @@ const createSocialEmbed = (url: string, linkText: string) => {
               </a>
             </div>
           </blockquote>
-          <script async src="//www.instagram.com/embed.js"></script>
         </div>
       `;
 
@@ -71,7 +74,6 @@ const createSocialEmbed = (url: string, linkText: string) => {
             <p>Loading tweet...</p>
             <a href="${url}" target="_blank" rel="noopener noreferrer">${linkText}</a>
           </blockquote>
-          <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
         </div>
       `;
 
@@ -97,11 +99,72 @@ const createSocialEmbed = (url: string, linkText: string) => {
   }
 };
 
+// Improved text processing for nested content
+const processTextContent = (content: any[]): string => {
+  return content
+    .map((item: any) => {
+      if (item.nodeType === "text") {
+        let text = item.value;
+        if (item.marks && item.marks.length > 0) {
+          item.marks.forEach((mark: any) => {
+            switch (mark.type) {
+              case "bold":
+                text = `<strong>${text}</strong>`;
+                break;
+              case "italic":
+                text = `<em>${text}</em>`;
+                break;
+              case "underline":
+                text = `<u>${text}</u>`;
+                break;
+              case "code":
+                text = `<code>${text}</code>`;
+                break;
+            }
+          });
+        }
+        return text;
+      }
+      if (item.nodeType === INLINES.HYPERLINK) {
+        const linkText = item.content[0]?.value || "Link";
+        return createSocialEmbed(item.data.uri, linkText);
+      }
+      return "";
+    })
+    .join("");
+};
+
+// Improved list processing
+const processListContent = (content: any[]): string => {
+  return content
+    .map((listItem: any) => {
+      if (listItem.nodeType === BLOCKS.LIST_ITEM) {
+        const itemContent = listItem.content
+          .map((block: any) => {
+            if (block.nodeType === BLOCKS.PARAGRAPH) {
+              return processTextContent(block.content);
+            }
+            if (block.nodeType === BLOCKS.UL_LIST) {
+              return `<ul class="nested_list">${processListContent(block.content)}</ul>`;
+            }
+            if (block.nodeType === BLOCKS.OL_LIST) {
+              return `<ol class="nested_list">${processListContent(block.content)}</ol>`;
+            }
+            return "";
+          })
+          .join("");
+        return `<li class="blog_list_item">${itemContent}</li>`;
+      }
+      return "";
+    })
+    .join("");
+};
+
 type Node = {
   nodeType: string;
   data: {
-    uri: string;
-    target: {
+    uri?: string;
+    target?: {
       fields: {
         title: string;
         slug: string;
@@ -112,23 +175,7 @@ type Node = {
       };
     };
   };
-  content: {
-    data: {
-      uri: string;
-      target: {
-        fields: {
-          title: string;
-          file: {
-            url: string;
-          };
-        };
-      };
-    };
-    content: { value: string }[];
-    value: string;
-    marks: { type: string }[];
-    nodeType: string;
-  }[];
+  content: any[];
 };
 
 type BlogContentProps = {
@@ -137,58 +184,65 @@ type BlogContentProps = {
 
 const renderNode: { [key: string]: (node: Node) => string } = {
   [BLOCKS.EMBEDDED_ASSET]: (node) => {
-    const { title, file } = node.data.target.fields;
+    const { title, file } = node.data.target?.fields || {};
+    if (!file) return "";
+
     const mimeType = file.contentType;
     const mimeGroup = mimeType.split("/")[0];
 
     switch (mimeGroup) {
       case "image":
-        return `<img src="${file.url}" class="blog_image" alt="${title}" loading="lazy" />`;
+        return `<img src="${file.url}" class="blog_image" alt="${title || "Image"}" loading="lazy" />`;
       case "application":
-        return `<a href="${file.url}" rel="noopener noreferrer" target="_blank">${title}</a>`;
+        return `<a href="${file.url}" rel="noopener noreferrer" target="_blank" class="blog_link">${title}</a>`;
       default:
-        return `<a href="${file.url}" rel="noopener noreferrer" target="_blank">${title}</a>`;
+        return `<a href="${file.url}" rel="noopener noreferrer" target="_blank" class="blog_link">${title}</a>`;
     }
   },
+
   [INLINES.EMBEDDED_ENTRY]: (node) => {
-    const { title, slug } = node.data.target.fields;
-    return `<a href="/${slug}" rel="noopener">${title}</a>`;
+    const { title, slug } = node.data.target?.fields || {};
+    return `<a href="/${slug}" rel="noopener" class="blog_link">${title}</a>`;
   },
+
   [INLINES.HYPERLINK]: (node) => {
-    const url = node.data.uri;
-    const linkText = node.content[0].value;
+    const url = node.data.uri || "";
+    const linkText = node.content[0]?.value || "Link";
     return createSocialEmbed(url, linkText);
   },
-  [BLOCKS.QUOTE]: (node) => {
-    return `<div class="ad_infeed"><ins class="adsbygoogle"
-  style="display:block; text-align:center;"
-  data-ad-layout="in-article"
-  data-ad-format="fluid"
-  data-ad-client="ca-pub-5892936530350741"
-  data-ad-slot="5536160107"></ins>
-<script>
-  (adsbygoogle = window.adsbygoogle || []).push({});
-</script></div>
-    `;
+
+  [BLOCKS.QUOTE]: () => {
+    return `<div class="ad_infeed">
+      <ins class="adsbygoogle"
+        style="display:block; text-align:center;"
+        data-ad-layout="in-article"
+        data-ad-format="fluid"
+        data-ad-client="ca-pub-5892936530350741"
+        data-ad-slot="5536160107">
+      </ins>
+      <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+    </div>`;
   },
+
   [BLOCKS.TABLE]: (node) => {
     let headerLabels: string[] = [];
 
     // First pass: collect header labels
     node.content.forEach((row: any, rowIndex: number) => {
       if (row.nodeType === BLOCKS.TABLE_ROW && rowIndex === 0) {
-        headerLabels = row.content.map((cell: any) => {
+        headerLabels = row.content.map((cell: any, cellIndex: number) => {
           if (
             cell.nodeType === BLOCKS.TABLE_CELL ||
             cell.nodeType === BLOCKS.TABLE_HEADER_CELL
           ) {
             return (
-              cell.content
-                .map((p: any) => p.content?.[0]?.value || "")
-                .join(" ") || `Column ${rowIndex + 1}`
+              processTextContent(cell.content[0]?.content || []) ||
+              `Column ${cellIndex + 1}`
             );
           }
-          return `Column ${rowIndex + 1}`;
+          return `Column ${cellIndex + 1}`;
         });
       }
     });
@@ -202,9 +256,9 @@ const renderNode: { [key: string]: (node: Node) => string } = {
                 cell.nodeType === BLOCKS.TABLE_CELL ||
                 cell.nodeType === BLOCKS.TABLE_HEADER_CELL
               ) {
-                const cellText = cell.content
-                  .map((p: any) => p.content?.[0]?.value || "")
-                  .join(" ");
+                const cellText = processTextContent(
+                  cell.content[0]?.content || [],
+                );
                 const isHeader =
                   cell.nodeType === BLOCKS.TABLE_HEADER_CELL || rowIndex === 0;
                 const dataLabel =
@@ -231,156 +285,114 @@ const renderNode: { [key: string]: (node: Node) => string } = {
       </div>
     `;
   },
-  [BLOCKS.TABLE_ROW]: (node) => {
-    // This will be handled by the TABLE block
-    return "";
-  },
-  [BLOCKS.TABLE_CELL]: (node) => {
-    // This will be handled by the TABLE block
-    return "";
-  },
+
   [BLOCKS.UL_LIST]: (node) => {
-    const listItems = node.content
-      .map((listItem: any) => {
-        if (listItem.nodeType === BLOCKS.LIST_ITEM) {
-          const itemContent = listItem.content
-            .map((paragraph: any) => {
-              if (paragraph.nodeType === BLOCKS.PARAGRAPH) {
-                return paragraph.content
-                  .map((n: any) => {
-                    if (n.nodeType === "text") {
-                      if (n.marks && n.marks.length > 0) {
-                        return `<strong>${n.value}</strong>`;
-                      }
-                      return n.value;
-                    }
-                    if (n.nodeType === INLINES.HYPERLINK) {
-                      return createSocialEmbed(n.data.uri, n.content[0].value);
-                    }
-                    return "";
-                  })
-                  .join("");
-              }
-              return "";
-            })
-            .join("");
-          return `<li>${itemContent}</li>`;
-        }
-        return "";
-      })
-      .join("");
-
-    return `<ul>${listItems}</ul>`;
+    return `<ul class="blog_list">${processListContent(node.content)}</ul>`;
   },
+
   [BLOCKS.OL_LIST]: (node) => {
-    const listItems = node.content
-      .map((listItem: any) => {
-        if (listItem.nodeType === BLOCKS.LIST_ITEM) {
-          const itemContent = listItem.content
-            .map((paragraph: any) => {
-              if (paragraph.nodeType === BLOCKS.PARAGRAPH) {
-                return paragraph.content
-                  .map((n: any) => {
-                    if (n.nodeType === "text") {
-                      if (n.marks && n.marks.length > 0) {
-                        return `<strong>${n.value}</strong>`;
-                      }
-                      return n.value;
-                    }
-                    if (n.nodeType === INLINES.HYPERLINK) {
-                      return createSocialEmbed(n.data.uri, n.content[0].value);
-                    }
-                    return "";
-                  })
-                  .join("");
-              }
-              return "";
-            })
-            .join("");
-          return `<li>${itemContent}</li>`;
-        }
-        return "";
-      })
-      .join("");
-
-    return `<ol>${listItems}</ol>`;
-  },
-  [BLOCKS.LIST_ITEM]: (node) => {
-    // This will be handled by UL_LIST and OL_LIST blocks
-    return "";
+    return `<ol class="blog_list">${processListContent(node.content)}</ol>`;
   },
 
   [BLOCKS.PARAGRAPH]: (node) => {
-    return `<p class="blog_paragraph">
-      ${node.content
-        .map((n) => {
-          if (n.nodeType === "text") {
-            if (n.marks.length > 0) {
-              return `<strong>${n.value}</strong>`;
-            }
-            return n.value;
-          }
-          if (n.nodeType === INLINES.HYPERLINK) {
-            return createSocialEmbed(n.data.uri, n.content[0].value);
-          }
-          if (n.nodeType === BLOCKS.EMBEDDED_ASSET) {
-            return `<img src="${n.data.target.fields.file.url}" alt="${n.data.target.fields.title}" class="blog_image" loading="lazy" />`;
-          }
-        })
-        .join("")}
-    </p>`;
+    const content = processTextContent(node.content);
+    return content ? `<p class="blog_paragraph">${content}</p>` : "";
   },
-  [BLOCKS.HEADING_1]: (node: Node) =>
-    `<h1 class="blog_heading_h1">${node.content[0].value}</h1>
-  `,
-  [BLOCKS.HEADING_2]: (node: Node) =>
-    `<h2 class="blog_heading_h2">${node.content[0].value}</h2>`,
-  [BLOCKS.HEADING_3]: (node: Node) =>
-    `<h3 class="blog_heading_h3">${node.content[0].value}</h3>`,
-  [BLOCKS.HEADING_4]: (node: Node) =>
-    `<h4 class="blog_heading_h4">${node.content[0].value}</h4>`,
-  [BLOCKS.HEADING_5]: (node: Node) =>
-    `<h5 class="blog_heading_h5">${node.content[0].value}</h5>`,
-  [BLOCKS.HEADING_6]: (node: Node) =>
-    `<h6 class="blog_heading_h6">${node.content[0].value}</h6>`,
+
+  [BLOCKS.HEADING_1]: (node: Node) => {
+    const text = processTextContent(node.content);
+    return `<h1 class="blog_heading_h1">${text}</h1>`;
+  },
+
+  [BLOCKS.HEADING_2]: (node: Node) => {
+    const text = processTextContent(node.content);
+    return `<h2 class="blog_heading_h2">${text}</h2>`;
+  },
+
+  [BLOCKS.HEADING_3]: (node: Node) => {
+    const text = processTextContent(node.content);
+    return `<h3 class="blog_heading_h3">${text}</h3>`;
+  },
+
+  [BLOCKS.HEADING_4]: (node: Node) => {
+    const text = processTextContent(node.content);
+    return `<h4 class="blog_heading_h4">${text}</h4>`;
+  },
+
+  [BLOCKS.HEADING_5]: (node: Node) => {
+    const text = processTextContent(node.content);
+    return `<h5 class="blog_heading_h5">${text}</h5>`;
+  },
+
+  [BLOCKS.HEADING_6]: (node: Node) => {
+    const text = processTextContent(node.content);
+    return `<h6 class="blog_heading_h6">${text}</h6>`;
+  },
+
+  [BLOCKS.HR]: () => {
+    return `<hr class="blog_divider" />`;
+  },
+
+  // Handle other blocks that should be ignored at the top level
+  [BLOCKS.TABLE_ROW]: () => "",
+  [BLOCKS.TABLE_CELL]: () => "",
+  [BLOCKS.TABLE_HEADER_CELL]: () => "",
+  [BLOCKS.LIST_ITEM]: () => "",
 };
 
-const BlogContent = (props: BlogContentProps) => {
+const BlogContent = ({ data }: BlogContentProps) => {
   useEffect(() => {
-    // Load social media embed scripts
+    // Load social media embed scripts with better error handling
     const loadSocialScripts = () => {
-      // Instagram
-      if (window && (window as any).instgrm) {
-        (window as any).instgrm.Embeds.process();
-      }
+      try {
+        // Instagram
+        if (window && (window as any).instgrm) {
+          (window as any).instgrm.Embeds.process();
+        }
 
-      // Twitter
-      if (window && (window as any).twttr) {
-        (window as any).twttr.widgets.load();
+        // Twitter
+        if (window && (window as any).twttr) {
+          (window as any).twttr.widgets.load();
+        }
+      } catch (error) {
+        console.warn("Error loading social media scripts:", error);
       }
     };
 
-    // Use a timeout to ensure DOM is ready
-    const timer = setTimeout(loadSocialScripts, 100);
+    // Use requestAnimationFrame for better performance
+    const loadScripts = () => {
+      requestAnimationFrame(loadSocialScripts);
+    };
+
+    // Load immediately and also after a short delay
+    loadScripts();
+    const timer = setTimeout(loadScripts, 500);
+
     return () => clearTimeout(timer);
   }, []);
 
-  const htmlString = documentToHtmlString(
-    props.data.fields?.body as unknown as Document,
-    {
-      renderNode: renderNode as RenderNode & {
-        [key: string]: (node: Node) => string;
+  if (!data?.fields?.body) {
+    return <div className="blog_container">No content available</div>;
+  }
+
+  try {
+    const htmlString = documentToHtmlString(
+      data.fields.body as unknown as Document,
+      {
+        renderNode: renderNode as RenderNode,
       },
-    },
-  );
-  return (
-    <>
+    );
+
+    return (
       <div
         className="blog_container"
         dangerouslySetInnerHTML={{ __html: htmlString }}
-      ></div>
-    </>
-  );
+      />
+    );
+  } catch (error) {
+    console.error("Error rendering blog content:", error);
+    return <div className="blog_container">Error loading content</div>;
+  }
 };
 
 export default BlogContent;

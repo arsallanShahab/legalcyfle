@@ -112,9 +112,23 @@ body {
 /* .blog_paragraph a {
   @apply inline-block cursor-pointer text-wrap break-words break-all font-medium text-blue-500 dark:text-blue-400;
 } */
+.external_link_icon {
+  display: inline-block;
+  margin-left: 4px;
+  vertical-align: middle;
+  opacity: 0.7;
+  transition: opacity 0.2s ease;
+}
+
+.blog_link:hover .external_link_icon {
+  opacity: 1;
+}
 
 .blog_link {
-  @apply font-medium text-blue-600 hover:underline dark:text-blue-400;
+  @apply break-words font-medium text-blue-600 hover:underline dark:text-blue-400;
+  /* display: inline-flex; */
+  align-items: center;
+  gap: 2px;
 }
 
 .ad_infeed {

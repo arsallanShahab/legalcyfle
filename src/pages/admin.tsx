@@ -128,7 +128,12 @@ export default function AdminPage() {
         body.urls = indexingUrls.split("\n").filter((url) => url.trim());
       }
 
-      const response = await fetch("/api/admin/indexing", {
+      const apiPath =
+        action === "revalidate-sitemap"
+          ? "/api/admin/sitemap"
+          : "/api/admin/indexing";
+
+      const response = await fetch(apiPath, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -505,6 +510,59 @@ export default function AdminPage() {
           {/* Google Indexing Tab */}
           <TabsContent value="indexing" className="mt-6">
             <div className="grid gap-6">
+              {/* Sitemap Revalidation */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Globe className="h-5 w-5" />
+                    Sitemap Management
+                  </CardTitle>
+                  <CardDescription>
+                    Revalidate sitemap.xml and notify search engines about
+                    updates
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <Button
+                    onClick={() => handleIndexing("revalidate-sitemap")}
+                    disabled={loading === "revalidate-sitemap"}
+                    className="w-full"
+                  >
+                    {loading === "revalidate-sitemap" ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Revalidating Sitemap...
+                      </>
+                    ) : (
+                      <>
+                        <RefreshCw className="mr-2 h-4 w-4" />
+                        Revalidate Sitemap
+                      </>
+                    )}
+                  </Button>
+                  {indexingResults["revalidate-sitemap"] && (
+                    <Alert
+                      className={`mt-4 ${indexingResults["revalidate-sitemap"].success ? "border-green-200" : "border-red-200"}`}
+                    >
+                      <div className="flex items-center gap-2">
+                        {indexingResults["revalidate-sitemap"].success ? (
+                          <CheckCircle className="h-4 w-4 text-green-600" />
+                        ) : (
+                          <XCircle className="h-4 w-4 text-red-600" />
+                        )}
+                        <AlertDescription>
+                          <div className="space-y-2">
+                            <div>
+                              {indexingResults["revalidate-sitemap"].message}
+                            </div>
+                          </div>
+                        </AlertDescription>
+                      </div>
+                    </Alert>
+                  )}
+                </CardContent>
+              </Card>
+
               {/* Single URL Indexing */}
               <Card>
                 <CardHeader>
@@ -562,16 +620,6 @@ export default function AdminPage() {
                                   Google Indexing API:{" "}
                                   {indexingResults["single-url"].results.google
                                     ?.success
-                                    ? "✅ Success"
-                                    : "❌ Failed"}
-                                </div>
-                                <div>
-                                  Search Engine Ping:{" "}
-                                  {indexingResults[
-                                    "single-url"
-                                  ].results.searchEngines?.some(
-                                    (r: any) => r.success,
-                                  )
                                     ? "✅ Success"
                                     : "❌ Failed"}
                                 </div>

@@ -7,7 +7,7 @@ export async function GET(request: NextRequest) {
     // Get all published articles
     const articles = await client.getEntries({
       content_type: "blogPage",
-      select: ["fields.slug", "fields.date", "sys.updatedAt"],
+      select: ["fields.slug", "fields.date", "fields.title", "sys.updatedAt"],
       order: ["-sys.updatedAt"], // Most recent first
       limit: 1000,
     });
@@ -44,7 +44,7 @@ export async function GET(request: NextRequest) {
         <news:language>en</news:language>
       </news:publication>
       <news:publication_date>${publishDate}</news:publication_date>
-      <news:title><![CDATA[${article.fields.title}]]></news:title>
+      <news:title><![CDATA[${article.fields.title || "Legal Article"}]]></news:title>
     </news:news>`
         : ""
     }

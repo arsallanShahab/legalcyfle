@@ -35,7 +35,6 @@ export async function POST(request: NextRequest) {
         // Submit to Google for indexing using your configured Google API
         await Promise.allSettled([
           submitUrlForIndexing(articleUrl),
-          pingSearchEngines(articleUrl),
           notifyNewsAggregators(articleUrl),
         ]);
 
@@ -58,6 +57,7 @@ export async function POST(request: NextRequest) {
 }
 
 // Submit URL to Google for indexing
+// Submit URL to Google for indexing
 async function submitToGoogleIndexing(url: string) {
   // This function is deprecated - using submitUrlForIndexing from google-indexing.ts instead
   console.log(
@@ -66,25 +66,18 @@ async function submitToGoogleIndexing(url: string) {
   );
 }
 
-// Ping search engines about sitemap updates
-async function pingSearchEngines(url: string) {
-  const sitemapUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/sitemap.xml`;
-
-  const pingUrls = [
-    `https://www.google.com/ping?sitemap=${encodeURIComponent(sitemapUrl)}`,
-    `https://www.bing.com/ping?sitemap=${encodeURIComponent(sitemapUrl)}`,
-  ];
-
-  await Promise.allSettled(
-    pingUrls.map((pingUrl) =>
-      fetch(pingUrl).catch((err) => console.error("Ping error:", err)),
-    ),
-  );
-}
-
 // Notify news aggregators (if applicable)
 async function notifyNewsAggregators(url: string) {
   // You can add specific news aggregator notifications here
   // For example, if you're part of Google News, Apple News, etc.
   console.log("Notifying news aggregators about:", url);
+
+  // Example: RSS feed update notification (if you have RSS subscribers)
+  try {
+    // Revalidate RSS feed when new article is published
+    // This ensures RSS readers get the latest content faster
+    console.log("RSS feed will be updated automatically via revalidation");
+  } catch (error) {
+    console.error("Error notifying news aggregators:", error);
+  }
 }

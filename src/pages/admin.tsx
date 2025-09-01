@@ -18,6 +18,7 @@ import {
   Home,
   Loader2,
   RefreshCw,
+  Rss,
   Search,
   Shield,
   XCircle,
@@ -131,7 +132,9 @@ export default function AdminPage() {
       const apiPath =
         action === "revalidate-sitemap"
           ? "/api/admin/sitemap"
-          : "/api/admin/indexing";
+          : action === "refresh-feeds"
+            ? "/api/admin/rss"
+            : "/api/admin/indexing";
 
       const response = await fetch(apiPath, {
         method: "POST",
@@ -238,7 +241,7 @@ export default function AdminPage() {
         </div>
 
         <Tabs defaultValue="revalidation" className="w-full">
-          <TabsList className="grid w-full grid-cols-2">
+          <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger
               value="revalidation"
               className="flex items-center gap-2"
@@ -249,6 +252,10 @@ export default function AdminPage() {
             <TabsTrigger value="indexing" className="flex items-center gap-2">
               <Search className="h-4 w-4" />
               Google Indexing
+            </TabsTrigger>
+            <TabsTrigger value="rss" className="flex items-center gap-2">
+              <Rss className="h-4 w-4" />
+              RSS Management
             </TabsTrigger>
           </TabsList>
 
@@ -714,6 +721,141 @@ https://legalcyfle.com/article-3`}
                       </div>
                     </Alert>
                   )}
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+
+          {/* RSS Management Tab */}
+          <TabsContent value="rss" className="mt-6">
+            <div className="grid gap-6">
+              {/* RSS Feed Management */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Rss className="h-5 w-5" />
+                    RSS Feed Management
+                  </CardTitle>
+                  <CardDescription>
+                    Refresh RSS feeds and notify aggregators about new content
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <h4 className="font-medium">Available RSS Feeds:</h4>
+                      <div className="space-y-1 text-sm text-gray-600">
+                        <div>
+                          📰 Main Feed:{" "}
+                          <a
+                            href="/rss.xml"
+                            target="_blank"
+                            className="text-blue-600 hover:underline"
+                          >
+                            /rss.xml
+                          </a>
+                        </div>
+                        <div>
+                          📱 JSON Feed:{" "}
+                          <a
+                            href="/api/feed.json"
+                            target="_blank"
+                            className="text-blue-600 hover:underline"
+                          >
+                            /api/feed.json
+                          </a>
+                        </div>
+                        <div>
+                          📂 Category Feeds: /rss/category/[category-name]
+                        </div>
+                      </div>
+                    </div>
+                    <Button
+                      onClick={() => handleIndexing("refresh-feeds")}
+                      disabled={loading === "refresh-feeds"}
+                      className="w-full"
+                    >
+                      {loading === "refresh-feeds" ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          Refreshing RSS Feeds...
+                        </>
+                      ) : (
+                        <>
+                          <RefreshCw className="mr-2 h-4 w-4" />
+                          Refresh All RSS Feeds
+                        </>
+                      )}
+                    </Button>
+                    {indexingResults["refresh-feeds"] && (
+                      <Alert
+                        className={`mt-4 ${indexingResults["refresh-feeds"].success ? "border-green-200" : "border-red-200"}`}
+                      >
+                        <div className="flex items-center gap-2">
+                          {indexingResults["refresh-feeds"].success ? (
+                            <CheckCircle className="h-4 w-4 text-green-600" />
+                          ) : (
+                            <XCircle className="h-4 w-4 text-red-600" />
+                          )}
+                          <AlertDescription>
+                            <div className="space-y-2">
+                              <div>
+                                {indexingResults["refresh-feeds"].message}
+                              </div>
+                            </div>
+                          </AlertDescription>
+                        </div>
+                      </Alert>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* RSS Feed Information */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Globe className="h-5 w-5" />
+                    RSS Feed URLs
+                  </CardTitle>
+                  <CardDescription>
+                    Share these URLs with RSS readers and aggregators
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    <div className="space-y-2">
+                      <Label>Main RSS Feed</Label>
+                      <Input
+                        readOnly
+                        value={`${process.env.NEXT_PUBLIC_BASE_URL || "https://legalcyfle.in"}/rss.xml`}
+                        className="bg-gray-50"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>JSON Feed (Modern)</Label>
+                      <Input
+                        readOnly
+                        value={`${process.env.NEXT_PUBLIC_BASE_URL || "https://legalcyfle.in"}/api/feed.json`}
+                        className="bg-gray-50"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Category RSS Examples</Label>
+                      <div className="space-y-1 text-sm">
+                        <Input
+                          readOnly
+                          value={`${process.env.NEXT_PUBLIC_BASE_URL || "https://legalcyfle.in"}/rss/category/blogs-news`}
+                          className="bg-gray-50 text-xs"
+                        />
+                        <Input
+                          readOnly
+                          value={`${process.env.NEXT_PUBLIC_BASE_URL || "https://legalcyfle.in"}/rss/category/opportunities`}
+                          className="bg-gray-50 text-xs"
+                        />
+                      </div>
+                    </div>
+                  </div>
                 </CardContent>
               </Card>
             </div>

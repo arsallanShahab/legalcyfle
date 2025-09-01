@@ -77,7 +77,7 @@ export default function robots(): MetadataRoute.Robots {
         disallow: "/",
       },
     ],
-    sitemap: "https://legalcyfle.in/sitemap.xml",
+    sitemap: ["https://legalcyfle.in/sitemap", "https://legalcyfle.in/rss.xml"],
     host: "https://legalcyfle.in",
   };
 }

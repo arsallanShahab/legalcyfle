@@ -33,7 +33,7 @@ const Index = (props: Props) => {
       });
       setFilteredArticles(filtered);
     }
-  }, [q]);
+  }, [props.data, q]);
 
   return (
     <Wrapper>

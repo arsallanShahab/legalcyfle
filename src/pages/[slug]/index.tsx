@@ -1,32 +1,15 @@
 import AdWrapper from "@/components/AdWrapper";
-import BlogContent from "@/components/Blog";
-import generateFAQSchema from "@/components/FAQSchema";
+import ArticleAuthor from "@/components/article/ArticleAuthor";
+import ArticleContent from "@/components/article/ArticleContent";
+import ArticleHeader from "@/components/article/ArticleHeader";
+import ArticleSEO from "@/components/article/ArticleSEO";
+import InteractionBar from "@/components/article/InteractionBar";
+import RecommendedArticles from "@/components/article/RecommendedArticles";
 import FlexContainer from "@/components/FlexContainer";
-import SEOAnalytics from "@/components/SEOAnalytics";
-import { Badge } from "@/components/ui/badge";
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
-import { Button } from "@/components/ui/button";
 import client from "@/lib/contentful";
-import {
-  checkDevicePreference,
-  getDeviceId,
-  updateDevicePreferences,
-} from "@/lib/device-id";
+import { getDeviceId, updateDevicePreferences } from "@/lib/device-id";
 import useGet from "@/lib/hooks/use-get";
-import {
-  estimateReadingTime,
-  excerpt,
-  formatImageLink,
-  generateKeywords,
-  sanitizeString,
-} from "@/lib/utils";
+import { estimateReadingTime } from "@/lib/utils";
 import { BlogEntry } from "@/types/contentful/blog";
 import {
   ApiResponse,
@@ -39,35 +22,21 @@ import { Comment, IArticle } from "@/types/global/article";
 import { documentToHtmlString } from "@contentful/rich-text-html-renderer";
 import { Document } from "@contentful/rich-text-types";
 import {
-  Avatar,
-  AvatarGroup,
   Modal,
   ModalBody,
   ModalContent,
   ModalFooter,
   ModalHeader,
-  Tooltip,
   useDisclosure,
 } from "@nextui-org/react";
 import dayjs from "dayjs";
 import tz from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
-import {
-  Ban,
-  Eye,
-  Heart,
-  Loader,
-  Share,
-  ThumbsDown,
-  ThumbsUp,
-} from "lucide-react";
 import { GetStaticProps } from "next";
 import dynamic from "next/dynamic";
-import Head from "next/head";
-import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import React, { Fragment, useEffect } from "react";
+import React, { useEffect } from "react";
 import toast from "react-hot-toast";
 import {
   EmailIcon,
@@ -79,13 +48,6 @@ import {
   WhatsappIcon,
 } from "react-share";
 import safeJsonStringify from "safe-json-stringify";
-
-const DynamicAdWrapper = dynamic(() => import("../../components/DynamicAd"), {
-  ssr: false,
-  loading: () => (
-    <div style={{ width: "100%", minWidth: "250px", height: "100px" }} />
-  ),
-});
 
 dayjs.extend(utc);
 dayjs.extend(tz);
@@ -276,7 +238,6 @@ const Index = (props: Props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.data, deviceId]);
 
-  // Calculate advanced SEO metrics
   const readingTime = estimateReadingTime(
     documentToHtmlString(props.data.fields.body as Document),
   );
@@ -289,853 +250,67 @@ const Index = (props: Props) => {
     .filter((word) => word.length > 0).length;
   const publishDate = props.data.fields.date || props.data.sys.createdAt;
   const modifiedDate = props.data.sys.updatedAt;
-  const authorNames = props.data.fields.authors
-    .map((author) => author.fields.name)
-    .join(", ");
-  const categoryNames = props.data.fields.category
-    .map((cat) => cat.fields.name)
-    .join(", ");
-
-  // Enhanced meta description with optimal length (150-160 chars)
-  const optimizedMetaDescription =
-    props.data.fields.description && props.data.fields.description.length > 160
-      ? props.data.fields.description.substring(0, 157) + "..."
-      : props.data.fields.description ||
-        `Expert legal insights on ${props.data.fields.title}. Read analysis by ${authorNames} on LegalCyfle.`;
-
-  const keywords = generateKeywords(
-    props.data.fields?.category?.map((cat) => cat.fields.name),
-    props.data.fields?.title,
-    props.data.fields?.description ?? "",
-  );
-
-  const structuredData = {
-    "@context": "https://schema.org",
-    "@graph": [
-      {
-        "@type": "Article",
-        "@id": `https://legalcyfle.in/${props.data.fields.slug}/#article`,
-        isPartOf: { "@id": `https://legalcyfle.in/${props.data.fields.slug}/` },
-        author: props.data.fields.authors.map((author) => ({
-          "@id": `https://legalcyfle.in/author/${author.sys.id}/#person`,
-          "@type": "Person",
-          name: author.fields.name,
-          url: `https://legalcyfle.in/author/${author.sys.id}/`,
-          image: {
-            "@type": "ImageObject",
-            inLanguage: "en-US",
-            "@id": `https://legalcyfle.in/author/${author.sys.id}/#image`,
-            url: formatImageLink(author?.fields?.avatar?.fields?.file?.url),
-            contentUrl: formatImageLink(
-              author?.fields?.avatar?.fields?.file?.url,
-            ),
-            caption: author.fields.name,
-            width:
-              author?.fields?.avatar?.fields?.file?.details?.image?.width ||
-              400,
-            height:
-              author?.fields?.avatar?.fields?.file?.details?.image?.height ||
-              400,
-          },
-          sameAs: [],
-          description:
-            author?.fields?.bio || `Legal expert and contributor at LegalCyfle`,
-          jobTitle: "Legal Expert",
-          worksFor: {
-            "@type": "Organization",
-            "@id": "https://legalcyfle.in/#organization",
-            name: "LegalCyfle",
-          },
-          knowsAbout: props.data.fields.category.map((cat) => cat.fields.name),
-        })),
-        headline: props.data.fields.title,
-        alternativeHeadline: props.data.fields.title,
-        description: optimizedMetaDescription,
-        datePublished: publishDate,
-        dateModified: modifiedDate,
-        dateCreated: props.data.sys.createdAt,
-        mainEntityOfPage: {
-          "@type": "WebPage",
-          "@id": `https://legalcyfle.in/${props.data.fields.slug}/`,
-        },
-        publisher: {
-          "@type": "Organization",
-          "@id": "https://legalcyfle.in/#organization",
-          name: "LegalCyfle",
-          logo: {
-            "@type": "ImageObject",
-            "@id": "https://legalcyfle.in/#logo",
-            inLanguage: "en-US",
-            url: "https://legalcyfle.in/logo-black.png",
-            contentUrl: "https://legalcyfle.in/logo-black.png",
-            width: 1500,
-            height: 1500,
-            caption: "LegalCyfle",
-          },
-        },
-        image: {
-          "@type": "ImageObject",
-          "@id": `https://legalcyfle.in/${props.data.fields.slug}/#primaryimage`,
-          inLanguage: "en-US",
-          url: formatImageLink(thumbnail),
-          contentUrl: formatImageLink(thumbnail),
-          width:
-            props.data?.fields?.image?.fields?.file?.details?.image?.width ||
-            1280,
-          height:
-            props.data?.fields?.image?.fields?.file?.details?.image?.height ||
-            720,
-          caption: props.data.fields.title,
-          representativeOfPage: true,
-        },
-        thumbnailUrl: formatImageLink(thumbnail),
-        keywords: keywords,
-        articleSection: categoryNames,
-        articleBody: articleContent.replace(/<[^>]*>/g, ""),
-        wordCount: wordCount,
-        timeRequired: `PT${readingTime}M`,
-        inLanguage: "en-US",
-        copyrightYear: new Date(publishDate).getFullYear(),
-        copyrightHolder: {
-          "@type": "Organization",
-          "@id": "https://legalcyfle.in/#organization",
-          name: "LegalCyfle",
-        },
-        license: "https://creativecommons.org/licenses/by-nc-sa/4.0/",
-        potentialAction: [
-          {
-            "@type": "ReadAction",
-            target: [`https://legalcyfle.in/${props.data.fields.slug}/`],
-          },
-          {
-            "@type": "ShareAction",
-            target: [`https://legalcyfle.in/${props.data.fields.slug}/`],
-          },
-        ],
-        about: props.data.fields.category.map((cat) => ({
-          "@type": "Thing",
-          name: cat.fields.name,
-          url: `https://legalcyfle.in/category/${cat.fields.slug}/`,
-          sameAs: `https://legalcyfle.in/category/${cat.fields.slug}/`,
-        })),
-        mentions: props.data.fields.category.map((cat) => ({
-          "@type": "Thing",
-          name: cat.fields.name,
-          url: `https://legalcyfle.in/category/${cat.fields.slug}/`,
-        })),
-        isAccessibleForFree: true,
-        hasPart: [
-          {
-            "@type": "WebPageElement",
-            isAccessibleForFree: true,
-            cssSelector: ".article-content",
-          },
-        ],
-        speakable: {
-          "@type": "SpeakableSpecification",
-          cssSelector: ["h1", ".article-intro", ".article-summary"],
-        },
-      },
-      {
-        "@type": "WebPage",
-        "@id": `https://legalcyfle.in/${props.data.fields.slug}/`,
-        url: `https://legalcyfle.in/${props.data.fields.slug}/`,
-        name: `${props.data.fields.title} - LegalCyfle`,
-        isPartOf: { "@id": "https://legalcyfle.in/#website" },
-        primaryImageOfPage: {
-          "@id": `https://legalcyfle.in/${props.data.fields.slug}/#primaryimage`,
-        },
-        image: {
-          "@id": `https://legalcyfle.in/${props.data.fields.slug}/#primaryimage`,
-        },
-        thumbnailUrl: formatImageLink(props.data.fields.image.fields.file.url),
-        datePublished: props.data.fields.date,
-        dateModified: props.data.sys.updatedAt,
-        breadcrumb: {
-          "@id": `https://legalcyfle.in/${props.data.fields.slug}/#breadcrumb`,
-        },
-        inLanguage: "en-US",
-        potentialAction: [
-          {
-            "@type": "ReadAction",
-            target: [`https://legalcyfle.in/${props.data.fields.slug}/`],
-          },
-        ],
-      },
-      {
-        "@type": "ImageObject",
-        inLanguage: "en-US",
-        "@id": `https://legalcyfle.in/${props.data.fields.slug}/#primaryimage`,
-        url: formatImageLink(props?.data?.fields?.image?.fields?.file?.url),
-        contentUrl: formatImageLink(
-          props?.data?.fields?.image?.fields?.file?.url,
-        ),
-        width: props.data?.fields?.image?.fields?.file?.details?.image?.width,
-        height: props.data?.fields?.image?.fields?.file?.details?.image?.height,
-      },
-      {
-        "@type": "BreadcrumbList",
-        "@id": `https://legalcyfle.in/${props.data.fields.slug}/#breadcrumb`,
-        itemListElement: [
-          {
-            "@type": "ListItem",
-            position: 1,
-            name: "Home",
-            item: "https://legalcyfle.in/",
-          },
-          {
-            "@type": "ListItem",
-            position: 2,
-            name: props.data.fields.category[0]?.fields?.name,
-            item: `https://legalcyfle.in/category/${props.data.fields.category[0]?.fields?.slug}`,
-          },
-          { "@type": "ListItem", position: 3, name: props.data.fields.title },
-        ],
-      },
-      {
-        "@type": "WebSite",
-        "@id": "https://legalcyfle.in/#website",
-        url: "https://legalcyfle.in/",
-        name: "LegalCyfle",
-        description: "iuris occasio omnibus",
-        publisher: { "@id": "https://legalcyfle.in/#organization" },
-        potentialAction: [
-          {
-            "@type": "SearchAction",
-            target: {
-              "@type": "EntryPoint",
-              urlTemplate:
-                "https://legalcyfle.in/search?q={search_term_string}",
-            },
-            "query-input": {
-              "@type": "PropertyValueSpecification",
-              valueRequired: true,
-              valueName: "search_term_string",
-            },
-          },
-        ],
-        inLanguage: "en-US",
-      },
-      {
-        "@type": "Organization",
-        "@id": "https://legalcyfle.in/#organization",
-        name: "LegalCyfle",
-        url: "https://legalcyfle.in/",
-        logo: {
-          "@type": "ImageObject",
-          inLanguage: "en-US",
-          "@id": "https://legalcyfle.in/#/schema/logo/image/",
-          url: "https://legalcyfle.in/logo-black.png",
-          contentUrl: "https://legalcyfle.in/logo-black.png",
-          width: 1500,
-          height: 1500,
-          caption: "LegalCyfle",
-        },
-        image: { "@id": "https://legalcyfle.in/#/schema/logo/image/" },
-        sameAs: [
-          "https://www.facebook.com/profile.php?id=61559661011805",
-          "https://www.linkedin.com/company/legalcyfle-in/",
-          "https://www.instagram.com/legalcyfle/?hl=en",
-        ],
-      },
-    ],
-  };
 
   return (
-    <main className="relative">
-      <Head>
-        {/* Primary Meta Tags */}
-        <title>{`${props.data.fields.title} - LegalCyfle`}</title>
-        <meta
-          name="title"
-          content={`${props.data.fields.title} - LegalCyfle`}
-        />
-        <meta name="description" content={optimizedMetaDescription} />
-        <meta name="keywords" content={keywords} />
-        <meta name="author" content={authorNames} />
-        <meta
-          name="robots"
-          content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
-        />
-        <meta
-          name="googlebot"
-          content="index, follow, max-video-preview:-1, max-image-preview:large, max-snippet:-1"
-        />
+    <main className="relative min-h-screen bg-white dark:bg-black">
+      <ArticleSEO
+        article={props.data}
+        metrics={article}
+        url={`https://legalcyfle.in/${props.data.fields.slug}`}
+      />
 
-        {/* Canonical URL */}
-        <link
-          rel="canonical"
-          href={`https://legalcyfle.in/${props.data.fields.slug}`}
-        />
-
-        {/* Language and Region */}
-        <meta httpEquiv="content-language" content="en-US" />
-        <meta name="geo.region" content="IN" />
-        <meta name="geo.country" content="India" />
-
-        {/* Article-specific meta */}
-        <meta name="article:published_time" content={publishDate} />
-        <meta name="article:modified_time" content={modifiedDate} />
-        <meta name="article:author" content={authorNames} />
-        <meta name="article:section" content={categoryNames} />
-        <meta name="article:tag" content={keywords} />
-
-        {/* Reading time and word count */}
-        <meta name="reading_time" content={`${readingTime} minutes`} />
-        <meta name="word_count" content={wordCount.toString()} />
-
-        {/* Open Graph / Facebook */}
-        <meta property="og:type" content="article" />
-        <meta
-          property="og:url"
-          content={`https://legalcyfle.in/${props.data.fields.slug}`}
-        />
-        <meta property="og:title" content={props.data.fields.title} />
-        <meta property="og:description" content={optimizedMetaDescription} />
-        <meta property="og:image" content={formatImageLink(thumbnail)} />
-        <meta
-          property="og:image:secure_url"
-          content={formatImageLink(thumbnail)}
-        />
-        <meta
-          property="og:image:width"
-          content={(
-            props.data?.fields?.image?.fields?.file?.details?.image?.width ||
-            1280
-          ).toString()}
-        />
-        <meta
-          property="og:image:height"
-          content={(
-            props.data?.fields?.image?.fields?.file?.details?.image?.height ||
-            720
-          ).toString()}
-        />
-        <meta property="og:image:alt" content={props.data.fields.title} />
-        <meta property="og:site_name" content="LegalCyfle" />
-        <meta property="og:locale" content="en_US" />
-        <meta property="article:published_time" content={publishDate} />
-        <meta property="article:modified_time" content={modifiedDate} />
-        <meta property="article:author" content={authorNames} />
-        <meta property="article:section" content={categoryNames} />
-
-        {/* Twitter */}
-        <meta property="twitter:card" content="summary_large_image" />
-        <meta
-          property="twitter:url"
-          content={`https://legalcyfle.in/${props.data.fields.slug}`}
-        />
-        <meta property="twitter:title" content={props.data.fields.title} />
-        <meta
-          property="twitter:description"
-          content={optimizedMetaDescription}
-        />
-        <meta property="twitter:image" content={formatImageLink(thumbnail)} />
-        <meta property="twitter:image:alt" content={props.data.fields.title} />
-        <meta name="twitter:creator" content="@legalcyfle" />
-        <meta name="twitter:site" content="@legalcyfle" />
-
-        {/* Additional SEO meta tags */}
-        <meta name="format-detection" content="telephone=no" />
-        <meta name="mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-status-bar-style" content="black" />
-
-        {/* Schema.org for Google */}
-        <meta itemProp="name" content={props.data.fields.title} />
-        <meta itemProp="description" content={optimizedMetaDescription} />
-        <meta itemProp="image" content={formatImageLink(thumbnail)} />
-
-        {/* Performance and Preloading */}
-        <link
-          rel="preload"
-          href={formatImageLink(thumbnail)}
-          as="image"
-          type="image/webp"
-        />
-        <link rel="dns-prefetch" href="//images.ctfassets.net" />
-        <link
-          rel="preconnect"
-          href="https://images.ctfassets.net"
-          crossOrigin=""
-        />
-
-        {/* Alternate URLs for different formats/languages */}
-        <link
-          rel="alternate"
-          type="application/rss+xml"
-          title="LegalCyfle RSS Feed"
-          href="https://legalcyfle.in/rss.xml"
-        />
-
-        {/* Structured Data */}
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
-        />
-      </Head>
       <FlexContainer
         variant="column-start"
         className="mx-auto max-w-4xl px-4 py-10 pt-2.5 md:px-10 md:py-20 md:pt-2.5"
         gap="2xl"
       >
-        {/* <AdWrapper
-          data-ad-slot="4210005765"
-          data-ad-format="auto"
-          data-full-width-responsive="true"
-        /> */}
-        {/* <DynamicAdWrapper
-          slot="1973122915"
-          format="fluid"
-          layoutKey="-et-7n+gx+cc-19b"
-        /> */}
         <AdWrapper
           data-ad-format="fluid"
           data-ad-layout-key="-et-7n+gx+cc-19b"
           data-ad-slot="1973122915"
         />
 
-        {/* Article Header with Semantic HTML */}
-        <header className="article-header">
-          <FlexContainer variant="column-start" gap="md">
-            <nav aria-label="Breadcrumb">
-              <Breadcrumb>
-                <BreadcrumbList>
-                  <BreadcrumbItem>
-                    <BreadcrumbLink
-                      className="font-giest-sans font-normal"
-                      href="/"
-                    >
-                      Home
-                    </BreadcrumbLink>
-                  </BreadcrumbItem>
-                  <BreadcrumbSeparator />
-                  <BreadcrumbItem>
-                    <BreadcrumbLink
-                      className="font-giest-sans font-normal"
-                      href={
-                        "/category/" +
-                        props.data.fields.category[0]?.fields?.slug
-                      }
-                    >
-                      {props.data.fields.category[0]?.fields?.name}
-                    </BreadcrumbLink>
-                  </BreadcrumbItem>
-                  <BreadcrumbSeparator />
-                  <BreadcrumbItem>
-                    <BreadcrumbPage className="font-giest-sans font-medium text-amber-600">
-                      {excerpt(props.data.fields.title, 50)}
-                    </BreadcrumbPage>
-                  </BreadcrumbItem>
-                </BreadcrumbList>
-              </Breadcrumb>
-            </nav>
-            <h1
-              className="max-w-3xl text-left font-poppins text-3xl font-semibold md:text-5xl"
-              itemProp="headline"
-            >
-              {props.data.fields.title}
-            </h1>
-          </FlexContainer>
-        </header>
+        <ArticleHeader
+          data={props.data}
+          onShare={onOpen}
+          publishDate={publishDate}
+          modifiedDate={modifiedDate}
+          wordCount={wordCount}
+          readingTime={readingTime}
+        />
 
-        {/* Article Metadata with Schema.org microdata */}
-        <section
-          className="article-meta"
-          itemScope
-          itemType="https://schema.org/Article"
-        >
-          <meta itemProp="headline" content={props.data.fields.title} />
-          <meta itemProp="datePublished" content={publishDate} />
-          <meta itemProp="dateModified" content={modifiedDate} />
-          <meta itemProp="wordCount" content={wordCount.toString()} />
-          <meta itemProp="timeRequired" content={`PT${readingTime}M`} />
-          <meta itemProp="inLanguage" content="en-US" />
-          <meta
-            itemProp="url"
-            content={`https://legalcyfle.in/${props.data.fields.slug}`}
-          />
+        <ArticleContent data={props.data} thumbnail={thumbnail} />
 
-          <FlexContainer
-            variant="row-between"
-            alignItems="center"
-            className="mb-6"
-          >
-            <FlexContainer variant="row-start" alignItems="center" gap="md">
-              {props.data.fields?.authors?.length > 1 && (
-                <AvatarGroup isBordered>
-                  {props.data.fields?.authors.map((author) => (
-                    <Tooltip
-                      showArrow
-                      placement="right"
-                      classNames={{
-                        base: [
-                          // arrow color
-                          "before:bg-neutral-400 dark:before:bg-white",
-                        ],
-                        content: [
-                          "py-2 px-4 shadow-xl text-nowrap break-keep text-center w-auto",
-                          "text-black bg-gradient-to-br from-white to-neutral-400",
-                        ],
-                      }}
-                      key={author.sys.id}
-                      content={author.fields.name}
-                    >
-                      <Avatar
-                        src={formatImageLink(
-                          author?.fields?.avatar?.fields?.file?.url ??
-                            "https://via.placeholder.com/100x100",
-                        )}
-                        className="h-10 w-10 rounded-full object-cover object-center"
-                        alt={author.fields.name}
-                      />
-                    </Tooltip>
-                  ))}
-                </AvatarGroup>
-              )}
+        <InteractionBar
+          article={article}
+          isLoadingMetrics={isLoadingMetrics}
+          likeLoading={likeLoading}
+          dislikeLoading={dislikeLoading}
+          heartLoading={heartLoading}
+          isLiked={isLiked}
+          isDisliked={isDisliked}
+          isHearted={isHearted}
+          likeCount={likeCount}
+          dislikeCount={dislikeCount}
+          heartCount={heartCount}
+          error={error}
+          onLike={handleLike}
+          onDislike={handleDislike}
+          onHeart={handleHeart}
+        />
 
-              {props.data.fields?.authors?.length === 1 && (
-                <Image
-                  src={formatImageLink(
-                    props?.data?.fields?.authors[0]?.fields?.avatar?.fields
-                      ?.file?.url ?? "https://via.placeholder.com/100x100",
-                  )}
-                  width={40}
-                  height={40}
-                  className="h-10 w-10 rounded-full object-cover object-center"
-                  alt="Profile"
-                />
-              )}
+        <ArticleAuthor article={props.data} />
 
-              <FlexContainer variant="column-start" gap="xs">
-                <p className="flex gap-1.5 text-sm font-medium text-gray-900 dark:text-gray-100">
-                  By{" "}
-                  {props.data.fields.authors.map((author, index) => (
-                    <Link
-                      key={author.sys.id}
-                      href={`/author/${author.sys.id}`}
-                      className="text-amber-600 hover:text-amber-700 hover:underline"
-                    >
-                      {author.fields.name}
-                      {index < props.data.fields.authors.length - 1 && ","}
-                    </Link>
-                  ))}
-                </p>
-                <p className="text-xs text-gray-500 dark:text-gray-400">
-                  <time itemProp="datePublished" dateTime={publishDate}>
-                    {props?.data?.fields?.date
-                      ? dayjs(props?.data?.fields?.date)
-                          .tz("Asia/Kolkata")
-                          .format("MMMM DD, YYYY")
-                      : "Date not available"}
-                    {" • "}
-                    {estimateReadingTime(
-                      documentToHtmlString(props.data.fields.body as Document),
-                    )}{" "}
-                    min read
-                  </time>
-                </p>
-              </FlexContainer>
-            </FlexContainer>
+        <RecommendedArticles
+          articles={props.recommendedArticles}
+          currentCategory={{
+            title: props.data.fields.category?.[0]?.fields?.name || "Legal",
+            slug: props.data.fields.category?.[0]?.fields?.slug || "legal",
+          }}
+        />
 
-            {/* Minimal share button */}
-            <Button
-              variant="outline"
-              size="sm"
-              className="gap-2 rounded-full border-gray-200 bg-transparent hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800"
-              onClick={onOpen}
-            >
-              <Share className="h-4 w-4" />
-              <span className="hidden text-sm sm:inline">Share</span>
-            </Button>
-          </FlexContainer>
-        </section>
-
-        {/* Main Article Content - Hero Image and Content */}
-        <article className="article-content" itemProp="articleBody">
-          {/* Hero Image */}
-          <Image
-            src={formatImageLink(thumbnail)}
-            width={1280}
-            height={720}
-            onClick={() => {
-              window.open(formatImageLink(thumbnail), "_blank");
-            }}
-            className="h-[400px] w-full cursor-pointer rounded-xl border object-cover object-center transition-transform hover:scale-[1.02]"
-            alt={props.data.fields.title}
-            itemProp="image"
-            priority
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-          />
-
-          {/* Article Content */}
-          <div className="mt-8">
-            <BlogContent data={props.data} />
-          </div>
-        </article>
-
-        {/* Article Engagement Section - After Content */}
-        <section className="article-engagement border-t border-gray-100 pt-6 dark:border-gray-800">
-          <FlexContainer variant="column-start" gap="md">
-            {/* Article Stats */}
-            <FlexContainer
-              variant="row-start"
-              gap="sm"
-              alignItems="center"
-              className="mb-4"
-            >
-              {isLoadingMetrics ? (
-                <div className="flex items-center gap-2 rounded-full bg-gray-100 px-3 py-1.5 dark:bg-gray-800">
-                  <Loader className="h-3 w-3 animate-spin" />
-                  <span className="text-xs">Loading...</span>
-                </div>
-              ) : (
-                <div className="flex items-center gap-2 rounded-full bg-gray-100 px-3 py-1.5 dark:bg-gray-800">
-                  <Eye className="h-3 w-3 text-gray-600 dark:text-gray-400" />
-                  <span className="text-xs font-medium text-gray-700 dark:text-gray-300">
-                    {article?.views?.toLocaleString()} views
-                  </span>
-                </div>
-              )}
-            </FlexContainer>
-
-            {/* Engagement Buttons */}
-            <FlexContainer variant="row-start" gap="sm" wrap="wrap">
-              {/* Heart button */}
-              {isLoadingMetrics ? (
-                <Button
-                  disabled
-                  size="sm"
-                  className="rounded-full bg-pink-100 text-pink-600 hover:bg-pink-200 dark:bg-pink-900/20 dark:text-pink-400"
-                >
-                  <Loader className="h-4 w-4 animate-spin" />
-                </Button>
-              ) : (
-                <Button
-                  onClick={handleHeart}
-                  disabled={
-                    isLoadingMetrics || heartLoading || isLiked || isDisliked
-                  }
-                  loading={heartLoading}
-                  size="sm"
-                  variant="outline"
-                  className="gap-2 rounded-full border-pink-200 bg-pink-50 text-pink-600 hover:bg-pink-100 dark:border-pink-800 dark:bg-pink-900/20 dark:text-pink-400 dark:hover:bg-pink-900/30"
-                >
-                  {error ? (
-                    <Ban className="h-4 w-4" />
-                  ) : (
-                    <>
-                      <Heart className="h-4 w-4" />
-                      <span className="text-sm">{heartCount}</span>
-                    </>
-                  )}
-                </Button>
-              )}
-
-              {/* Like button */}
-              {isLoadingMetrics ? (
-                <Button
-                  disabled
-                  size="sm"
-                  className="rounded-full bg-blue-100 text-blue-600 hover:bg-blue-200 dark:bg-blue-900/20 dark:text-blue-400"
-                >
-                  <Loader className="h-4 w-4 animate-spin" />
-                </Button>
-              ) : (
-                <Button
-                  onClick={handleLike}
-                  disabled={
-                    isLoadingMetrics || likeLoading || isHearted || isDisliked
-                  }
-                  loading={likeLoading}
-                  size="sm"
-                  variant="outline"
-                  className="gap-2 rounded-full border-blue-200 bg-blue-50 text-blue-600 hover:bg-blue-100 dark:border-blue-800 dark:bg-blue-900/20 dark:text-blue-400 dark:hover:bg-blue-900/30"
-                >
-                  {error ? (
-                    <Ban className="h-4 w-4" />
-                  ) : (
-                    <>
-                      <ThumbsUp className="h-4 w-4" />
-                      <span className="text-sm">{likeCount}</span>
-                    </>
-                  )}
-                </Button>
-              )}
-
-              {/* Dislike button */}
-              {isLoadingMetrics ? (
-                <Button
-                  disabled
-                  size="sm"
-                  className="rounded-full bg-red-100 text-red-600 hover:bg-red-200 dark:bg-red-900/20 dark:text-red-400"
-                >
-                  <Loader className="h-4 w-4 animate-spin" />
-                </Button>
-              ) : (
-                <Button
-                  onClick={handleDislike}
-                  disabled={
-                    isLoadingMetrics || dislikeLoading || isHearted || isLiked
-                  }
-                  loading={dislikeLoading}
-                  size="sm"
-                  variant="outline"
-                  className="gap-2 rounded-full border-red-200 bg-red-50 text-red-600 hover:bg-red-100 dark:border-red-800 dark:bg-red-900/20 dark:text-red-400 dark:hover:bg-red-900/30"
-                >
-                  <ThumbsDown className="h-4 w-4" />
-                  <span className="text-sm">{dislikeCount}</span>
-                </Button>
-              )}
-            </FlexContainer>
-          </FlexContainer>
-        </section>
-
-        {/* Article Tags and Categories */}
-        <aside className="article-aside border-t border-gray-100 pt-6 dark:border-gray-800">
-          <FlexContainer variant="column-start" gap="md">
-            <FlexContainer
-              variant="row-between"
-              alignItems="center"
-              className="mb-3"
-            >
-              <h4 className="text-sm font-semibold uppercase tracking-wide text-gray-700 dark:text-gray-300">
-                Categories
-              </h4>
-              <Button
-                variant="outline"
-                size="sm"
-                className="gap-2 rounded-full border-gray-200 bg-transparent hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800"
-                onClick={onOpen}
-              >
-                <Share className="h-4 w-4" />
-                <span className="hidden text-sm sm:inline">Share</span>
-              </Button>
-            </FlexContainer>
-
-            <FlexContainer variant="row-start" gap="sm" wrap="wrap">
-              {props.data.fields.category.map((category) => (
-                <Link
-                  key={category.sys.id}
-                  href={`/category/${category.fields.slug}`}
-                  className="transition-colors hover:opacity-80"
-                >
-                  <Badge
-                    variant="outline"
-                    className="rounded-full border-amber-200 bg-amber-50 px-3 py-1.5 text-sm font-medium text-amber-700 hover:bg-amber-100 dark:border-amber-800 dark:bg-amber-900/20 dark:text-amber-400 dark:hover:bg-amber-900/30"
-                  >
-                    {category.fields.name}
-                  </Badge>
-                </Link>
-              ))}
-            </FlexContainer>
-          </FlexContainer>
-        </aside>
-
-        {/* Author Information Section */}
-        <section className="author-section">
-          <FlexContainer variant="column-start" className="mt-5">
-            <FlexContainer variant="row-start" gap="sm">
-              {props.data.fields?.authors?.length > 1 && (
-                <AvatarGroup isBordered>
-                  {props.data.fields?.authors.map((author) => (
-                    <Tooltip
-                      showArrow
-                      placement="right"
-                      classNames={{
-                        base: [
-                          // arrow color
-                          "before:bg-neutral-400 dark:before:bg-white",
-                        ],
-                        content: [
-                          "py-2 px-4 shadow-xl text-nowrap break-keep text-center w-auto",
-                          "text-black bg-gradient-to-br from-white to-neutral-400",
-                        ],
-                      }}
-                      key={author.sys.id}
-                      content={author.fields.name}
-                    >
-                      <Avatar
-                        src={formatImageLink(
-                          author?.fields?.avatar?.fields?.file?.url ??
-                            "https://via.placeholder.com/100x100",
-                        )}
-                        // size="md"
-                        className="h-20 w-20 rounded-[80px] object-cover object-center"
-                        alt={author.fields.name}
-                      />
-                    </Tooltip>
-                  ))}
-                </AvatarGroup>
-              )}{" "}
-              {props.data.fields?.authors?.length === 1 && (
-                <Image
-                  src={formatImageLink(
-                    props?.data?.fields?.authors[0]?.fields?.avatar?.fields
-                      ?.file?.url ?? "https://via.placeholder.com/100x100",
-                  )}
-                  width={100}
-                  height={100}
-                  className="h-20 w-20 rounded-[80px] object-cover object-center"
-                  alt="Profile"
-                />
-              )}
-            </FlexContainer>
-            <FlexContainer variant="row-between" alignItems="center">
-              <h3 className="text-2xl font-medium">
-                Written By{" "}
-                {props.data.fields?.authors
-                  .map((author) => author.fields.name)
-                  .join(", ")}
-              </h3>
-              {/* <Button className="rounded-3xl bg-blue-600 hover:bg-blue-500 dark:bg-blue-600 dark:text-white dark:hover:bg-blue-500">
-            Follow
-          </Button> */}
-            </FlexContainer>
-            {props.data.fields?.authors.length === 1 && (
-              <p className="max-w-2xl text-base font-normal text-gray-400">
-                {props.data.fields.authors[0]?.fields?.bio}
-              </p>
-            )}
-          </FlexContainer>
-        </section>
-
-        {/* Recommended Articles Section */}
-        {props.recommendedArticles.length > 0 && (
-          <section className="recommended-articles">
-            <FlexContainer variant="column-start" className="mt-5" gap="xl">
-              <h3 className="text-2xl font-medium">Recommended Articles</h3>
-              <div className="grid items-stretch gap-5 md:grid-cols-2">
-                {props.recommendedArticles?.map((article) => {
-                  return (
-                    <a key={article.sys.id} href={`/${article.fields.slug}`}>
-                      <FlexContainer
-                        variant="column-start"
-                        className="h-full rounded-3xl bg-zinc-50 p-3 dark:bg-zinc-700"
-                      >
-                        <Image
-                          src={formatImageLink(
-                            article.fields.image.fields.file.url,
-                          )}
-                          width={300}
-                          height={200}
-                          className="h-40 w-full rounded-xl object-cover object-center"
-                          alt="Cover"
-                        />
-                        <h3 className="text-lg font-semibold">
-                          {article.fields.title}
-                        </h3>
-                      </FlexContainer>
-                    </a>
-                  );
-                })}
-              </div>
-            </FlexContainer>
-          </section>
-        )}
-
-        {/* Comments Section */}
-        <section id="comment" className="comments-section">
+        {/* Comments Section Placeholder */}
+        <section id="comment" className="comments-section mt-10">
           <FlexContainer variant="column-start" className="mt-5" gap="xl">
             <h3 className="text-2xl font-medium">Comments</h3>
             <div className="rounded-lg bg-gray-50 p-6 text-center dark:bg-gray-800">
@@ -1220,31 +395,6 @@ const Index = (props: Props) => {
             )}
           </ModalContent>
         </Modal>
-
-        {/* FAQ Schema Component - for articles that have Q&A content */}
-        {/* {(() => {
-          // Extract potential FAQs from article content
-          const faqPattern =
-            /(?:Q(?:uestion)?[:\s]*([^?]+\?)\s*A(?:nswer)?[:\s]*([^Q]+))/gi;
-          const matches: { question: string; answer: string }[] = [];
-          let match;
-
-          while ((match = faqPattern.exec(articleContent)) !== null) {
-            matches.push({
-              question: match[1].trim(),
-              answer: match[2].replace(/<[^>]*>/g, "").trim(),
-            });
-          }
-
-          if (matches.length > 0) {
-            return generateFAQSchema({
-              faqs: matches,
-              articleTitle: props.data.fields.title,
-              articleUrl: `https://legalcyfle.in/${props.data.fields.slug}`,
-            });
-          }
-          return null;
-        })()} */}
       </FlexContainer>
     </main>
   );

@@ -175,7 +175,7 @@ const Navbar = (_props: Props) => {
       <FlexContainer
         variant="row-between"
         alignItems="center"
-        className="sticky top-0 z-[900] h-[80px] border-b border-gray-200 bg-white px-5 py-5 dark:border-gray-700 dark:bg-gray-900 md:px-10"
+        className="sticky top-0 z-[900] mx-auto h-[80px] max-w-7xl border-b border-gray-200 bg-white px-5 py-5 dark:border-gray-700 dark:bg-gray-900 md:px-10"
       >
         <FlexContainer gap="2xl" alignItems="center">
           <Link
@@ -219,6 +219,7 @@ const Navbar = (_props: Props) => {
             </Link>
             <Dropdown title="Resources">
               <DropdownContent>
+                <DropdownItem href="/category/articles">Articles</DropdownItem>
                 <DropdownItem href="/category/blogs">Blog</DropdownItem>
                 <DropdownItem href="/category/news">News</DropdownItem>
                 <DropdownItem href="/category/law-notes">

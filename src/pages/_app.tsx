@@ -8,6 +8,7 @@ import { useGlobalContext } from "@/context/GlobalContext";
 import "@/styles/globals.css";
 import { GeistMono } from "geist/font/mono";
 import { GeistSans } from "geist/font/sans";
+import { playfair, lora } from "@/lib/fonts";
 import { ChevronUp } from "lucide-react";
 import type { AppProps } from "next/app";
 import Head from "next/head";
@@ -47,7 +48,9 @@ export default function App({ Component, pageProps }: AppProps) {
         />
       </Head>
       <Navbar />
-      <main className={`${GeistSans.variable} ${GeistMono.variable}`}>
+      <main
+        className={`${GeistSans.variable} ${GeistMono.variable} ${playfair.variable} ${lora.variable} font-lora`}
+      >
         <Component {...pageProps} />
       </main>
       <FlexContainer variant="column-end" className="fixed bottom-5 right-5">

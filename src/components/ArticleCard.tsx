@@ -25,15 +25,15 @@ const ArticleCard = ({ article }: Props) => {
   return (
     <div
       key={article.sys.id}
-      className="relative flex flex-col items-start justify-start gap-4 border-b border-gray-200 bg-white transition-colors duration-200 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-900 dark:hover:bg-gray-800 md:flex-row md:py-6 md:*:w-auto"
+      className="relative flex flex-col items-start justify-start gap-4 pt-4 transition-colors duration-200 hover:bg-gray-50 dark:hover:bg-gray-800 md:flex-row md:*:w-auto"
     >
-      <div className="relative w-full">
+      <div className="relative w-full md:w-auto">
         <Image
           src={formatImageLink(thumbnail)}
           alt={article.fields.title}
           width={500}
           height={500}
-          className="h-[180px] w-full object-cover md:h-[140px] md:w-[240px]"
+          className="h-[200px] w-full object-cover grayscale transition-all duration-500 hover:grayscale-0 md:h-[160px] md:w-[260px]"
         />
         <a
           href={`/${article.fields.slug}`}
@@ -46,15 +46,15 @@ const ArticleCard = ({ article }: Props) => {
       <FlexContainer
         variant="column-start"
         wrap="wrap"
-        className="h-full flex-1 px-4 pb-4 pt-2 md:px-6 md:py-0"
+        className="h-full flex-1 px-0 pb-2 md:px-4 md:py-0"
         gap="sm"
       >
-        <FlexContainer variant="row-start" className="gap-1">
+        <FlexContainer variant="row-start" className="gap-2">
           {article.fields.category?.map((category) => (
             <a href={`/category/${category.fields.slug}`} key={category.sys.id}>
               <span
                 key={category.sys.id}
-                className="border-0 bg-transparent px-1 py-0 text-xs font-bold uppercase tracking-wider text-blue-600 transition-colors hover:bg-transparent hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
+                className="border border-gray-300 bg-transparent px-2 py-0.5 font-sans text-[10px] font-bold uppercase tracking-widest text-gray-600 transition-colors hover:border-gray-900 hover:text-gray-900 dark:border-gray-600 dark:text-gray-400 dark:hover:border-gray-300 dark:hover:text-gray-200"
               >
                 {category.fields.name}
               </span>
@@ -63,13 +63,13 @@ const ArticleCard = ({ article }: Props) => {
         </FlexContainer>
         <a
           href={"/" + article.fields.slug}
-          className="max-w-none text-xl font-bold leading-tight text-gray-900 transition-colors duration-200 hover:text-blue-600 dark:text-white md:text-2xl"
+          className="font-playfair max-w-none text-xl font-bold leading-tight text-gray-900 transition-colors duration-200 hover:text-blue-800 dark:text-white md:text-2xl"
         >
           {article.fields.title}
         </a>
-        <p className="max-w-none text-sm leading-relaxed text-gray-600 dark:text-gray-400">
-          {article.fields.description?.length > 120 ? (
-            <span>{article.fields.description.substring(0, 120)}...</span>
+        <p className="font-lora max-w-none text-sm leading-relaxed text-gray-600 dark:text-gray-400">
+          {article.fields.description?.length > 140 ? (
+            <span>{article.fields.description.substring(0, 140)}...</span>
           ) : (
             article.fields.description
           )}
@@ -78,24 +78,27 @@ const ArticleCard = ({ article }: Props) => {
           variant="row-start"
           alignItems="center"
           wrap="wrap"
-          className="mt-2 gap-3 md:max-w-none"
+          className="mt-auto gap-3 pt-2 md:max-w-none"
         >
           <FlexContainer alignItems="center" className="relative" wrap="wrap">
             <FlexContainer gap="sm" alignItems="center" wrap="wrap">
+              <span className="font-sans text-[10px] font-bold uppercase tracking-widest text-gray-500">
+                By
+              </span>
               {article.fields?.authors?.map((author) => (
                 <a
                   href={"/author/" + author.sys.id}
                   key={author.sys.id}
-                  className="text-nowrap text-xs font-bold uppercase tracking-wider text-green-600 transition-colors duration-200 hover:text-green-800 dark:text-green-400 dark:hover:text-green-300"
+                  className="text-nowrap font-sans text-xs font-bold uppercase tracking-wider text-gray-900 underline decoration-gray-300 underline-offset-4 transition-all hover:decoration-gray-900 dark:text-gray-200 dark:decoration-gray-600 dark:hover:decoration-gray-300"
                 >
                   {author.fields.name}
                 </a>
               ))}
             </FlexContainer>
-            <span className="text-xs font-bold text-gray-400 dark:text-gray-600">
-              •
+            <span className="mx-2 text-xs font-bold text-gray-300 dark:text-gray-700">
+              |
             </span>
-            <p className="text-nowrap text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
+            <p className="text-nowrap font-sans text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
               {article?.fields?.date
                 ? dayjs(article?.fields?.date)
                     .tz("Asia/Kolkata")

@@ -29,7 +29,7 @@ import {
   SheetTrigger,
 } from "./ui/sheet";
 import { cn } from "@/lib/utils";
-import { playfair } from "@/lib/fonts";
+import { italiana, playfair } from "@/lib/fonts";
 
 const QUICK_LINKS = [
   {
@@ -183,8 +183,8 @@ const Navbar = (_props: Props) => {
           <Link
             href="/"
             className={cn(
-              "text-2xl font-black tracking-tighter text-black dark:text-white",
-              playfair.className,
+              "text-2xl font-black tracking-normal text-black dark:text-white",
+              italiana.className,
             )}
           >
             LegalCyfle

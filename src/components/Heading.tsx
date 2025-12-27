@@ -10,9 +10,7 @@ type Props = {
 const Heading = ({ children, className, level = 1 }: Props) => {
   const Tag = `h${level}` as keyof JSX.IntrinsicElements;
 
-  return (
-    <Tag className={cn("font-giest-sans text-4xl", className)}>{children}</Tag>
-  );
+  return <Tag className={cn("text-4xl", className)}>{children}</Tag>;
 };
 
 export default Heading;

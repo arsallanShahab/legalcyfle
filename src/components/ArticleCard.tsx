@@ -1,4 +1,4 @@
-import { estimateReadingTime, formatImageLink } from "@/lib/utils";
+import { cn, estimateReadingTime, formatImageLink } from "@/lib/utils";
 import { BlogEntry } from "@/types/contentful/blog";
 import { documentToHtmlString } from "@contentful/rich-text-html-renderer";
 import { Document } from "@contentful/rich-text-types";
@@ -11,6 +11,7 @@ import { Badge } from "./ui/badge";
 // tz
 import tz from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
+import { italiana } from "@/lib/fonts";
 dayjs.extend(utc);
 dayjs.extend(tz);
 
@@ -63,7 +64,10 @@ const ArticleCard = ({ article }: Props) => {
         </FlexContainer>
         <a
           href={"/" + article.fields.slug}
-          className="font-playfair max-w-none text-xl font-bold leading-tight text-gray-900 transition-colors duration-200 hover:text-blue-800 dark:text-white md:text-2xl"
+          className={cn(
+            "max-w-none text-xl font-bold leading-tight text-gray-900 transition-colors duration-200 hover:text-blue-800 dark:text-white md:text-2xl",
+            italiana.className,
+          )}
         >
           {article.fields.title}
         </a>

@@ -28,6 +28,7 @@ const config = {
         "giest-mono": ["var(--font-geist-mono)"],
         playfair: ["var(--font-playfair)", "serif"],
         lora: ["var(--font-lora)", "serif"],
+        italiana: ["var(--font-italiana)", "serif"],
       },
       keyframes: {
         "accordion-down": {

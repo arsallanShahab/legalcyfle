@@ -19,7 +19,7 @@ import { useRouter } from "next/router";
 import React from "react";
 import FlexContainer from "./FlexContainer";
 import { cn } from "@/lib/utils";
-import { lora, playfair } from "@/lib/fonts";
+import { italiana, lora, playfair } from "@/lib/fonts";
 
 const Footer = () => {
   const { setDisclaimerAccepted } = useGlobalContext();
@@ -52,8 +52,8 @@ const Footer = () => {
           <div className="max-w-4xl text-left">
             <h3
               className={cn(
-                "mb-6 text-3xl font-bold tracking-tight text-gray-900 dark:text-white",
-                playfair.className,
+                "mb-6 text-3xl font-bold tracking-normal text-gray-900 dark:text-white",
+                italiana.className,
               )}
             >
               Disclaimer
@@ -130,8 +130,8 @@ const Footer = () => {
             <Link
               href="/"
               className={cn(
-                "text-4xl font-black tracking-tighter text-black dark:text-white",
-                playfair.className,
+                "text-4xl font-black tracking-normal text-black dark:text-white",
+                italiana.className,
               )}
             >
               LegalCyfle
@@ -163,7 +163,7 @@ const Footer = () => {
             <h4
               className={cn(
                 "text-lg font-bold tracking-wide text-black dark:text-white",
-                playfair.className,
+                italiana.className,
               )}
             >
               Opportunities
@@ -191,7 +191,7 @@ const Footer = () => {
             <h4
               className={cn(
                 "text-lg font-bold tracking-wide text-black dark:text-white",
-                playfair.className,
+                italiana.className,
               )}
             >
               Company
@@ -219,7 +219,7 @@ const Footer = () => {
             <h4
               className={cn(
                 "text-lg font-bold tracking-wide text-black dark:text-white",
-                playfair.className,
+                italiana.className,
               )}
             >
               Resources

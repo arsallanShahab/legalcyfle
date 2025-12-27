@@ -1,7 +1,8 @@
 import FlexContainer from "@/components/FlexContainer";
 import Heading from "@/components/Heading";
 import { Button } from "@/components/ui/button";
-import { formatImageLink } from "@/lib/utils";
+import { italiana } from "@/lib/fonts";
+import { cn, formatImageLink } from "@/lib/utils";
 import { BlogEntry } from "@/types/contentful/blog";
 import { ArrowRight } from "lucide-react";
 import Image from "next/image";
@@ -44,7 +45,10 @@ const ArticleAuthor: React.FC<ArticleAuthorProps> = ({ article }) => {
             </span>
             <Heading
               level={3}
-              className="font-playfair mb-2 text-2xl font-bold text-gray-900 dark:text-white"
+              className={cn(
+                "mb-2 text-2xl font-semibold text-black dark:text-white",
+                italiana.className,
+              )}
             >
               {authorName}
             </Heading>

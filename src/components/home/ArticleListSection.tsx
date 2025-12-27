@@ -1,6 +1,8 @@
 import AdWrapper from "@/components/AdWrapper";
 import ArticleCard from "@/components/ArticleCard";
 import FlexContainer from "@/components/FlexContainer";
+import { italiana } from "@/lib/fonts";
+import { cn } from "@/lib/utils";
 import { BlogEntry } from "@/types/contentful/blog";
 
 interface ArticleListSectionProps {
@@ -17,7 +19,12 @@ export default function ArticleListSection({
   return (
     <FlexContainer variant="column-start" className="px-3 md:px-5 lg:px-10">
       <div className="mb-4 mt-6 w-full border-b-2 border-zinc-200 pb-2 dark:border-white">
-        <h3 className="font-playfair text-3xl font-bold tracking-tight text-gray-900 dark:text-white">
+        <h3
+          className={cn(
+            "text-3xl font-bold tracking-tight text-gray-900 dark:text-white",
+            italiana.className,
+          )}
+        >
           {title}
         </h3>
       </div>

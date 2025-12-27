@@ -546,8 +546,8 @@ export const getStaticProps = async (
         data: safeJsonArticle || {},
         recommendedArticles: safeRecommendedArticles || [],
       },
-      // Revalidate the page every hour
-      revalidate: 3600,
+      // Revalidate the page every week
+      revalidate: 604800,
     };
   } catch (error) {
     console.log("Error in getStaticProps:", error);

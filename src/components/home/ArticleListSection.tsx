@@ -1,7 +1,7 @@
 import AdWrapper from "@/components/AdWrapper";
 import ArticleCard from "@/components/ArticleCard";
 import FlexContainer from "@/components/FlexContainer";
-import { italiana } from "@/lib/fonts";
+import { italiana, playfair } from "@/lib/fonts";
 import { cn } from "@/lib/utils";
 import { BlogEntry } from "@/types/contentful/blog";
 
@@ -22,7 +22,7 @@ export default function ArticleListSection({
         <h3
           className={cn(
             "text-3xl font-bold tracking-tight text-gray-900 dark:text-white",
-            italiana.className,
+            playfair.className,
           )}
         >
           {title}

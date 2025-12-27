@@ -11,7 +11,7 @@ import { Badge } from "./ui/badge";
 // tz
 import tz from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
-import { italiana } from "@/lib/fonts";
+import { italiana, playfair } from "@/lib/fonts";
 dayjs.extend(utc);
 dayjs.extend(tz);
 
@@ -66,12 +66,12 @@ const ArticleCard = ({ article }: Props) => {
           href={"/" + article.fields.slug}
           className={cn(
             "max-w-none text-xl font-bold leading-tight text-gray-900 transition-colors duration-200 hover:text-blue-800 dark:text-white md:text-2xl",
-            italiana.className,
+            playfair.className,
           )}
         >
           {article.fields.title}
         </a>
-        <p className="font-lora max-w-none text-sm leading-relaxed text-gray-600 dark:text-gray-400">
+        <p className="max-w-none font-lora text-sm leading-relaxed text-gray-600 dark:text-gray-400">
           {article.fields.description?.length > 140 ? (
             <span>{article.fields.description.substring(0, 140)}...</span>
           ) : (

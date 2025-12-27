@@ -1,7 +1,7 @@
 import FlexContainer from "@/components/FlexContainer";
 import Heading from "@/components/Heading";
 import { Button } from "@/components/ui/button";
-import { italiana } from "@/lib/fonts";
+import { italiana, playfair } from "@/lib/fonts";
 import { cn, formatImageLink } from "@/lib/utils";
 import { BlogEntry } from "@/types/contentful/blog";
 import { ArrowRight } from "lucide-react";
@@ -47,12 +47,12 @@ const ArticleAuthor: React.FC<ArticleAuthorProps> = ({ article }) => {
               level={3}
               className={cn(
                 "mb-2 text-2xl font-semibold text-black dark:text-white",
-                italiana.className,
+                playfair.className,
               )}
             >
               {authorName}
             </Heading>
-            <p className="font-lora mb-4 max-w-xl text-base leading-relaxed text-gray-600 dark:text-gray-300">
+            <p className="mb-4 max-w-xl font-lora text-base leading-relaxed text-gray-600 dark:text-gray-300">
               {authorBio}
             </p>
             <Link href={`/author/${authorId}`}>

@@ -53,7 +53,7 @@ const Footer = () => {
             <h3
               className={cn(
                 "mb-6 text-3xl font-bold tracking-normal text-gray-900 dark:text-white",
-                italiana.className,
+                playfair.className,
               )}
             >
               Disclaimer
@@ -131,12 +131,12 @@ const Footer = () => {
               href="/"
               className={cn(
                 "text-4xl font-black tracking-normal text-black dark:text-white",
-                italiana.className,
+                playfair.className,
               )}
             >
               LegalCyfle
             </Link>
-            <p className="font-lora max-w-sm text-sm leading-relaxed text-gray-600 dark:text-gray-400">
+            <p className="max-w-sm font-lora text-sm leading-relaxed text-gray-600 dark:text-gray-400">
               LegalCyfle is a platform for legal professionals to share their
               knowledge and insights. The information provided on this platform
               is for educational purposes only.
@@ -163,7 +163,7 @@ const Footer = () => {
             <h4
               className={cn(
                 "text-lg font-bold tracking-wide text-black dark:text-white",
-                italiana.className,
+                playfair.className,
               )}
             >
               Opportunities
@@ -191,7 +191,7 @@ const Footer = () => {
             <h4
               className={cn(
                 "text-lg font-bold tracking-wide text-black dark:text-white",
-                italiana.className,
+                playfair.className,
               )}
             >
               Company
@@ -219,7 +219,7 @@ const Footer = () => {
             <h4
               className={cn(
                 "text-lg font-bold tracking-wide text-black dark:text-white",
-                italiana.className,
+                playfair.className,
               )}
             >
               Resources

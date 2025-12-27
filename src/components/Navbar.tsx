@@ -29,7 +29,7 @@ import {
   SheetTrigger,
 } from "./ui/sheet";
 import { cn } from "@/lib/utils";
-import { italiana, playfair } from "@/lib/fonts";
+import { croissantOne, italiana, playfair } from "@/lib/fonts";
 
 const QUICK_LINKS = [
   {
@@ -184,12 +184,12 @@ const Navbar = (_props: Props) => {
             href="/"
             className={cn(
               "text-2xl font-black tracking-normal text-black dark:text-white",
-              italiana.className,
+              playfair.className,
             )}
           >
             LegalCyfle
           </Link>
-          <FlexContainer className="*:font-playfair hidden items-center *:text-xs *:font-bold *:uppercase *:tracking-wide lg:flex">
+          <FlexContainer className="hidden items-center *:font-playfair *:text-xs *:font-bold *:uppercase *:tracking-wide lg:flex">
             <Link
               href="/category/publications"
               className="px-3 py-2 text-gray-700 transition-colors duration-200 hover:text-black dark:text-gray-300 dark:hover:text-white"
@@ -302,14 +302,14 @@ const Navbar = (_props: Props) => {
               >
                 <Link
                   href="/category/publications"
-                  className="font-playfair border-b border-gray-200 py-3 text-sm font-bold uppercase tracking-wide text-gray-900 dark:border-gray-700 dark:text-gray-200"
+                  className="border-b border-gray-200 py-3 font-playfair text-sm font-bold uppercase tracking-wide text-gray-900 dark:border-gray-700 dark:text-gray-200"
                 >
                   Publications
                 </Link>
                 <Link
                   target="_blank"
                   href="https://www.indiacode.nic.in/"
-                  className="font-playfair border-b border-gray-200 py-3 text-sm font-bold uppercase tracking-wide text-gray-900 dark:border-gray-700 dark:text-gray-200"
+                  className="border-b border-gray-200 py-3 font-playfair text-sm font-bold uppercase tracking-wide text-gray-900 dark:border-gray-700 dark:text-gray-200"
                 >
                   Bare Acts
                 </Link>
@@ -396,13 +396,13 @@ const Navbar = (_props: Props) => {
                 </Accordion>
                 <Link
                   href="/internships"
-                  className="font-playfair mb-3 py-3 text-sm font-bold uppercase tracking-wide text-gray-900 dark:text-gray-200"
+                  className="mb-3 py-3 font-playfair text-sm font-bold uppercase tracking-wide text-gray-900 dark:text-gray-200"
                 >
                   Internships
                 </Link>
                 <Link
                   href="/jobs"
-                  className="font-playfair mb-3 py-3 text-sm font-bold uppercase tracking-wide text-gray-900 dark:text-gray-200"
+                  className="mb-3 py-3 font-playfair text-sm font-bold uppercase tracking-wide text-gray-900 dark:text-gray-200"
                 >
                   Jobs
                 </Link>

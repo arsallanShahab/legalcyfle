@@ -310,32 +310,32 @@ const renderNode: { [key: string]: (node: Node) => string } = {
 
   [BLOCKS.HEADING_1]: (node: Node) => {
     const text = processTextContent(node.content);
-    return `<h1 class="mt-10 mb-6 font-italiana text-3xl md:text-4xl text-gray-900 leading-tight tracking-tight border-b border-gray-200 pb-4">${text}</h1>`;
+    return `<h1 class="mt-10 mb-6 font-playfair text-3xl md:text-4xl text-gray-900 leading-tight tracking-tight border-b border-gray-200 pb-4">${text}</h1>`;
   },
 
   [BLOCKS.HEADING_2]: (node: Node) => {
     const text = processTextContent(node.content);
-    return `<h2 class="mt-8 mb-4 font-italiana text-2xl md:text-3xl text-gray-900 leading-snug tracking-tight">${text}</h2>`;
+    return `<h2 class="mt-8 mb-4 font-playfair text-2xl md:text-3xl text-gray-900 leading-snug tracking-tight">${text}</h2>`;
   },
 
   [BLOCKS.HEADING_3]: (node: Node) => {
     const text = processTextContent(node.content);
-    return `<h3 class="mt-6 mb-3 font-italiana text-xl md:text-2xl text-gray-900 leading-snug">${text}</h3>`;
+    return `<h3 class="mt-6 mb-3 font-playfair text-xl md:text-2xl text-gray-900 leading-snug">${text}</h3>`;
   },
 
   [BLOCKS.HEADING_4]: (node: Node) => {
     const text = processTextContent(node.content);
-    return `<h4 class="mt-5 mb-2 font-italiana text-lg md:text-xl text-gray-900 leading-snug">${text}</h4>`;
+    return `<h4 class="mt-5 mb-2 font-playfair text-lg md:text-xl text-gray-900 leading-snug">${text}</h4>`;
   },
 
   [BLOCKS.HEADING_5]: (node: Node) => {
     const text = processTextContent(node.content);
-    return `<h5 class="mt-4 mb-2 font-italiana text-base md:text-lg text-gray-900 uppercase tracking-wide">${text}</h5>`;
+    return `<h5 class="mt-4 mb-2 font-playfair text-base md:text-lg text-gray-900 uppercase tracking-wide">${text}</h5>`;
   },
 
   [BLOCKS.HEADING_6]: (node: Node) => {
     const text = processTextContent(node.content);
-    return `<h6 class="mt-4 mb-2 font-italiana text-sm md:text-base text-gray-700 uppercase tracking-wider">${text}</h6>`;
+    return `<h6 class="mt-4 mb-2 font-playfair text-sm md:text-base text-gray-700 uppercase tracking-wider">${text}</h6>`;
   },
 
   [BLOCKS.HR]: () => {
@@ -382,7 +382,7 @@ const BlogContent = ({ data }: BlogContentProps) => {
 
   if (!data?.fields?.body) {
     return (
-      <div className="font-lora w-full max-w-none py-8 text-center text-gray-500">
+      <div className="w-full max-w-none py-8 text-center font-lora text-gray-500">
         No content available
       </div>
     );
@@ -405,7 +405,7 @@ const BlogContent = ({ data }: BlogContentProps) => {
   } catch (error) {
     console.error("Error rendering blog content:", error);
     return (
-      <div className="font-lora w-full max-w-none py-8 text-center text-red-500">
+      <div className="w-full max-w-none py-8 text-center font-lora text-red-500">
         Error loading content
       </div>
     );

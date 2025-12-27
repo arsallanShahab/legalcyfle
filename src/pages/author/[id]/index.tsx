@@ -4,7 +4,8 @@ import FlexContainer from "@/components/FlexContainer";
 import { Button } from "@/components/ui/button";
 import Wrapper from "@/components/Wrapper";
 import client from "@/lib/contentful";
-import { formatImageLink } from "@/lib/utils";
+import { playfair } from "@/lib/fonts";
+import { cn, formatImageLink } from "@/lib/utils";
 import { Author } from "@/types/contentful/author";
 import { BlogEntries } from "@/types/contentful/blog";
 import { GetStaticProps } from "next";
@@ -74,7 +75,7 @@ const Index = (props: Props) => {
               className="h-20 w-20 rounded-full border"
             />
           </div>
-          <h3 className="text-4xl font-semibold text-green-500">
+          <h3 className={cn("text-4xl font-semibold", playfair.className)}>
             {props.data.author.fields.name}
           </h3>
           <p className="max-w-xl text-base text-gray-600 dark:text-gray-100">

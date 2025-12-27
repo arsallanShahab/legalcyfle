@@ -125,7 +125,7 @@ const Index = (props: Props) => {
           data-ad-format="auto"
           data-full-width-responsive="true"
         />
-        <h1 className="font-giest-sans text-4xl">{categoryName}</h1>
+        <h1 className="font-playfair text-4xl font-semibold">{categoryName}</h1>
         {props?.data?.map((article) => {
           return <ArticleCard article={article} key={article.sys.id} />;
         })}

@@ -312,9 +312,7 @@ const Index = (props: Props) => {
         {/* Comments Section Placeholder */}
         <section id="comment" className="comments-section mt-10">
           <FlexContainer variant="column-start" className="mt-5" gap="xl">
-            <h3 className="font-italiana text-2xl font-medium font-semibold">
-              Comments
-            </h3>
+            <h3 className="font-playfair text-2xl font-medium">Comments</h3>
             <div className="rounded-lg bg-gray-50 p-6 text-center dark:bg-gray-800">
               <p className="text-lg font-medium text-gray-600 dark:text-gray-300">
                 💬 Comments Coming Soon!

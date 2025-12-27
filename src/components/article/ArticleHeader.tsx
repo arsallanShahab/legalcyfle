@@ -8,7 +8,7 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { Button } from "@/components/ui/button";
-import { italiana } from "@/lib/fonts";
+import { italiana, playfair } from "@/lib/fonts";
 import { excerpt, formatImageLink, estimateReadingTime, cn } from "@/lib/utils";
 import { BlogEntry } from "@/types/contentful/blog";
 import { documentToHtmlString } from "@contentful/rich-text-html-renderer";
@@ -73,8 +73,8 @@ const ArticleHeader: React.FC<ArticleHeaderProps> = ({
           </nav>
           <h1
             className={cn(
-              "max-w-4xl text-left text-2xl font-bold leading-tight text-gray-900 dark:text-white md:text-4xl lg:text-5xl",
-              italiana.className,
+              "max-w-4xl text-left text-2xl font-semibold leading-tight text-gray-900 dark:text-white md:text-4xl lg:text-5xl",
+              playfair.className,
             )}
             itemProp="headline"
           >

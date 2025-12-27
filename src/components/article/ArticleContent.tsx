@@ -11,9 +11,9 @@ interface ArticleContentProps {
 
 const ArticleContent: React.FC<ArticleContentProps> = ({ data, thumbnail }) => {
   return (
-    <article className="article-content mt-8" itemProp="articleBody">
+    <article className="article-content mt-4 md:mt-8" itemProp="articleBody">
       {/* Hero Image */}
-      <div className="relative mb-10 w-full overflow-hidden rounded-xl shadow-sm">
+      <div className="relative mb-6 w-full overflow-hidden rounded-xl shadow-sm md:mb-10">
         <Image
           src={formatImageLink(thumbnail)}
           width={1280}
@@ -21,7 +21,7 @@ const ArticleContent: React.FC<ArticleContentProps> = ({ data, thumbnail }) => {
           onClick={() => {
             window.open(formatImageLink(thumbnail), "_blank");
           }}
-          className="h-auto max-h-[600px] w-full cursor-pointer object-cover object-center transition-transform duration-700 hover:scale-[1.02]"
+          className="h-auto max-h-[200px] w-full cursor-pointer object-cover object-center transition-transform duration-700 hover:scale-[1.02] md:max-h-[400px]"
           alt={data.fields.title}
           itemProp="image"
           priority
@@ -31,7 +31,7 @@ const ArticleContent: React.FC<ArticleContentProps> = ({ data, thumbnail }) => {
       </div>
 
       {/* Article Content */}
-      <div className="font-lora text-lg leading-relaxed text-gray-800 dark:text-gray-200 md:text-xl">
+      <div className="font-lora text-base leading-relaxed text-gray-800 dark:text-gray-200 md:text-lg md:leading-relaxed">
         <BlogContent data={data} />
       </div>
     </article>

@@ -261,7 +261,7 @@ const Index = (props: Props) => {
 
       <FlexContainer
         variant="column-start"
-        className="mx-auto max-w-4xl px-4 py-10 pt-2.5 md:px-10 md:py-20 md:pt-2.5"
+        className="mx-auto max-w-4xl px-4 py-6 pt-2.5 md:px-10 md:py-20 md:pt-2.5"
         gap="2xl"
       >
         <AdWrapper

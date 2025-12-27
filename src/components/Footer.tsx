@@ -46,13 +46,9 @@ const Footer = () => {
   };
 
   return (
-    <FlexContainer
-      variant="column-start"
-      gap="none"
-      className="mx-auto max-w-7xl"
-    >
+    <FlexContainer variant="column-start" gap="none" className="">
       {pathname === "/" && (
-        <div className="w-full border-t-4 border-black bg-gray-50 px-5 py-12 dark:border-white dark:bg-gray-900 md:px-10">
+        <div className="w-full border-t-4 border-zinc-200 bg-gray-50 px-5 py-12 dark:border-white dark:bg-gray-900 md:px-10">
           <div className="max-w-4xl text-left">
             <h3
               className={cn(
@@ -128,7 +124,7 @@ const Footer = () => {
         </ModalContent>
       </Modal>
       <footer className="w-full border-t border-gray-200 bg-white pt-16 dark:border-gray-800 dark:bg-gray-950">
-        <div className="mx-auto grid max-w-7xl grid-cols-1 gap-12 px-5 pb-12 md:grid-cols-2 md:px-10 lg:grid-cols-5 lg:gap-8">
+        <div className="grid grid-cols-1 gap-12 px-5 pb-12 md:grid-cols-2 md:px-10 lg:grid-cols-5 lg:gap-8">
           {/* Brand Column */}
           <div className="flex flex-col gap-6 lg:col-span-2">
             <Link
@@ -253,7 +249,7 @@ const Footer = () => {
 
         {/* Bottom Bar */}
         <div className="border-t border-gray-200 bg-gray-50 py-8 dark:border-gray-800 dark:bg-black">
-          <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-5 md:flex-row md:px-10">
+          <div className="flex flex-col items-center justify-between gap-4 px-5 md:flex-row md:px-10">
             <p className="font-sans text-xs font-bold uppercase tracking-widest text-gray-500">
               © {new Date().getFullYear()} LegalCyfle. All rights reserved.
             </p>

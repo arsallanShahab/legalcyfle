@@ -40,7 +40,7 @@ const InteractionBar: React.FC<InteractionBarProps> = ({
   onHeart,
 }) => {
   return (
-    <section className="article-engagement mt-10 border-t border-gray-200 pt-8 dark:border-gray-800">
+    <section className="article-engagement mt-6 border-t border-gray-200 pt-6 dark:border-gray-800 md:mt-10 md:pt-8">
       <FlexContainer variant="column-start" gap="md">
         {/* Article Stats */}
         <FlexContainer

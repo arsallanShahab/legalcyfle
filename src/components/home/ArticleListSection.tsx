@@ -16,8 +16,8 @@ export default function ArticleListSection({
 }: ArticleListSectionProps) {
   return (
     <FlexContainer variant="column-start" className="px-3 md:px-5 lg:px-10">
-      <div className="mb-4 mt-6 w-full border-b-2 border-black pb-2 dark:border-white">
-        <h3 className="font-playfair text-3xl font-bold uppercase tracking-tight text-gray-900 dark:text-white">
+      <div className="mb-4 mt-6 w-full border-b-2 border-zinc-200 pb-2 dark:border-white">
+        <h3 className="font-playfair text-3xl font-bold tracking-tight text-gray-900 dark:text-white">
           {title}
         </h3>
       </div>

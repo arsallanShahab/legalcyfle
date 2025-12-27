@@ -71,7 +71,7 @@ const ArticleHeader: React.FC<ArticleHeaderProps> = ({
             </Breadcrumb>
           </nav>
           <h1
-            className="font-playfair max-w-4xl text-left text-3xl font-bold leading-tight text-gray-900 dark:text-white md:text-5xl lg:text-6xl"
+            className="font-playfair max-w-4xl text-left text-2xl font-bold leading-tight text-gray-900 dark:text-white md:text-4xl lg:text-5xl"
             itemProp="headline"
           >
             {data.fields.title}
@@ -81,7 +81,7 @@ const ArticleHeader: React.FC<ArticleHeaderProps> = ({
 
       {/* Article Metadata with Schema.org microdata */}
       <section
-        className="article-meta mt-6 border-b border-gray-200 pb-6 dark:border-gray-800"
+        className="article-meta mt-4 border-b border-gray-200 pb-4 dark:border-gray-800 md:mt-6 md:pb-6"
         itemScope
         itemType="https://schema.org/Article"
       >

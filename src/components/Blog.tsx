@@ -30,12 +30,12 @@ const createSocialEmbed = (url: string, linkText: string) => {
   const detection = detectSocialMediaUrl(url);
 
   // External link icon SVG
-  const externalLinkIcon = `<svg class="external_link_icon" width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+  const externalLinkIcon = `<svg class="inline-block ml-1 text-gray-400" width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path d="M3.5 3C3.22386 3 3 3.22386 3 3.5C3 3.77614 3.22386 4 3.5 4H7.29289L3.14645 8.14645C2.95118 8.34171 2.95118 8.65829 3.14645 8.85355C3.34171 9.04882 3.65829 9.04882 3.85355 8.85355L8 4.70711V8.5C8 8.77614 8.22386 9 8.5 9C8.77614 9 9 8.77614 9 8.5V3.5C9 3.22386 8.77614 3 8.5 3H3.5Z" fill="currentColor"/>
   </svg>`;
 
   if (!detection) {
-    return `<a class="blog_link" href="${url}" rel="noopener noreferrer" target="_blank">${linkText}${externalLinkIcon}</a>`;
+    return `<a class="text-blue-600 hover:text-blue-800 underline decoration-blue-400 underline-offset-2 transition-colors duration-200" href="${url}" rel="noopener noreferrer" target="_blank">${linkText}${externalLinkIcon}</a>`;
   }
 
   const { platform, id } = detection;
@@ -43,8 +43,8 @@ const createSocialEmbed = (url: string, linkText: string) => {
   switch (platform) {
     case "instagram":
       return `
-        <div class="social_embed instagram_embed">
-          <blockquote class="instagram-media" data-instgrm-permalink="${url}" data-instgrm-version="14">
+        <div class="my-6 flex justify-center">
+          <blockquote class="instagram-media" data-instgrm-permalink="${url}" data-instgrm-version="14" style="background:#FFF; border:0; border-radius:3px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15); margin: 1px; max-width:540px; min-width:326px; padding:0; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px);">
             <div style="padding: 16px;">
               <a href="${url}" style="background: #FFFFFF; line-height: 0; padding: 0 0; text-align: center; text-decoration: none; width: 100%;" target="_blank" rel="noopener noreferrer">
                 <div style="display: flex; flex-direction: row; align-items: center;">
@@ -70,7 +70,7 @@ const createSocialEmbed = (url: string, linkText: string) => {
 
     case "twitter":
       return `
-        <div class="social_embed twitter_embed">
+        <div class="my-6 flex justify-center">
           <blockquote class="twitter-tweet" data-theme="light">
             <p>Loading tweet...</p>
             <a href="${url}" target="_blank" rel="noopener noreferrer">${linkText}</a>
@@ -82,9 +82,10 @@ const createSocialEmbed = (url: string, linkText: string) => {
 
     case "youtube":
       return `
-        <div class="social_embed youtube_embed">
-          <div class="youtube_container">
+        <div class="my-6 w-full aspect-video rounded-lg overflow-hidden shadow-sm">
+          <div class="relative w-full h-full">
             <iframe 
+              class="absolute top-0 left-0 w-full h-full"
               src="https://www.youtube.com/embed/${id}"
               title="YouTube video player"
               frameborder="0"
@@ -98,7 +99,7 @@ const createSocialEmbed = (url: string, linkText: string) => {
       `;
 
     default:
-      return `<a class="blog_link" href="${url}" rel="noopener noreferrer" target="_blank">${linkText}</a>`;
+      return `<a class="text-blue-600 hover:text-blue-800 underline decoration-blue-400 underline-offset-2 transition-colors duration-200" href="${url}" rel="noopener noreferrer" target="_blank">${linkText}</a>`;
   }
 };
 
@@ -112,16 +113,16 @@ const processTextContent = (content: any[]): string => {
           item.marks.forEach((mark: any) => {
             switch (mark.type) {
               case "bold":
-                text = `<strong>${text}</strong>`;
+                text = `<strong class="font-bold text-gray-900">${text}</strong>`;
                 break;
               case "italic":
-                text = `<em>${text}</em>`;
+                text = `<em class="italic text-gray-800">${text}</em>`;
                 break;
               case "underline":
-                text = `<u>${text}</u>`;
+                text = `<u class="decoration-gray-400 underline-offset-2">${text}</u>`;
                 break;
               case "code":
-                text = `<code>${text}</code>`;
+                text = `<code class="bg-gray-100 text-red-600 px-1.5 py-0.5 rounded text-sm font-mono border border-gray-200">${text}</code>`;
                 break;
             }
           });
@@ -148,15 +149,15 @@ const processListContent = (content: any[]): string => {
               return processTextContent(block.content);
             }
             if (block.nodeType === BLOCKS.UL_LIST) {
-              return `<ul class="nested_list">${processListContent(block.content)}</ul>`;
+              return `<ul class="mt-2 ml-4 space-y-1 list-disc text-gray-700">${processListContent(block.content)}</ul>`;
             }
             if (block.nodeType === BLOCKS.OL_LIST) {
-              return `<ol class="nested_list">${processListContent(block.content)}</ol>`;
+              return `<ol class="mt-2 ml-4 space-y-1 list-decimal text-gray-700">${processListContent(block.content)}</ol>`;
             }
             return "";
           })
           .join("");
-        return `<li class="blog_list_item">${itemContent}</li>`;
+        return `<li class="pl-1">${itemContent}</li>`;
       }
       return "";
     })
@@ -195,17 +196,20 @@ const renderNode: { [key: string]: (node: Node) => string } = {
 
     switch (mimeGroup) {
       case "image":
-        return `<img src="${file.url}" class="blog_image" alt="${title || "Image"}" loading="lazy" />`;
+        return `<figure class="my-6 md:my-8">
+          <img src="${file.url}" class="w-full h-auto rounded-lg shadow-sm object-cover" alt="${title || "Image"}" loading="lazy" />
+          ${title ? `<figcaption class="mt-2 text-center text-sm text-gray-500 font-lora italic">${title}</figcaption>` : ""}
+        </figure>`;
       case "application":
-        return `<a href="${file.url}" rel="noopener noreferrer" target="_blank" class="blog_link">${title}</a>`;
+        return `<a href="${file.url}" rel="noopener noreferrer" target="_blank" class="text-blue-600 hover:text-blue-800 underline decoration-blue-400 underline-offset-2 transition-colors duration-200">${title}</a>`;
       default:
-        return `<a href="${file.url}" rel="noopener noreferrer" target="_blank" class="blog_link">${title}</a>`;
+        return `<a href="${file.url}" rel="noopener noreferrer" target="_blank" class="text-blue-600 hover:text-blue-800 underline decoration-blue-400 underline-offset-2 transition-colors duration-200">${title}</a>`;
     }
   },
 
   [INLINES.EMBEDDED_ENTRY]: (node) => {
     const { title, slug } = node.data.target?.fields || {};
-    return `<a href="/${slug}" rel="noopener" class="blog_link">${title}</a>`;
+    return `<a href="/${slug}" rel="noopener" class="text-blue-600 hover:text-blue-800 underline decoration-blue-400 underline-offset-2 transition-colors duration-200">${title}</a>`;
   },
 
   [INLINES.HYPERLINK]: (node) => {
@@ -215,9 +219,9 @@ const renderNode: { [key: string]: (node: Node) => string } = {
   },
 
   [BLOCKS.QUOTE]: () => {
-    return `<div class="ad_infeed">
+    return `<div class="my-2 flex justify-center overflow-hidden">
       <ins class="adsbygoogle"
-        style="display:block; text-align:center;"
+        style="display:block; text-align:center; min-width: 250px;"
         data-ad-layout="in-article"
         data-ad-format="fluid"
         data-ad-client="ca-pub-5892936530350741"
@@ -268,21 +272,21 @@ const renderNode: { [key: string]: (node: Node) => string } = {
                   headerLabels[cellIndex] || `Column ${cellIndex + 1}`;
 
                 return isHeader
-                  ? `<th class="blog_table_header">${cellText}</th>`
-                  : `<td class="blog_table_cell" data-label="${dataLabel}">${cellText}</td>`;
+                  ? `<th class="px-4 py-3 text-left text-sm font-bold text-gray-900 bg-gray-50 border-b-2 border-gray-200 font-playfair tracking-wider whitespace-nowrap">${cellText}</th>`
+                  : `<td class="px-4 py-3 text-sm text-gray-700 border-b border-gray-100 font-lora" data-label="${dataLabel}">${cellText}</td>`;
               }
               return "";
             })
             .join("");
-          return `<tr class="blog_table_row">${cellsContent}</tr>`;
+          return `<tr class="hover:bg-gray-50 transition-colors duration-150">${cellsContent}</tr>`;
         }
         return "";
       })
       .join("");
 
     return `
-      <div class="blog_table_wrapper">
-        <table class="blog_table" role="table">
+      <div class="my-8 w-full overflow-x-auto rounded-lg border border-gray-200 shadow-sm">
+        <table class="w-full border-collapse bg-white text-left text-sm text-gray-500">
           ${tableContent}
         </table>
       </div>
@@ -290,50 +294,52 @@ const renderNode: { [key: string]: (node: Node) => string } = {
   },
 
   [BLOCKS.UL_LIST]: (node) => {
-    return `<ul class="blog_list">${processListContent(node.content)}</ul>`;
+    return `<ul class="list-disc pl-6 mb-6 space-y-2 text-gray-800 font-lora text-base md:text-lg leading-relaxed marker:text-gray-400">${processListContent(node.content)}</ul>`;
   },
 
   [BLOCKS.OL_LIST]: (node) => {
-    return `<ol class="blog_list">${processListContent(node.content)}</ol>`;
+    return `<ol class="list-decimal pl-6 mb-6 space-y-2 text-gray-800 font-lora text-base md:text-lg leading-relaxed marker:text-gray-400">${processListContent(node.content)}</ol>`;
   },
 
   [BLOCKS.PARAGRAPH]: (node) => {
     const content = processTextContent(node.content);
-    return content ? `<p class="blog_paragraph">${content}</p>` : "";
+    return content
+      ? `<p class="mb-5 font-lora text-base md:text-lg leading-7 md:leading-8 text-gray-800 text-justify break-words">${content}</p>`
+      : "";
   },
 
   [BLOCKS.HEADING_1]: (node: Node) => {
     const text = processTextContent(node.content);
-    return `<h1 class="blog_heading_h1">${text}</h1>`;
+    return `<h1 class="mt-10 mb-6 font-playfair text-3xl md:text-4xl font-bold text-gray-900 leading-tight tracking-tight border-b border-gray-200 pb-4">${text}</h1>`;
   },
 
   [BLOCKS.HEADING_2]: (node: Node) => {
     const text = processTextContent(node.content);
-    return `<h2 class="blog_heading_h2">${text}</h2>`;
+    return `<h2 class="mt-8 mb-4 font-playfair text-2xl md:text-3xl font-bold text-gray-900 leading-snug tracking-tight">${text}</h2>`;
   },
 
   [BLOCKS.HEADING_3]: (node: Node) => {
     const text = processTextContent(node.content);
-    return `<h3 class="blog_heading_h3">${text}</h3>`;
+    return `<h3 class="mt-6 mb-3 font-playfair text-xl md:text-2xl font-semibold text-gray-900 leading-snug">${text}</h3>`;
   },
 
   [BLOCKS.HEADING_4]: (node: Node) => {
     const text = processTextContent(node.content);
-    return `<h4 class="blog_heading_h4">${text}</h4>`;
+    return `<h4 class="mt-5 mb-2 font-playfair text-lg md:text-xl font-semibold text-gray-900 leading-snug">${text}</h4>`;
   },
 
   [BLOCKS.HEADING_5]: (node: Node) => {
     const text = processTextContent(node.content);
-    return `<h5 class="blog_heading_h5">${text}</h5>`;
+    return `<h5 class="mt-4 mb-2 font-playfair text-base md:text-lg font-semibold text-gray-900 uppercase tracking-wide">${text}</h5>`;
   },
 
   [BLOCKS.HEADING_6]: (node: Node) => {
     const text = processTextContent(node.content);
-    return `<h6 class="blog_heading_h6">${text}</h6>`;
+    return `<h6 class="mt-4 mb-2 font-playfair text-sm md:text-base font-semibold text-gray-700 uppercase tracking-wider">${text}</h6>`;
   },
 
   [BLOCKS.HR]: () => {
-    return `<hr class="blog_divider" />`;
+    return `<hr class="my-8 border-t border-gray-200" />`;
   },
 
   // Handle other blocks that should be ignored at the top level
@@ -375,7 +381,11 @@ const BlogContent = ({ data }: BlogContentProps) => {
   }, []);
 
   if (!data?.fields?.body) {
-    return <div className="blog_container">No content available</div>;
+    return (
+      <div className="font-lora w-full max-w-none py-8 text-center text-gray-500">
+        No content available
+      </div>
+    );
   }
 
   try {
@@ -388,13 +398,17 @@ const BlogContent = ({ data }: BlogContentProps) => {
 
     return (
       <div
-        className="blog_container"
+        className="w-full max-w-none"
         dangerouslySetInnerHTML={{ __html: htmlString }}
       />
     );
   } catch (error) {
     console.error("Error rendering blog content:", error);
-    return <div className="blog_container">Error loading content</div>;
+    return (
+      <div className="font-lora w-full max-w-none py-8 text-center text-red-500">
+        Error loading content
+      </div>
+    );
   }
 };
 

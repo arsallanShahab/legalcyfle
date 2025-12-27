@@ -9,8 +9,8 @@ export default function SocialMediaSection() {
       gap="md"
       className="mt-8 px-3 md:px-5 lg:px-10"
     >
-      <div className="flex w-full items-center justify-between border-b-2 border-black pb-2 dark:border-white">
-        <h2 className="font-playfair text-2xl font-bold uppercase tracking-tight text-gray-900 dark:text-white">
+      <div className="flex w-full items-center justify-between border-b-2 border-zinc-200 pb-2 dark:border-white">
+        <h2 className="font-playfair text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
           Connect With Us
         </h2>
         <span className="hidden font-sans text-xs font-bold uppercase tracking-widest text-gray-500 sm:block">

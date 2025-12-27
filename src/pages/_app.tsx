@@ -58,16 +58,16 @@ export default function App({ Component, pageProps }: AppProps) {
           onClick={() => {
             window.scrollTo({ top: 0, behavior: "smooth" });
           }}
-          className="flex w-auto rounded-[99px] bg-zinc-700 p-5 shadow-md duration-200 active:scale-95"
+          className="flex w-auto rounded-[99px] bg-zinc-700 p-3 shadow-md duration-200 active:scale-95"
         >
-          <ChevronUp className="h-7 w-7 text-white" />
+          <ChevronUp className="h-5 w-5 text-white" />
         </button>
         <Link
           target="_blank"
           href={"https://chat.whatsapp.com/LYroveHgsMMLvbpIqVPKCe"}
-          className="flex w-auto rounded-[99px] bg-[#25D366] p-5 shadow-xl duration-200 hover:bg-[rgb(28,162,77)] active:scale-95"
+          className="flex w-auto rounded-[99px] bg-[#25D366] p-3 shadow-xl duration-200 hover:bg-[rgb(28,162,77)] active:scale-95"
         >
-          <WhatsappIcon className="h-7 w-7 fill-white text-white" />
+          <WhatsappIcon className="h-5 w-5 fill-white text-white" />
         </Link>
       </FlexContainer>
       <Footer />

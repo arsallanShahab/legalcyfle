@@ -113,7 +113,7 @@ export default function Home({ data }: HomeProps) {
         ></script>
       </Head>
 
-      <div className="mx-auto max-w-7xl">
+      <div className="">
         {" "}
         <HeroSection
           topArticles={data?.topArticles}

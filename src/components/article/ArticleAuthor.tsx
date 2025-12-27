@@ -27,7 +27,7 @@ const ArticleAuthor: React.FC<ArticleAuthorProps> = ({ article }) => {
     : "/placeholder-user.jpg";
 
   return (
-    <section className="article-author mt-12 rounded-xl border border-gray-200 bg-gray-50 p-8 dark:border-gray-800 dark:bg-gray-900/50">
+    <section className="article-author mt-8 rounded-xl border border-gray-200 bg-gray-50 p-5 dark:border-gray-800 dark:bg-gray-900/50 md:mt-12 md:p-8">
       <FlexContainer variant="column-start" gap="md">
         <div className="flex flex-col items-center gap-6 sm:flex-row sm:items-start">
           <div className="relative h-24 w-24 flex-shrink-0 overflow-hidden rounded-full border-4 border-white shadow-sm dark:border-gray-800">

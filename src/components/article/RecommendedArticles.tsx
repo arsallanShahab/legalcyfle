@@ -22,7 +22,7 @@ const RecommendedArticles: React.FC<RecommendedArticlesProps> = ({
   if (!articles || articles.length === 0) return null;
 
   return (
-    <section className="article-recommended mt-16 border-t border-gray-200 pt-12 dark:border-gray-800">
+    <section className="article-recommended mt-8 border-t border-gray-200 pt-8 dark:border-gray-800 md:mt-16 md:pt-12">
       <FlexContainer variant="column-start" gap="lg">
         <div className="flex w-full items-end justify-between border-b border-gray-200 pb-4 dark:border-gray-800">
           <div>

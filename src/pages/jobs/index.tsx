@@ -1,20 +1,18 @@
 import BlogContent from "@/components/Blog";
+import MarkdownRenderer from "@/components/MarkdownRenderer";
 import FlexContainer from "@/components/FlexContainer";
-import Heading from "@/components/Heading";
-import { Button } from "@/components/ui/button";
 import Wrapper from "@/components/Wrapper";
 import client from "@/lib/contentful";
+import { minifyJob, minifyJobToMarkdown } from "@/lib/contentful-minifier";
 import useGet from "@/lib/hooks/use-get";
-import { BlogEntry } from "@/types/contentful/blog";
 import { ApiResponse, MetricsResponse } from "@/types/global/api-response";
-import { Card, CardBody, CardHeader, Divider } from "@nextui-org/react";
 import { Eye } from "lucide-react";
 import React, { useEffect } from "react";
 
 type Props = {
   jobs: {
     fields: {
-      articles: BlogEntry[];
+      articles: any[];
       title: string;
     };
   };
@@ -25,7 +23,7 @@ const Index = ({ jobs }: Props) => {
     ApiResponse<MetricsResponse>
   >({ showToast: true });
 
-  const reversedArticles = [...jobs.fields?.articles].reverse();
+  const reversedArticles = [...(jobs?.fields?.articles ?? [])].reverse();
 
   useEffect(() => {
     getData(`/api/articles/jobs-metrics/metrics`, "jobs-metrics", {
@@ -38,25 +36,37 @@ const Index = ({ jobs }: Props) => {
   }, [jobs]);
   return (
     <Wrapper>
-      <FlexContainer variant="row-between">
-        <Heading>{jobs.fields?.title}</Heading>
-        <Button variant={"secondary"}>
+      <FlexContainer
+        variant="row-between"
+        className="mb-8 border-b-2 border-zinc-200 pb-4 dark:border-gray-700 md:mb-12"
+      >
+        <h1 className="font-playfair text-4xl font-black tracking-tight text-black dark:text-white md:text-5xl">
+          {jobs?.fields?.title || "Jobs"}
+        </h1>
+        <div className="flex items-center gap-2 rounded-full bg-gray-100 px-3 py-1 text-sm font-medium text-gray-600 dark:bg-gray-800 dark:text-gray-300">
           <Eye className="h-4 w-4" />
-          {data?.data?.view}
-        </Button>
+          <span>{data?.data?.view || 0} views</span>
+        </div>
       </FlexContainer>
-      <FlexContainer variant="column-start" gap="xl">
-        {reversedArticles.map((article) => {
+
+      <div className="mx-auto flex max-w-4xl flex-col gap-12 md:gap-16">
+        {reversedArticles?.map((article) => {
           return (
-            <article key={article.sys.id}>
-              <Card>
-                <CardHeader className="p-4 md:p-7">
-                  <FlexContainer variant="column-start">
-                    <h3 className="max-w-lg font-giest-sans text-2xl md:text-3xl">
-                      {article?.fields?.title}
-                    </h3>
-                    <p className="text-small text-default-500">
-                      {new Date(article?.sys?.createdAt).toLocaleDateString(
+            <article
+              key={article.sys.id}
+              className="border-b border-gray-200 pb-12 last:border-0 dark:border-gray-800"
+            >
+              <header className="mb-6">
+                <h2 className="font-playfair mb-3 text-3xl font-bold leading-tight text-gray-900 dark:text-white md:text-4xl">
+                  {article?.fields?.title}
+                </h2>
+                <div className="font-lora flex items-center text-sm italic text-gray-500">
+                  {article?.fields?.date && (
+                    <time
+                      dateTime={new Date(article.fields.date).toISOString()}
+                    >
+                      Published on{" "}
+                      {new Date(article.fields.date).toLocaleDateString(
                         "en-US",
                         {
                           year: "numeric",
@@ -64,18 +74,22 @@ const Index = ({ jobs }: Props) => {
                           day: "numeric",
                         },
                       )}
-                    </p>
-                  </FlexContainer>
-                </CardHeader>
-                <Divider />
-                <CardBody className="blog-small p-4 md:p-7">
+                    </time>
+                  )}
+                </div>
+              </header>
+
+              <div className="prose prose-lg dark:prose-invert max-w-none">
+                {typeof article.fields.body === "string" ? (
+                  <MarkdownRenderer content={article.fields.body} />
+                ) : (
                   <BlogContent data={article} />
-                </CardBody>
-              </Card>
+                )}
+              </div>
             </article>
           );
         })}
-      </FlexContainer>
+      </div>
     </Wrapper>
   );
 };
@@ -93,36 +107,53 @@ export async function getStaticProps() {
         return { items: [] };
       });
 
-    console.log("Internships fetched:", internships);
+    // Use the new markdown minifier for better compression
+    const minifiedJob = minifyJobToMarkdown(internships.items[0]);
 
-    if (!internships?.items?.length) {
-      return { notFound: true };
+    // Development logging for data compression
+    if (process.env.NODE_ENV === "development") {
+      const originalSize = JSON.stringify(internships.items[0]).length;
+      const standardMinified = minifyJob(internships.items[0]);
+      const standardMinifiedSize = JSON.stringify(standardMinified).length;
+      const markdownMinifiedSize = JSON.stringify(minifiedJob).length;
+
+      const savedBytes = originalSize - markdownMinifiedSize;
+      const savedPercentage = ((savedBytes / originalSize) * 100).toFixed(2);
+
+      const extraSavings = standardMinifiedSize - markdownMinifiedSize;
+      const extraSavingsPercentage = (
+        (extraSavings / standardMinifiedSize) *
+        100
+      ).toFixed(2);
+
+      console.log("--- Data Compression Log (Markdown) ---");
+      console.log(`Original Size: ${(originalSize / 1024).toFixed(2)} KB`);
+      console.log(
+        `Standard Minified: ${(standardMinifiedSize / 1024).toFixed(2)} KB`,
+      );
+      console.log(
+        `Markdown Minified: ${(markdownMinifiedSize / 1024).toFixed(2)} KB`,
+      );
+      console.log(
+        `Total Saved: ${(savedBytes / 1024).toFixed(2)} KB (${savedPercentage}%)`,
+      );
+      console.log(
+        `Extra Savings vs Standard: ${(extraSavings / 1024).toFixed(2)} KB (${extraSavingsPercentage}%)`,
+      );
+      console.log(
+        `-----------Minified Size: ${(markdownMinifiedSize / 1024).toFixed(2)} KB`,
+      );
+      console.log(
+        `Saved: ${(savedBytes / 1024).toFixed(2)} KB (${savedPercentage}%)`,
+      );
+      console.log("----------------------------");
     }
-
-    const minimalInternship = {
-      sys: { id: internships.items[0].sys.id },
-      fields: {
-        title: internships.items[0].fields.title,
-        articles: Array.isArray(internships.items[0].fields.articles)
-          ? internships.items[0].fields.articles.map((article: any) => ({
-              sys: {
-                id: article.sys.id,
-                createdAt: article.sys.createdAt,
-              },
-              fields: {
-                title: article.fields.title,
-                body: article.fields.body,
-              },
-            }))
-          : [],
-      },
-    };
 
     return {
       props: {
-        jobs: minimalInternship,
+        jobs: minifiedJob,
       },
-      revalidate: 3600,
+      revalidate: 604800, //weekly,
     };
   } catch (error) {
     console.error("Error in getStaticProps:", error);

@@ -1,7 +1,7 @@
 import FlexContainer from "@/components/FlexContainer";
 import { Badge } from "@/components/ui/badge";
 import { BentoGrid } from "@/components/ui/BentoGrid";
-import { formatImageLink, estimateReadingTime } from "@/lib/utils";
+import { formatImageLink, estimateReadingTime, cn } from "@/lib/utils";
 import { Author } from "@/types/contentful/author";
 import { BlogEntry } from "@/types/contentful/blog";
 import { documentToHtmlString } from "@contentful/rich-text-html-renderer";
@@ -83,7 +83,11 @@ export default function HeroSection({
                     ))}
                   </div>
                   <h2
-                    className={`font-playfair font-bold leading-tight text-white ${titleSize}`}
+                    className={cn(
+                      `font-playfair font-bold leading-tight text-white`,
+                      titleSize,
+                      index > 0 ? "line-clamp-2" : "",
+                    )}
                   >
                     {article.fields?.title}
                   </h2>
@@ -143,7 +147,7 @@ export default function HeroSection({
                     <p className="font-playfair text-lg font-bold leading-tight text-gray-900 dark:text-white">
                       {author.fields.name}
                     </p>
-                    <p className="font-lora line-clamp-2 text-xs text-gray-600 dark:text-gray-400">
+                    <p className="line-clamp-2 font-lora text-xs text-gray-600 dark:text-gray-400">
                       {author.fields.bio}
                     </p>
                   </div>

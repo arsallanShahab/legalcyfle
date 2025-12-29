@@ -22,6 +22,7 @@ import {
   Search,
   Shield,
   XCircle,
+  Briefcase,
 } from "lucide-react";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -303,6 +304,54 @@ export default function AdminPage() {
                         )}
                         <AlertDescription>
                           {results.homepage.message}
+                        </AlertDescription>
+                      </div>
+                    </Alert>
+                  )}
+                </CardContent>
+              </Card>
+
+              {/* Jobs Page Revalidation */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Briefcase className="h-5 w-5" />
+                    Jobs Page Revalidation
+                  </CardTitle>
+                  <CardDescription>
+                    Revalidate the jobs listing page
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <Button
+                    onClick={() => handleRevalidation("jobs")}
+                    disabled={loading === "jobs"}
+                    className="w-full"
+                  >
+                    {loading === "jobs" ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Revalidating...
+                      </>
+                    ) : (
+                      <>
+                        <RefreshCw className="mr-2 h-4 w-4" />
+                        Revalidate Jobs Page
+                      </>
+                    )}
+                  </Button>
+                  {results.jobs && (
+                    <Alert
+                      className={`mt-4 ${results.jobs.success ? "border-green-200" : "border-red-200"}`}
+                    >
+                      <div className="flex items-center gap-2">
+                        {results.jobs.success ? (
+                          <CheckCircle className="h-4 w-4 text-green-600" />
+                        ) : (
+                          <XCircle className="h-4 w-4 text-red-600" />
+                        )}
+                        <AlertDescription>
+                          {results.jobs.message}
                         </AlertDescription>
                       </div>
                     </Alert>

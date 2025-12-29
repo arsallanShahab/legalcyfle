@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 
 interface RevalidationRequest {
-  type: "homepage" | "specific" | "categories" | "custom" | "fullsite";
+  type: "homepage" | "jobs" | "specific" | "categories" | "custom" | "fullsite";
   specificUrl?: string;
   customPaths?: string[];
   paths?: string[];
@@ -105,6 +105,10 @@ export default async function handler(
     switch (type) {
       case "homepage":
         pathsToRevalidate = ["/"];
+        break;
+
+      case "jobs":
+        pathsToRevalidate = ["/jobs"];
         break;
 
       case "specific":

@@ -21,7 +21,7 @@ type Props = {
 const Index = ({ jobs }: Props) => {
   const { getData, loading, data, error, refresh } = useGet<
     ApiResponse<MetricsResponse>
-  >({ showToast: true });
+  >({ showToast: false });
 
   const reversedArticles = [...(jobs?.fields?.articles ?? [])].reverse();
 
@@ -43,10 +43,10 @@ const Index = ({ jobs }: Props) => {
         <h1 className="font-playfair text-4xl font-black tracking-tight text-black dark:text-white md:text-5xl">
           {jobs?.fields?.title || "Jobs"}
         </h1>
-        <div className="flex items-center gap-2 rounded-full bg-gray-100 px-3 py-1 text-sm font-medium text-gray-600 dark:bg-gray-800 dark:text-gray-300">
+        {/* <div className="flex items-center gap-2 rounded-full bg-gray-100 px-3 py-1 text-sm font-medium text-gray-600 dark:bg-gray-800 dark:text-gray-300">
           <Eye className="h-4 w-4" />
           <span>{data?.data?.view || 0} views</span>
-        </div>
+        </div> */}
       </FlexContainer>
 
       <div className="mx-auto flex max-w-4xl flex-col gap-12 md:gap-16">
@@ -57,10 +57,10 @@ const Index = ({ jobs }: Props) => {
               className="border-b border-gray-200 pb-12 last:border-0 dark:border-gray-800"
             >
               <header className="mb-6">
-                <h2 className="font-playfair mb-3 text-3xl font-bold leading-tight text-gray-900 dark:text-white md:text-4xl">
+                <h2 className="mb-3 font-playfair text-3xl font-bold leading-tight text-gray-900 dark:text-white md:text-4xl">
                   {article?.fields?.title}
                 </h2>
-                <div className="font-lora flex items-center text-sm italic text-gray-500">
+                <div className="flex items-center font-lora text-sm italic text-gray-500">
                   {article?.fields?.date && (
                     <time
                       dateTime={new Date(article.fields.date).toISOString()}

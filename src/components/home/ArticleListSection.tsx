@@ -17,12 +17,15 @@ export default function ArticleListSection({
   adSlot = "5536160107",
 }: ArticleListSectionProps) {
   return (
-    <FlexContainer variant="column-start" className="px-3 md:px-5 lg:px-10">
-      <div className="mb-4 mt-6 w-full border-b-2 border-zinc-200 pb-2 dark:border-white">
+    <FlexContainer
+      variant="column-start"
+      className="px-3 md:px-5 lg:px-10"
+      gap="none"
+    >
+      <div className="mb-0 mt-6 w-full border-zinc-200 pb-2 dark:border-white">
         <h3
           className={cn(
-            "text-3xl font-bold tracking-tight text-gray-900 dark:text-white",
-            playfair.className,
+            "font-google text-3xl font-bold tracking-tight text-gray-900 dark:text-white",
           )}
         >
           {title}

@@ -29,6 +29,7 @@ const config = {
         playfair: ["var(--font-playfair)", "serif"],
         lora: ["var(--font-lora)", "serif"],
         italiana: ["var(--font-italiana)", "serif"],
+        google: ["Google Sans", "sans-serif"],
       },
       keyframes: {
         "accordion-down": {

@@ -84,7 +84,7 @@ export default function HeroSection({
                   </div>
                   <h2
                     className={cn(
-                      `font-playfair font-bold leading-tight text-white`,
+                      `font-google font-bold leading-tight text-white`,
                       titleSize,
                       index > 0 ? "line-clamp-2" : "",
                     )}

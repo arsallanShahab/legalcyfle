@@ -19,7 +19,7 @@ const Dropdown = (props: Props) => {
       <Link href={"/category/" + url}>
         <div
           className={cn(
-            "flex cursor-pointer select-none items-center justify-center gap-1 px-3 py-2 transition-colors duration-200 hover:text-black dark:hover:text-white",
+            "font-google flex cursor-pointer select-none items-center justify-center gap-1 px-3 py-2 transition-colors duration-200 hover:text-black dark:hover:text-white",
             props?.className,
           )}
         >
@@ -37,7 +37,7 @@ type DropdownContentProps = {
 
 const DropdownContent = (props: DropdownContentProps) => {
   return (
-    <div className="pointer-events-none absolute inset-x-0 top-7 z-[700] flex w-[200px] origin-top -translate-y-1 scale-50 flex-col border border-gray-200 bg-white px-0 py-2 opacity-0 shadow-lg transition-all duration-300 ease-in-out *:w-full *:text-sm group-hover:pointer-events-auto group-hover:translate-y-0 group-hover:scale-100 group-hover:opacity-100 dark:border-gray-700 dark:bg-gray-900">
+    <div className="pointer-events-none absolute inset-x-0 top-7 z-[700] flex w-[200px] origin-top -translate-y-1 scale-50 flex-col rounded-2xl border border-gray-200 bg-white px-2 py-2 opacity-0 shadow-lg transition-all duration-300 ease-in-out *:w-full *:text-xs group-hover:pointer-events-auto group-hover:translate-y-0 group-hover:scale-100 group-hover:opacity-100 dark:border-zinc-700 dark:bg-zinc-800">
       {props.children}
     </div>
   );
@@ -47,7 +47,7 @@ const DropdownItem = (props: { children: React.ReactNode; href: string }) => {
   return (
     <Link
       href={props.href}
-      className="font-lora block px-4 py-2 text-gray-700 duration-150 hover:bg-gray-100 hover:text-black dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-white"
+      className="font-google block rounded-lg px-4 py-2 text-zinc-700 duration-150 hover:bg-gray-100 hover:text-black dark:text-gray-300 dark:hover:bg-zinc-700 dark:hover:text-white"
     >
       {props.children}
     </Link>

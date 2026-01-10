@@ -119,13 +119,15 @@ const Index = (props: Props) => {
           dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
         />
       </Head>
-      <Wrapper className="pt-2.5 md:pt-2.5">
+      <Wrapper className="pt-2.5 md:pt-5">
         <AdWrapper
           data-ad-slot="4210005765"
           data-ad-format="auto"
           data-full-width-responsive="true"
         />
-        <h1 className="font-playfair text-4xl font-semibold">{categoryName}</h1>
+        <h1 className="font-google mt-5 text-4xl font-semibold">
+          {categoryName}
+        </h1>
         {props?.data?.map((article) => {
           return <ArticleCard article={article} key={article.sys.id} />;
         })}

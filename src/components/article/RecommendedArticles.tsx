@@ -26,12 +26,12 @@ const RecommendedArticles: React.FC<RecommendedArticlesProps> = ({
       <FlexContainer variant="column-start" gap="lg">
         <div className="flex w-full items-end justify-between border-b border-gray-200 pb-4 dark:border-gray-800">
           <div>
-            <span className="mb-2 block font-sans text-xs font-bold uppercase tracking-wider text-primary">
+            <span className="font-google mb-2 block text-xs font-bold uppercase tracking-wider text-primary">
               Read Next
             </span>
             <Heading
               level={2}
-              className="font-playfair text-3xl font-bold text-gray-900 dark:text-white"
+              className="font-google text-3xl font-bold text-gray-900 dark:text-white"
             >
               Related Articles
             </Heading>

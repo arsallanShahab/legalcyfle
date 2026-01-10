@@ -47,7 +47,7 @@ const ArticleHeader: React.FC<ArticleHeaderProps> = ({
               <BreadcrumbList>
                 <BreadcrumbItem>
                   <BreadcrumbLink
-                    className="font-sans font-normal text-gray-500 hover:text-black dark:text-gray-400 dark:hover:text-white"
+                    className="font-google font-normal text-gray-500 hover:text-black dark:text-gray-400 dark:hover:text-white"
                     href="/"
                   >
                     Home
@@ -56,7 +56,7 @@ const ArticleHeader: React.FC<ArticleHeaderProps> = ({
                 <BreadcrumbSeparator />
                 <BreadcrumbItem>
                   <BreadcrumbLink
-                    className="font-sans font-normal text-gray-500 hover:text-black dark:text-gray-400 dark:hover:text-white"
+                    className="font-google font-normal text-gray-500 hover:text-black dark:text-gray-400 dark:hover:text-white"
                     href={"/category/" + data.fields.category[0]?.fields?.slug}
                   >
                     {data.fields.category[0]?.fields?.name}
@@ -64,7 +64,7 @@ const ArticleHeader: React.FC<ArticleHeaderProps> = ({
                 </BreadcrumbItem>
                 <BreadcrumbSeparator />
                 <BreadcrumbItem>
-                  <BreadcrumbPage className="font-sans font-medium text-blue-600 dark:text-blue-400">
+                  <BreadcrumbPage className="font-google font-medium text-blue-600 dark:text-blue-400">
                     {excerpt(data.fields.title, 50)}
                   </BreadcrumbPage>
                 </BreadcrumbItem>
@@ -73,8 +73,7 @@ const ArticleHeader: React.FC<ArticleHeaderProps> = ({
           </nav>
           <h1
             className={cn(
-              "max-w-4xl text-left text-2xl font-semibold leading-tight text-gray-900 dark:text-white md:text-4xl lg:text-5xl",
-              playfair.className,
+              "font-google max-w-4xl text-left text-2xl font-semibold leading-tight text-gray-900 dark:text-white md:text-4xl lg:text-5xl",
             )}
             itemProp="headline"
           >
@@ -149,7 +148,7 @@ const ArticleHeader: React.FC<ArticleHeaderProps> = ({
             )}
 
             <FlexContainer variant="column-start" gap="xs">
-              <p className="flex gap-1.5 font-sans text-sm font-bold text-gray-900 dark:text-gray-100">
+              <p className="font-google flex gap-1.5 text-sm font-bold text-gray-900 dark:text-gray-100">
                 By{" "}
                 {data.fields.authors.map((author, index) => (
                   <Link

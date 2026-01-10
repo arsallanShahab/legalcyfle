@@ -113,10 +113,10 @@ const processTextContent = (content: any[]): string => {
           item.marks.forEach((mark: any) => {
             switch (mark.type) {
               case "bold":
-                text = `<strong class="font-bold text-gray-900">${text}</strong>`;
+                text = `<strong class="font-bold text-gray-900 dark:text-gray-300">${text}</strong>`;
                 break;
               case "italic":
-                text = `<em class="italic text-gray-800">${text}</em>`;
+                text = `<em class="italic text-gray-800 dark:text-gray-300">${text}</em>`;
                 break;
               case "underline":
                 text = `<u class="decoration-gray-400 underline-offset-2">${text}</u>`;
@@ -149,15 +149,15 @@ const processListContent = (content: any[]): string => {
               return processTextContent(block.content);
             }
             if (block.nodeType === BLOCKS.UL_LIST) {
-              return `<ul class="mt-2 ml-4 space-y-1 list-disc text-gray-700">${processListContent(block.content)}</ul>`;
+              return `<ul class="mt-2 ml-4 space-y-1 list-disc text-gray-700 dark:text-gray-300">${processListContent(block.content)}</ul>`;
             }
             if (block.nodeType === BLOCKS.OL_LIST) {
-              return `<ol class="mt-2 ml-4 space-y-1 list-decimal text-gray-700">${processListContent(block.content)}</ol>`;
+              return `<ol class="mt-2 ml-4 space-y-1 list-decimal text-gray-700 dark:text-gray-300">${processListContent(block.content)}</ol>`;
             }
             return "";
           })
           .join("");
-        return `<li class="pl-1">${itemContent}</li>`;
+        return `<li class="pl-1 text-gray-700 dark:text-gray-300">${itemContent}</li>`;
       }
       return "";
     })
@@ -272,8 +272,8 @@ const renderNode: { [key: string]: (node: Node) => string } = {
                   headerLabels[cellIndex] || `Column ${cellIndex + 1}`;
 
                 return isHeader
-                  ? `<th class="px-4 py-3 text-left text-sm font-bold text-gray-900 bg-gray-50 border-b-2 border-gray-200 font-playfair tracking-wider whitespace-nowrap">${cellText}</th>`
-                  : `<td class="px-4 py-3 text-sm text-gray-700 border-b border-gray-100 font-lora" data-label="${dataLabel}">${cellText}</td>`;
+                  ? `<th class="px-4 py-3 text-left text-sm font-bold text-gray-900 dark:text-gray-300 bg-gray-50 border-b-2 border-gray-200 font-playfair tracking-wider whitespace-nowrap">${cellText}</th>`
+                  : `<td class="px-4 py-3 text-sm text-zinc-700 dark:text-zinc-300 border-b border-gray-100 font-lora" data-label="${dataLabel}">${cellText}</td>`;
               }
               return "";
             })
@@ -304,38 +304,38 @@ const renderNode: { [key: string]: (node: Node) => string } = {
   [BLOCKS.PARAGRAPH]: (node) => {
     const content = processTextContent(node.content);
     return content
-      ? `<p class="mb-5 font-lora text-base md:text-lg leading-7 md:leading-8 text-gray-800 text-justify break-words">${content}</p>`
+      ? `<p class="mb-5 font-lora text-base md:text-lg leading-7 md:leading-8 text-zinc-800 dark:text-zinc-300 text-justify break-words">${content}</p>`
       : "";
   },
 
   [BLOCKS.HEADING_1]: (node: Node) => {
     const text = processTextContent(node.content);
-    return `<h1 class="mt-10 mb-6 font-playfair font-semibold text-3xl md:text-4xl text-gray-900 leading-tight tracking-tight border-b border-gray-200 pb-4">${text}</h1>`;
+    return `<h1 class="mt-10 mb-6 font-google font-semibold text-3xl md:text-4xl text-gray-900 dark:text-gray-300 leading-tight tracking-tight border-b border-gray-200 pb-4">${text}</h1>`;
   },
 
   [BLOCKS.HEADING_2]: (node: Node) => {
     const text = processTextContent(node.content);
-    return `<h2 class="mt-8 mb-4 font-playfair font-semibold text-2xl md:text-3xl text-gray-900 leading-snug tracking-tight">${text}</h2>`;
+    return `<h2 class="mt-8 mb-4 font-google font-semibold text-2xl md:text-3xl text-gray-900 dark:text-gray-300 leading-snug tracking-tight">${text}</h2>`;
   },
 
   [BLOCKS.HEADING_3]: (node: Node) => {
     const text = processTextContent(node.content);
-    return `<h3 class="mt-6 mb-3 font-playfair font-semibold text-xl md:text-2xl text-gray-900 leading-snug">${text}</h3>`;
+    return `<h3 class="mt-6 mb-3 font-google font-semibold text-xl md:text-2xl text-gray-900 dark:text-gray-300 leading-snug">${text}</h3>`;
   },
 
   [BLOCKS.HEADING_4]: (node: Node) => {
     const text = processTextContent(node.content);
-    return `<h4 class="mt-5 mb-2 font-playfair font-semibold text-lg md:text-xl text-gray-900 leading-snug">${text}</h4>`;
+    return `<h4 class="mt-5 mb-2 font-google font-semibold text-lg md:text-xl text-gray-900 dark:text-gray-300 leading-snug">${text}</h4>`;
   },
 
   [BLOCKS.HEADING_5]: (node: Node) => {
     const text = processTextContent(node.content);
-    return `<h5 class="mt-4 mb-2 font-playfair font-semibold text-base md:text-lg text-gray-900 uppercase tracking-wide">${text}</h5>`;
+    return `<h5 class="mt-4 mb-2 font-google font-semibold text-base md:text-lg text-gray-900 dark:text-gray-300 uppercase tracking-wide">${text}</h5>`;
   },
 
   [BLOCKS.HEADING_6]: (node: Node) => {
     const text = processTextContent(node.content);
-    return `<h6 class="mt-4 mb-2 font-playfair font-semibold text-sm md:text-base text-gray-700 uppercase tracking-wider">${text}</h6>`;
+    return `<h6 class="mt-4 mb-2 font-google font-semibold text-sm md:text-base text-gray-700 dark:text-gray-300 uppercase tracking-wider">${text}</h6>`;
   },
 
   [BLOCKS.HR]: () => {

@@ -177,19 +177,18 @@ const Navbar = (_props: Props) => {
       <FlexContainer
         variant="row-between"
         alignItems="center"
-        className="sticky top-0 z-[900] h-[80px] border-b-2 border-zinc-200 bg-white px-5 py-5 dark:border-gray-700 dark:bg-gray-900 md:px-10"
+        className="sticky top-0 z-[900] h-[80px] border-b-2 border-zinc-200 bg-white px-5 py-5 dark:border-zinc-700 dark:bg-zinc-900 md:px-10"
       >
         <FlexContainer gap="2xl" alignItems="center">
           <Link
             href="/"
             className={cn(
-              "text-2xl font-black tracking-normal text-black dark:text-white",
-              playfair.className,
+              "font-google text-2xl font-black tracking-normal text-black dark:text-white",
             )}
           >
             LegalCyfle
           </Link>
-          <FlexContainer className="hidden items-center *:font-playfair *:text-xs *:font-bold *:uppercase *:tracking-wide lg:flex">
+          <FlexContainer className="*:font-google hidden items-center *:text-sm *:font-bold lg:flex">
             <Link
               href="/category/publications"
               className="px-3 py-2 text-gray-700 transition-colors duration-200 hover:text-black dark:text-gray-300 dark:hover:text-white"
@@ -258,8 +257,8 @@ const Navbar = (_props: Props) => {
             className="hidden w-64 md:flex"
             classNames={{
               inputWrapper:
-                "bg-white border border-gray-300 rounded-none shadow-none hover:border-gray-400 focus-within:border-black dark:bg-gray-800 dark:border-gray-600",
-              input: "font-lora text-sm",
+                "bg-white border border-zinc-300 rounded-xl shadow-none hover:border-zinc-400 focus-within:border-black dark:bg-gray-800 dark:border-zinc-600",
+              input: "font-google text-sm",
             }}
             value={search}
             onValueChange={setSearch}
@@ -268,7 +267,7 @@ const Navbar = (_props: Props) => {
                 onClick={() => {
                   router.push(`/search?q=${search}`);
                 }}
-                className="cursor-pointer text-gray-500 hover:text-black dark:text-gray-400 dark:hover:text-white"
+                className="cursor-pointer text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-200"
               >
                 <Search className="h-4 w-4" />
               </span>

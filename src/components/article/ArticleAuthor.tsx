@@ -40,19 +40,18 @@ const ArticleAuthor: React.FC<ArticleAuthorProps> = ({ article }) => {
             />
           </div>
           <div className="flex flex-col items-center text-center sm:items-start sm:text-left">
-            <span className="mb-1 font-sans text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+            <span className="font-google mb-1 text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
               About the Author
             </span>
             <Heading
               level={3}
               className={cn(
-                "mb-2 text-2xl font-semibold text-black dark:text-white",
-                playfair.className,
+                "font-google mb-2 text-2xl font-semibold text-black dark:text-white",
               )}
             >
               {authorName}
             </Heading>
-            <p className="mb-4 max-w-xl font-lora text-base leading-relaxed text-gray-600 dark:text-gray-300">
+            <p className="font-google mb-4 max-w-xl text-base leading-relaxed text-gray-600 dark:text-gray-300">
               {authorBio}
             </p>
             <Link href={`/author/${authorId}`}>

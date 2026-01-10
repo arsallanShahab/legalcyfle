@@ -52,16 +52,14 @@ const Footer = () => {
           <div className="max-w-4xl text-left">
             <h3
               className={cn(
-                "mb-6 text-3xl font-bold tracking-normal text-gray-900 dark:text-white",
-                playfair.className,
+                "font-google mb-6 text-3xl font-bold tracking-normal text-gray-900 dark:text-white",
               )}
             >
               Disclaimer
             </h3>
             <div
               className={cn(
-                "space-y-4 text-lg leading-relaxed text-gray-700 dark:text-gray-300",
-                lora.className,
+                "font-google space-y-4 text-lg leading-relaxed text-gray-700 dark:text-gray-300",
               )}
             >
               <p>
@@ -130,13 +128,13 @@ const Footer = () => {
             <Link
               href="/"
               className={cn(
-                "text-4xl font-black tracking-normal text-black dark:text-white",
+                "font-google text-4xl font-black tracking-normal text-black dark:text-white",
                 playfair.className,
               )}
             >
               LegalCyfle
             </Link>
-            <p className="max-w-sm font-lora text-sm leading-relaxed text-gray-600 dark:text-gray-400">
+            <p className="font-google max-w-sm text-sm text-gray-600 dark:text-gray-400">
               LegalCyfle is a platform for legal professionals to share their
               knowledge and insights. The information provided on this platform
               is for educational purposes only.
@@ -162,8 +160,7 @@ const Footer = () => {
           <div className="flex flex-col gap-6">
             <h4
               className={cn(
-                "text-lg font-bold tracking-wide text-black dark:text-white",
-                playfair.className,
+                "font-google text-lg font-bold text-black dark:text-white",
               )}
             >
               Opportunities
@@ -178,7 +175,7 @@ const Footer = () => {
                 <Link
                   key={link.href}
                   href={link.href}
-                  className="font-sans text-sm font-medium text-gray-600 transition-colors hover:text-black dark:text-gray-400 dark:hover:text-white"
+                  className="font-google text-sm font-medium text-gray-600 transition-colors hover:text-black dark:text-gray-400 dark:hover:text-white"
                 >
                   {link.label}
                 </Link>
@@ -190,8 +187,7 @@ const Footer = () => {
           <div className="flex flex-col gap-6">
             <h4
               className={cn(
-                "text-lg font-bold tracking-wide text-black dark:text-white",
-                playfair.className,
+                "font-google text-lg font-bold text-black dark:text-white",
               )}
             >
               Company
@@ -206,7 +202,7 @@ const Footer = () => {
                 <Link
                   key={link.href}
                   href={link.href}
-                  className="font-sans text-sm font-medium text-gray-600 transition-colors hover:text-black dark:text-gray-400 dark:hover:text-white"
+                  className="font-google text-sm font-medium text-gray-600 transition-colors hover:text-black dark:text-gray-400 dark:hover:text-white"
                 >
                   {link.label}
                 </Link>
@@ -218,8 +214,7 @@ const Footer = () => {
           <div className="flex flex-col gap-6">
             <h4
               className={cn(
-                "text-lg font-bold tracking-wide text-black dark:text-white",
-                playfair.className,
+                "font-google text-lg font-bold text-black dark:text-white",
               )}
             >
               Resources
@@ -238,7 +233,7 @@ const Footer = () => {
                 <Link
                   key={link.href}
                   href={link.href}
-                  className="font-sans text-sm font-medium text-gray-600 transition-colors hover:text-black dark:text-gray-400 dark:hover:text-white"
+                  className="font-google text-sm font-medium text-gray-600 transition-colors hover:text-black dark:text-gray-400 dark:hover:text-white"
                 >
                   {link.label}
                 </Link>
@@ -250,7 +245,7 @@ const Footer = () => {
         {/* Bottom Bar */}
         <div className="border-t border-gray-200 bg-gray-50 py-8 dark:border-gray-800 dark:bg-black">
           <div className="flex flex-col items-center justify-between gap-4 px-5 md:flex-row md:px-10">
-            <p className="font-sans text-xs font-bold uppercase tracking-widest text-gray-500">
+            <p className="font-google text-xs font-bold uppercase tracking-widest text-gray-500">
               © {new Date().getFullYear()} LegalCyfle. All rights reserved.
             </p>
           </div>

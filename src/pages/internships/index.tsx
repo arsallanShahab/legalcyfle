@@ -23,7 +23,7 @@ type Props = {
 const Index = ({ internships }: Props) => {
   const { getData, loading, data, error, refresh } = useGet<
     ApiResponse<MetricsResponse>
-  >({ showToast: true });
+  >({ showToast: false });
 
   const reversedArticles = [...internships.fields?.articles].reverse();
 
@@ -43,20 +43,22 @@ const Index = ({ internships }: Props) => {
   return (
     <Wrapper>
       <FlexContainer variant="row-between">
-        <Heading>{internships.fields?.title}</Heading>
-        <Button variant={"secondary"}>
+        <Heading className="font-google text-4xl font-black tracking-tight text-black dark:text-white md:text-5xl">
+          {internships.fields?.title}
+        </Heading>
+        {/* <Button variant={"secondary"}>
           <Eye className="h-4 w-4" />
           {data?.data?.view}
-        </Button>
+        </Button> */}
       </FlexContainer>
       <FlexContainer variant="column-start" gap="xl">
         {reversedArticles.map((article) => {
           return (
             <article key={article.sys.id}>
-              <Card>
-                <CardHeader className="p-4 md:p-7">
+              <Card className="rounded-xl border border-gray-200 bg-zinc-50 shadow-none dark:border-gray-800 dark:bg-zinc-900">
+                <CardHeader className="rounded-xl rounded-b-none border-b bg-white p-5 dark:bg-zinc-800">
                   <FlexContainer variant="column-start">
-                    <h3 className="max-w-lg font-giest-sans text-2xl md:text-3xl">
+                    <h3 className="font-google mb-3 max-w-xl text-3xl font-bold leading-tight text-gray-900 dark:text-white md:text-4xl">
                       {article?.fields?.title}
                     </h3>
                     <p className="text-small text-default-500">
@@ -71,8 +73,7 @@ const Index = ({ internships }: Props) => {
                     </p>
                   </FlexContainer>
                 </CardHeader>
-                <Divider />
-                <CardBody className="blog-small p-4 md:p-7">
+                <CardBody className="rounded-xl border-gray-200 bg-zinc-50 p-5 dark:border-gray-800 dark:bg-zinc-900">
                   <BlogContent data={article} />
                 </CardBody>
               </Card>

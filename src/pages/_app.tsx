@@ -8,7 +8,13 @@ import { useGlobalContext } from "@/context/GlobalContext";
 import "@/styles/globals.css";
 import { GeistMono } from "geist/font/mono";
 import { GeistSans } from "geist/font/sans";
-import { playfair, lora, italiana, croissantOne } from "@/lib/fonts";
+import {
+  playfair,
+  lora,
+  italiana,
+  croissantOne,
+  abrilFatface,
+} from "@/lib/fonts";
 import { ChevronUp } from "lucide-react";
 import type { AppProps } from "next/app";
 import Head from "next/head";
@@ -49,7 +55,7 @@ export default function App({ Component, pageProps }: AppProps) {
       </Head>
       <Navbar />
       <main
-        className={`${GeistSans.variable} ${GeistMono.variable} ${italiana.variable} ${croissantOne.variable} ${playfair.variable} ${lora.variable} font-lora`}
+        className={`${GeistSans.variable} ${GeistMono.variable} ${playfair.variable} ${abrilFatface.variable} font-lora`}
       >
         <Component {...pageProps} />
       </main>

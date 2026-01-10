@@ -19,21 +19,8 @@ const Index = (props: Props) => {
   );
 
   useEffect(() => {
-    if (q) {
-      const filtered = props.data.filter((article) => {
-        if (typeof q === "object") {
-          return false;
-        }
-        if (q.length === 0) {
-          return false;
-        }
-        if (typeof q === "string") {
-          return article.fields.title.toLowerCase().includes(q.toLowerCase());
-        }
-      });
-      setFilteredArticles(filtered);
-    }
-  }, [props.data, q]);
+    setFilteredArticles(props.data);
+  }, [props.data]);
 
   return (
     <Wrapper>
@@ -48,18 +35,26 @@ const Index = (props: Props) => {
   );
 };
 
-export async function getStaticProps() {
-  const articles = await client.getEntries({
+export async function getServerSideProps(context: any) {
+  const { q } = context.query;
+
+  const queryParams: any = {
     content_type: "blogPage",
     order: ["-sys.createdAt"],
     select: [
       "fields.title,fields.slug,fields.category,fields.image,fields.authors,fields.description,fields.date",
     ],
-  });
-  const safeJsonArticles = articles.items;
+  };
+
+  if (q) {
+    queryParams["fields.title[match]"] = q;
+  }
+
+  const articles = await client.getEntries(queryParams);
+
   return {
     props: {
-      data: safeJsonArticles,
+      data: articles.items,
     },
   };
 }

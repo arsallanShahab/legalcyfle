@@ -15,7 +15,7 @@ const Wrapper = (props: Props) => {
         props.className,
       )}
     >
-      <FlexContainer variant="column-start" gap="3xl">
+      <FlexContainer variant="column-start" gap="xl">
         {props.children}
       </FlexContainer>
     </div>

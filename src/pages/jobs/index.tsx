@@ -8,6 +8,7 @@ import useGet from "@/lib/hooks/use-get";
 import { ApiResponse, MetricsResponse } from "@/types/global/api-response";
 import { Eye } from "lucide-react";
 import React, { useEffect } from "react";
+import { ReactMarkdownRenderer } from "@/components/ReactMarkdownRenderer";
 
 type Props = {
   jobs: {
@@ -38,9 +39,9 @@ const Index = ({ jobs }: Props) => {
     <Wrapper>
       <FlexContainer
         variant="row-between"
-        className="mb-8 border-b-2 border-zinc-200 pb-4 dark:border-gray-700 md:mb-12"
+        className="mb-8 border-zinc-200 dark:border-gray-700"
       >
-        <h1 className="font-playfair text-4xl font-black tracking-tight text-black dark:text-white md:text-5xl">
+        <h1 className="font-google text-4xl font-black tracking-tight text-black dark:text-white md:text-5xl">
           {jobs?.fields?.title || "Jobs"}
         </h1>
         {/* <div className="flex items-center gap-2 rounded-full bg-gray-100 px-3 py-1 text-sm font-medium text-gray-600 dark:bg-gray-800 dark:text-gray-300">
@@ -49,18 +50,18 @@ const Index = ({ jobs }: Props) => {
         </div> */}
       </FlexContainer>
 
-      <div className="mx-auto flex max-w-4xl flex-col gap-12 md:gap-16">
+      <div className="flex flex-col gap-12 md:gap-16">
         {reversedArticles?.map((article) => {
           return (
             <article
               key={article.sys.id}
-              className="border-b border-gray-200 pb-12 last:border-0 dark:border-gray-800"
+              className="rounded-xl border border-zinc-200 bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-900"
             >
-              <header className="mb-6">
-                <h2 className="mb-3 font-playfair text-3xl font-bold leading-tight text-gray-900 dark:text-white md:text-4xl">
+              <header className="rounded-xl rounded-b-none border-b bg-white p-5 dark:bg-zinc-800">
+                <h2 className="font-google mb-3 max-w-xl text-3xl font-bold leading-tight text-zinc-900 dark:text-white md:text-4xl">
                   {article?.fields?.title}
                 </h2>
-                <div className="flex items-center font-lora text-sm italic text-gray-500">
+                <div className="flex items-center font-lora text-sm italic text-zinc-500">
                   {article?.fields?.date && (
                     <time
                       dateTime={new Date(article.fields.date).toISOString()}
@@ -79,12 +80,8 @@ const Index = ({ jobs }: Props) => {
                 </div>
               </header>
 
-              <div className="prose prose-lg dark:prose-invert max-w-none">
-                {typeof article.fields.body === "string" ? (
-                  <MarkdownRenderer content={article.fields.body} />
-                ) : (
-                  <BlogContent data={article} />
-                )}
+              <div className="prose prose-lg dark:prose-invert max-w-none p-5 dark:bg-zinc-900">
+                <ReactMarkdownRenderer content={article.fields.body} />
               </div>
             </article>
           );

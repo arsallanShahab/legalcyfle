@@ -62,7 +62,7 @@ const Index = (props: Props) => {
           data-ad-format="auto"
           data-full-width-responsive="true"
         />
-        <FlexContainer variant="column-start" gap="md">
+        <FlexContainer variant="column-start" gap="xl">
           <div>
             <Image
               src={formatImageLink(
@@ -70,12 +70,12 @@ const Index = (props: Props) => {
                   "https://picsum.photos/200/200",
               )}
               alt={props.data.author.fields.name}
-              width={200}
-              height={200}
-              className="h-20 w-20 rounded-full border"
+              width={300}
+              height={300}
+              className="h-[150px] w-[150px] rounded-full border"
             />
           </div>
-          <h3 className={cn("text-4xl font-semibold", playfair.className)}>
+          <h3 className={cn("font-google text-4xl font-semibold")}>
             {props.data.author.fields.name}
           </h3>
           <p className="max-w-xl text-base text-gray-600 dark:text-gray-100">
